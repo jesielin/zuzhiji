@@ -4,10 +4,73 @@
     android:id="@+id/activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorPrimary"
     tools:context="com.zzj.zuzhiji.LoginActivity">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="手机号"
+            android:padding="10dp"
+            android:background="@color/md_white_1000"
+            android:textSize="20dp"
+            android:textColorHint="@color/text_hint"/>
+        <RelativeLayout
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="验证码"
+                android:maxLength="6"
+                android:padding="10dp"
+                android:textSize="20dp"
+                android:background="@color/md_white_1000"
+                android:textColorHint="@color/text_hint"/>
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:text="获取验证码"
+                android:layout_marginRight="15dp"
+                android:textSize="14dp"
+                android:textColor="@color/md_red_800"/>
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:text="登录"
+            android:textSize="24dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/common_pressed_bg"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:text="注册"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorPrimaryDark"
+            />
+    </LinearLayout>
 
 </RelativeLayout>
