@@ -7,16 +7,66 @@
     android:orientation="vertical"
     tools:context="com.zzj.zuzhiji.MainActivity">
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/titlebar_height"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/colorPrimaryDark"
-        android:text=""/>
+        android:layout_height="0dp"
+        android:id="@+id/container"
+        android:layout_weight="1"></FrameLayout>
 
-    <Button
-        android:layout_width="wrap_content"
+    <RadioGroup
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="测试"
-        android:onClick="ceshi"/>
+        android:paddingTop="15dp"
+        android:id="@+id/nav"
+        android:background="@color/md_white_1000"
+        android:paddingBottom="15dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/home"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textSize="0sp"
+            android:checked="true"
+            android:drawableTop="@drawable/bottom_main_nav_home_bg"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/social"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+
+            android:textSize="0sp"
+            android:drawableTop="@drawable/bottom_main_nav_social_bg"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/news"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textSize="0sp"
+            android:drawableTop="@drawable/bottom_main_nav_news_bg"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/message"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textSize="0sp"
+            android:drawableTop="@drawable/bottom_main_nav_message_bg"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:id="@+id/me"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:textSize="0sp"
+            android:drawableTop="@drawable/bottom_main_nav_me_bg"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
 </LinearLayout>
