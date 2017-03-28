@@ -22,7 +22,7 @@
             android:padding="10dp"
             android:singleLine="true"
             android:inputType="phone"
-
+            android:maxLength="11"
             android:id="@+id/tel"
             android:background="@color/md_white_1000"
             android:textSize="20dp"
