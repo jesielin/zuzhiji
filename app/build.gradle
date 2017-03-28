@@ -45,8 +45,9 @@ dependencies {
     compile 'com.afollestad.material-dialogs:commons:0.9.2.1'
 
     //photopicker
-    compile 'me.iwf.photopicker:PhotoPicker:0.9.5@aar'
-    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.droidninja:filepicker:2.0.3'
+
+    //glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     //fragment manager

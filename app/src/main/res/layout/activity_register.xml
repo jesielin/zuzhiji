@@ -1,63 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/container"
     android:background="@color/md_white_1000"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
-        android:layout_height="?attr/actionBarSize">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="注册"
-            android:textSize="20dp"
-            android:layout_centerInParent="true"
-            android:textColor="@color/colorPrimaryDark"
-            />
 
-
-    </RelativeLayout>
-
-    <ImageView
-        android:layout_width="120dp"
-        android:src="@drawable/placeholder_avator"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:id="@+id/avator"
-        android:layout_height="120dp" />
-
-
-    <RadioGroup
-        android:layout_gravity="center"
-        android:layout_width="320dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="40dp"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/single"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="个人"
-            android:button="@null"
-            android:gravity="center"
-            android:checked="true"
-            android:textColor="@color/register_type_text_color"
-            android:background="@drawable/register_left_type_bg"/>
-        <RadioButton
-            android:id="@+id/operator"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="技师"
-            android:button="@null"
-            android:gravity="center"
-            android:textColor="@color/register_type_text_color"
-            android:background="@drawable/register_right_type_pressed_bg"/>
-    </RadioGroup>
-
-</LinearLayout>
+</FrameLayout>

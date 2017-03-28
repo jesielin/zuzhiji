@@ -7,6 +7,15 @@
         android:layout_width="match_parent"
         android:background="@color/colorPrimary"
         android:layout_height="?attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="40dp"
+            android:layout_centerVertical="true"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/back" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +76,7 @@
             android:inputType="phone"
             android:maxLength="11"
             android:id="@+id/tel"
-            android:textSize="20dp"
+            android:textSize="18dp"
             android:textColorHint="@color/text_hint"/>
         <RelativeLayout
             android:layout_marginTop="20dp"
@@ -82,7 +91,7 @@
                 android:padding="10dp"
                 android:id="@+id/verify"
 
-                android:textSize="20dp"
+                android:textSize="18dp"
                 android:textColorHint="@color/text_hint"/>
             <TextView
                 android:id="@+id/get_verify"
@@ -91,6 +100,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:text="获取验证码"
+                android:inputType="number"
                 android:layout_marginRight="15dp"
                 android:textSize="14dp"
                 android:textColor="@color/md_red_800"/>
@@ -101,12 +111,13 @@
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:text="下一步"
-            android:textSize="24dp"
+            android:textSize="20dp"
+
             android:gravity="center"
             android:padding="5dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="40dp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/md_black_1000"
             android:background="@drawable/btn_common_bg"/>
 
         <TextView

@@ -1,9 +1,9 @@
 package com.zzj.zuzhiji;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -41,16 +41,22 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (SharedPreferencesUtils.getInstance().isLogin()) {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
+
 
         setContentView(R.layout.activity_login);
 
 
 
         ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (SharedPreferencesUtils.getInstance().isLogin()) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
     }
 
     @OnClick(R.id.login)
@@ -103,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.register)
     public void register(View view) {
-        Toast.makeText(this, "注册", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, RegisterActivity.class));
     }
 
     @OnClick(R.id.get_verify)

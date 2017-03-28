@@ -40,11 +40,6 @@
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".RegisterActivity"></activity>
 
-        <activity android:name="me.iwf.photopicker.PhotoPickerActivity"
-            />
-
-        <activity android:name="me.iwf.photopicker.PhotoPagerActivity"
-            />
     </application>
 
 </manifest>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="?attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="40dp"
+            android:layout_centerVertical="true"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置信息"
+            android:textSize="20dp"
+            android:layout_centerInParent="true"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/avator"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/placeholder_avator" />
+
+    <EditText
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="昵称"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:maxLength="11"
+        android:id="@+id/nickname"
+        android:textSize="18dp"
+        android:textColorHint="@color/text_hint" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal"
+        android:layout_height="50dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="18dp"
+            android:layout_marginLeft="5dp"
+            android:text="性别：" />
+
+        <RadioGroup
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="男"
+                android:id="@+id/male"
+                android:textColor="@color/md_blue_500" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/md_red_500"
+                android:id="@+id/female"
+                android:text="女" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/complete"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:text="完成"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/md_black_1000"
+        android:background="@drawable/btn_common_bg" />
+
+</LinearLayout>

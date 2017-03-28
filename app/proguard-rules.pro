@@ -22,10 +22,7 @@
     **[] $VALUES;
     public *;
 }
-# nineoldandroids
--keep interface com.nineoldandroids.view.** { *; }
--dontwarn com.nineoldandroids.**
--keep class com.nineoldandroids.** { *; }
+
 # support-v7-appcompat
 -keep public class android.support.v7.widget.** { *; }
 -keep public class android.support.v7.internal.widget.** { *; }

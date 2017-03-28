@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.zzj.zuzhiji.app.Constant;
 
-import java.security.PublicKey;
+import java.util.Map;
 
 /**
  * Created by shawn on 17/3/28.
@@ -52,4 +52,15 @@ public class SharedPreferencesUtils {
                 .apply();
     }
 
+    public String getValue(String key) {
+        return mSharedPreference.getString(key, "");
+    }
+
+    public void setValues(Map<String, String> items) {
+        SharedPreferences.Editor edit = mSharedPreference.edit();
+        for (Map.Entry entry : items.entrySet()) {
+            edit.putString(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
+        }
+        edit.apply();
+    }
 }
