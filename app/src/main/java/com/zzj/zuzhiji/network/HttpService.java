@@ -1,6 +1,6 @@
 package com.zzj.zuzhiji.network;
 
-import com.zzj.zuzhiji.network.entity.IndexAdvert;
+import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
@@ -27,15 +27,7 @@ import rx.Observable;
 
 public interface HttpService {
 
-    /**
-     * 首页广告
-     *
-     * @param position
-     * @param sign
-     * @return
-     */
-    @GET("/getIndexAdvert")
-    Observable<HttpResult<List<IndexAdvert>>> getIndexAdvert(@Query("position") int position, @Query("sign") String sign);
+
 
     /**
      * 登录
@@ -87,8 +79,9 @@ public interface HttpService {
      * @param sign
      * @return
      */
+    //searchTechs?currentPage=2&size=1&techName=小&owner=itrqXZ6Q36&sign=123
     @GET("/searchTechs")
-    Observable<HttpResult<List<Tech>>> searchTechs(@Query("currentPage") int currentPage, @Query("size") int size, @Query("techName") String techName, @Query("sign") String sign);
+    Observable<HttpResult<List<Tech>>> searchTechs(@Query("currentPage") int currentPage, @Query("size") int size, @Query("techName") String techName, @Query("owner") String owner, @Query("sign") String sign);
 
     /**
      * 更新用户信息
@@ -204,6 +197,18 @@ public interface HttpService {
      */
     @GET("getInformations")
     Observable<HttpResult<List<NewsResult>>> getNews(@Query("type") String type, @Query("sign") String sign);
+
+    //getIndexAdvert?position=1&sign=123
+
+    /**
+     * 首页广告轮播图
+     *
+     * @param position
+     * @param sign
+     * @return
+     */
+    @GET("/getIndexAdvert")
+    Observable<HttpResult<List<AdvertResult>>> getIndexAdvert(@Query("position") String position, @Query("sign") String sign);
 
 
 }

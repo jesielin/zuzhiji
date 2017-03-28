@@ -20,6 +20,10 @@ public interface Constant {
 
     int COUNT_DOWN_TIME = 60;
 
+    int PAGE_SIZE = 10;
+
+    int MAX = 10000;
+
     String BASE_URL_NOR = "http://101.201.155.115:6068";
     String BASE_URL_SMS = "http://101.201.155.115:8086";
 }

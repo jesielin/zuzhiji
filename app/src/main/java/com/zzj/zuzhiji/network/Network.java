@@ -1,9 +1,8 @@
 package com.zzj.zuzhiji.network;
 
-import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
@@ -25,7 +24,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -155,8 +153,8 @@ public class Network {
     }
 
 
-    public Observable<List<Tech>> searchTech(int currentPage, int size, String title) {
-        return compose(normalHttpService.searchTechs(currentPage, size, title, sign));
+    public Observable<List<Tech>> searchTech(int currentPage, int size, String title, String owner) {
+        return compose(normalHttpService.searchTechs(currentPage, size, title, owner, sign));
     }
 
 
@@ -174,6 +172,10 @@ public class Network {
 
     public Observable<List<MessageResult>> getMyFriendship(String uuid) {
         return compose(normalHttpService.getMyFriendship(uuid, sign));
+    }
+
+    public Observable<List<AdvertResult>> getAdvert(String position) {
+        return compose(normalHttpService.getIndexAdvert(position, sign));
     }
 
 
