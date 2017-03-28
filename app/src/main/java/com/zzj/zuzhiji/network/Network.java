@@ -195,6 +195,7 @@ public class Network {
 
         @Override
         public T call(HttpResult<T> httpResult) {
+            DebugLog.e("result:"+new Gson().toJson(httpResult));
             if (httpResult == null || "error".equals(httpResult.result))
                 throw new ApiException(httpResult == null ? "网络错误!" : httpResult.msg);
             return httpResult.data;

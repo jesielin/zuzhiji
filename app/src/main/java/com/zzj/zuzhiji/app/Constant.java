@@ -9,6 +9,11 @@ public interface Constant {
     public interface SHARED_KEY {
         String SHARED_FILE_NAME = "ZZJ";
         String UUID = "UUID";
+        String AVATOR = "AVATOR";
+        String LOGIN_NAME = "LOGIN_NAME";
+        String NICK_NAME = "NICK_NAME";
+        String USER_TYPE = "USER_TYPE";
+
     }
 
     int DEFAULT_TIMEOUT = 5;

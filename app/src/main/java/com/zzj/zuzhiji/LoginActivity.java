@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji;
 
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,10 +10,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.DialogUtils;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,14 +41,63 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (SharedPreferencesUtils.getInstance().isLogin()) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+
         setContentView(R.layout.activity_login);
+
+
 
         ButterKnife.bind(this);
     }
 
     @OnClick(R.id.login)
     public void login(View view) {
-        Toast.makeText(this, "登录", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(etTel.getText().toString().trim()) || TextUtils.getTrimmedLength(etTel.getText().toString()) != 11) {
+            Toast.makeText(this, "请输入正确的手机号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(etVerify.getText().toString().trim())){
+            Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final MaterialDialog dialog = DialogUtils.showProgressDialog(this, "登录", "正在登录...");
+        try {
+            Network.getInstance().login(etTel.getText().toString().trim(), etVerify.getText().toString().trim())
+                    .subscribe(new Subscriber<LoginResult>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+
+                        @Override
+                        public void onNext(LoginResult loginResult) {
+                            SharedPreferencesUtils.getInstance().setLogin(
+                                    loginResult.uuid,
+                                    loginResult.nickName,
+                                    loginResult.headSculpture,
+                                    loginResult.userType,
+                                    loginResult.loginName
+                            );
+                            dialog.dismiss();
+                            startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                            finish();
+
+                        }
+                    });
+        }catch (ApiException ex){
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -99,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 //每隔countDownInterval秒会回调一次onTick()方法
-                DebugLog.d("onTick  " + millisUntilFinished / 1000);
+//                DebugLog.d("onTick  " + millisUntilFinished / 1000);
 
                 tvGetVerify.setText(String.format("%s秒", millisUntilFinished / 1000));
             }
@@ -129,7 +183,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void disableTvGetVerify() {
-        tvGetVerify.setTextColor(getResources().getColor(R.color.md_red_800));
+        tvGetVerify.setTextColor(getResources().getColor(R.color.text_hint));
         isGetVerifyEnable = false;
     }
 }
