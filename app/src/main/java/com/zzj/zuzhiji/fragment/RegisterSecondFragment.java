@@ -22,6 +22,7 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
+import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCircleTransform;
@@ -183,6 +184,6 @@ public class RegisterSecondFragment extends Fragment {
 
     @OnClick(R.id.back)
     public void back(View view) {
-        getActivity().finish();
+        ActivityManager.getInstance().finshActivities(getActivity().getClass());
     }
 }

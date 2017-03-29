@@ -8,6 +8,7 @@
     <color name="layout_bg">#EFEFEF</color>
 
     <color name="text_hint">@color/md_grey_600</color>
+    <color name="divider">#E0E0E0</color>
 
     <!-- google's material design colours from
   http://www.google.com/design/spec/style/color.html#color-ui-color-palette -->
