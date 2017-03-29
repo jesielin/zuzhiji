@@ -37,6 +37,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
+import io.reactivex.subjects.Subject;
+import me.shaohui.advancedluban.Luban;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -84,6 +86,14 @@ public class RegisterSecondFragment extends Fragment {
 
 
         File avatorFile = new File(paths.get(0));
+        //TODO:
+        Luban.compress(getActivity(), avatorFile)
+                .setMaxSize(Constant.IMAGE_UPLOAD_MAX_SIZE)                // limit the final image size（unit：Kb）
+                .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)             // limit image height
+                .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)              // limit image width
+                .putGear(Luban.CUSTOM_GEAR)     // use CUSTOM GEAR compression mode
+                .asObservable()
+                .subscribe();
         MultipartBody.Part avatorPart = null;
         // 创建 RequestBody，用于封装构建RequestBody
         RequestBody requestFile =

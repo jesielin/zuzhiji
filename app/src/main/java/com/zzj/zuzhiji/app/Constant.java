@@ -24,6 +24,12 @@ public interface Constant {
 
     int MAX = 10000;
 
+    int IMAGE_UPLOAD_MAX_SIZE = 500;//KB
+
+    int IMAGE_UPLOAD_MAX_HEIGHT = 1920;
+
+    int IMAGE_UPLOAD_MAX_WIDTH = 1080;
+
     String BASE_URL_NOR = "http://101.201.155.115:6068";
     String BASE_URL_SMS = "http://101.201.155.115:8086";
 }
