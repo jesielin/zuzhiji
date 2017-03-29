@@ -26,7 +26,7 @@ public class MarqueeTextView extends android.support.v7.widget.AppCompatTextView
     @Override
     public boolean isFocused() {
         // TODO Auto-generated method stub
-        if (getEditableText().equals(TextUtils.TruncateAt.MARQUEE)) {
+        if (getEditableText() != null && getEditableText().equals(TextUtils.TruncateAt.MARQUEE)) {
             return true;
         }
         return super.isFocused();
