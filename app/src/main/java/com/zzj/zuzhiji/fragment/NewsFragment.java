@@ -84,8 +84,10 @@ public class NewsFragment extends Fragment {
             switch (position) {
                 case 0:
                     title = "视频";
+                    break;
                 case 1:
                     title = "咨询";
+                    break;
 
             }
             return title;

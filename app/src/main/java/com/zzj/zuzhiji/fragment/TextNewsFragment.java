@@ -86,7 +86,6 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
                         @Override
                         public void onError(Throwable e) {
-                            swipeRefreshLayout.setRefreshing(false);
                             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
 
@@ -96,7 +95,6 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
                                 datas.clear();
                                 datas.addAll(newsResults);
                                 textNewsAdapter.notifyDataSetChanged();
-                                swipeRefreshLayout.setRefreshing(false);
                             }
                         }
                     });
@@ -148,6 +146,13 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
             holder.tvSubTitle.setText(item.contents);
             holder.tvHot.setText(item.hot);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "dianle", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         @Override
