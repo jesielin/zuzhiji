@@ -46,7 +46,8 @@ public class ActivityManager {
     //结束所有的Activities
     public ActivityManager finshAllActivities() {
         for (Activity activity : activityLinkedList) {
-            activity.finish();
+            if (activity != null && !activity.isDestroyed())
+                activity.finish();
         }
         return instance;
     }

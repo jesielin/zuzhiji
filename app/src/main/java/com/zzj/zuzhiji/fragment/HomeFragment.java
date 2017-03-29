@@ -60,13 +60,6 @@ public class HomeFragment extends Fragment {
         View contentView = View.inflate(getActivity(), R.layout.fragment_home, null);
         ButterKnife.bind(this, contentView);
 
-        //TODO:
-        for (int i = 0; i < 10; i++) {
-            Tech r = new Tech();
-            r.summary = "ddddddddddddddddddd";
-            r.id = "aaaaaaaaaa";
-            datas.add(r);
-        }
 
 
         setupBanner();
