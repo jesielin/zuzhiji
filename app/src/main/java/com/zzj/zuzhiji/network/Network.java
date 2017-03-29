@@ -157,6 +157,9 @@ public class Network {
         return compose(normalHttpService.searchTechs(currentPage, size, title, owner, sign));
     }
 
+    public Observable<List<Tech>> getRecommendTech(int size) {
+        return compose(normalHttpService.getRecommendTechs(size, sign));
+    }
 
     public Observable<SetInfoResult> setUserInfo(RequestBody uuid, RequestBody nickName, RequestBody sex, MultipartBody.Part avator) {
 

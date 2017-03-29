@@ -59,6 +59,7 @@ public interface HttpService {
      * @param sign
      * @return
      */
+
     Observable<HttpResult<List<Notice>>> getNotice(@Query("currentDate") String currentDate, @Query("sign") String sign);
 
     /**
@@ -68,6 +69,7 @@ public interface HttpService {
      * @param sign
      * @return
      */
+    @GET("/getRecommendTechs")
     Observable<HttpResult<List<Tech>>> getRecommendTechs(@Query("size") int size, @Query("sign") String sign);
 
     /**
