@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.R;
+import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
@@ -37,7 +39,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
-import io.reactivex.subjects.Subject;
 import me.shaohui.advancedluban.Luban;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -87,65 +88,82 @@ public class RegisterSecondFragment extends Fragment {
 
         File avatorFile = new File(paths.get(0));
         //TODO:
-        Luban.compress(getActivity(), avatorFile)
-                .setMaxSize(Constant.IMAGE_UPLOAD_MAX_SIZE)                // limit the final image size（unit：Kb）
-                .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)             // limit image height
-                .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)              // limit image width
-                .putGear(Luban.CUSTOM_GEAR)     // use CUSTOM GEAR compression mode
+        Luban.compress(App.getContext(), avatorFile)
+                .putGear(Luban.CUSTOM_GEAR)
                 .asObservable()
-                .subscribe();
-        MultipartBody.Part avatorPart = null;
-        // 创建 RequestBody，用于封装构建RequestBody
-        RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), avatorFile);
+                .subscribe(new Subscriber<File>() {
+                    @Override
+                    public void onCompleted() {
 
-        // MultipartBody.Part  和后端约定好Key，这里的partName是用image
-        avatorPart =
-                MultipartBody.Part.createFormData("headSculpture", avatorFile.getName(), requestFile);
+                    }
 
-        //添加UUID
-        String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
-        RequestBody uuid =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), uuidText);
-        // 添加nickname
-        String nickNameText = etNickName.getText().toString().trim();
-        RequestBody nickName =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), nickNameText);
-        // 添加sex
-        String sexText = gender;
-        RequestBody sex =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), sexText);
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
 
-        try {
-            Network.getInstance().setUserInfo(uuid, nickName, sex, avatorPart)
-                    .subscribe(new Subscriber<SetInfoResult>() {
-                        @Override
-                        public void onCompleted() {
+                    @Override
+                    public void onNext(File file) {
+                        Log.i("TAG", file.getAbsolutePath());
+
+                        MultipartBody.Part avatorPart = null;
+                        // 创建 RequestBody，用于封装构建RequestBody
+                        RequestBody requestFile =
+                                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+                        // MultipartBody.Part  和后端约定好Key，这里的partName是用image
+                        avatorPart =
+                                MultipartBody.Part.createFormData("headSculpture", file.getName(), requestFile);
+
+                        //添加UUID
+                        String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
+                        RequestBody uuid =
+                                RequestBody.create(
+                                        MediaType.parse("multipart/form-data"), uuidText);
+                        // 添加nickname
+                        String nickNameText = etNickName.getText().toString().trim();
+                        RequestBody nickName =
+                                RequestBody.create(
+                                        MediaType.parse("multipart/form-data"), nickNameText);
+                        // 添加sex
+                        String sexText = gender;
+                        RequestBody sex =
+                                RequestBody.create(
+                                        MediaType.parse("multipart/form-data"), sexText);
+
+                        try {
+                            Network.getInstance().setUserInfo(uuid, nickName, sex, avatorPart)
+                                    .subscribe(new Subscriber<SetInfoResult>() {
+                                        @Override
+                                        public void onCompleted() {
+                                        }
+
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            DebugLog.e("message:" + e.getMessage());
+                                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        }
+
+                                        @Override
+                                        public void onNext(SetInfoResult setInfoResult) {
+                                            Map<String, String> values = new ArrayMap<String, String>();
+                                            values.put(Constant.SHARED_KEY.AVATOR, setInfoResult.headSculpture);
+                                            values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
+                                            SharedPreferencesUtils.getInstance().setValues(values);
+                                            dialog.dismiss();
+                                            getActivity().finish();
+                                        }
+                                    });
+                        } catch (ApiException ex) {
+                            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                    }
+                });
 
-                        @Override
-                        public void onError(Throwable e) {
-                            DebugLog.e("message:" + e.getMessage());
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        }
 
-                        @Override
-                        public void onNext(SetInfoResult setInfoResult) {
-                            Map<String, String> values = new ArrayMap<String, String>();
-                            values.put(Constant.SHARED_KEY.AVATOR, setInfoResult.headSculpture);
-                            values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
-                            SharedPreferencesUtils.getInstance().setValues(values);
-                            dialog.dismiss();
-                            getActivity().finish();
-                        }
-                    });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+
+
     }
 
 
