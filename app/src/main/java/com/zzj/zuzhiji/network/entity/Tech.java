@@ -23,14 +23,14 @@ package com.zzj.zuzhiji.network.entity;
  */
 public class Tech {
     public String summary;
-    public int isRecommend;
+    public String isRecommend;
     public String level;
     public String nickName;
     public String loginName;
-    public int id;
-    public int userType;
+    public String id;
+    public String userType;
     public String uuid;
     public String createDate;
-    public int status;
+    public String status;
     public String headSculpture;
 }

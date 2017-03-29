@@ -15,11 +15,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SettingActivity;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.GlideCircleTransform;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import butterknife.BindView;
@@ -120,6 +120,11 @@ public class MeFragment extends Fragment {
                 fensi.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    @OnClick({R.id.dongtai, R.id.anli})
+    public void toHomePage(View view) {
+        startActivity(new Intent(getActivity(), HomePageActivity.class));
     }
 
     @OnClick(R.id.shezhi)

@@ -87,7 +87,7 @@ public class RegisterSecondFragment extends Fragment {
 
 
         File avatorFile = new File(paths.get(0));
-        //TODO:
+
         Luban.compress(App.getContext(), avatorFile)
                 .putGear(Luban.CUSTOM_GEAR)
                 .asObservable()

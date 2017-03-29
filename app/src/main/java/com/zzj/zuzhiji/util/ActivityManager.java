@@ -35,7 +35,9 @@ public class ActivityManager {
     public ActivityManager finshActivities(Class<? extends Activity>... activityClasses) {
         for (Activity activity : activityLinkedList) {
             if (Arrays.asList(activityClasses).contains(activity.getClass())) {
-                activity.finish();
+                if (!activity.isDestroyed())
+                    activity.finish();
+
             }
         }
         return instance;
