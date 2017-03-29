@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_bg"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -27,5 +28,181 @@
         android:id="@+id/banner"
         android:layout_width="match_parent"
         android:layout_height="120dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+
+            android:id="@+id/reservation"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="@drawable/touch_bg"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/icon_reservation" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="在线预约"
+                android:textColor="@color/md_black_1000"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="2dp"
+                android:text="只需一键|约您要的服务"
+                android:textColor="@color/text_hint"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="1dp"
+            android:layout_height="match_parent">
+
+            <TableRow android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/customer_service"
+                    android:clickable="true"
+                    android:background="@drawable/touch_bg"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_customer_service" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_black_1000"
+                        android:textSize="16dp"
+                        android:layout_marginTop="4dp"
+                        android:text="客服" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginLeft="1dp"
+                    android:clickable="true"
+                    android:background="@drawable/touch_bg"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id="@+id/service"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_service" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_black_1000"
+                        android:textSize="16dp"
+                        android:layout_marginTop="4dp"
+                        android:text="服务" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_marginTop="1dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/video"
+                    android:clickable="true"
+                    android:background="@drawable/touch_bg"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_video" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_black_1000"
+                        android:textSize="16dp"
+                        android:layout_marginTop="8dp"
+                        android:text="视频" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/news"
+                    android:layout_marginLeft="1dp"
+                    android:clickable="true"
+                    android:background="@drawable/touch_bg"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_news" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/md_black_1000"
+                        android:textSize="16dp"
+                        android:layout_marginTop="8dp"
+                        android:text="咨询" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+
+    </LinearLayout>
+
+    <com.zzj.zuzhiji.view.MarqueeTextView
+        android:id="@+id/home_location_tv"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:ellipsize="marquee"
+        android:background="@color/md_white_1000"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="足知脊上线了..."
+        android:textColor="@color/text_hint"
+        android:textSize="16dp" />
+
 
 </LinearLayout>
