@@ -1,8 +1,10 @@
 package com.zzj.zuzhiji;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +20,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.jaeger.ninegridimageview.NineGridImageView;
 import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
 import com.zzj.zuzhiji.util.ActivityManager;
+import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.UIHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,9 +38,16 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     RecyclerView recyclerView;
     @BindView(R.id.refresh)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.scroll_container)
+    NestedScrollView nestedScrollView;
+    @BindView(R.id.titlebar)
+    View titlebar;
+
+    private int mDistanceY;
 
     private CaseAdapter mAdapter = new CaseAdapter();
 
+    private int scrollHeight;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,9 +57,13 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         ActivityManager.getInstance().addActivity(this);
 
         setupLayout();
+
     }
 
+
     private void setupLayout() {
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -61,6 +76,31 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
             }
         });
         recyclerView.setAdapter(mAdapter);
+
+        scrollHeight = UIHelper.dipToPx(240.0f) - titlebar.getBottom();
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                int dy = scrollY - oldScrollY;
+                //滑动的距离
+                mDistanceY += dy;
+                //toolbar的高度
+                DebugLog.e("scroll height:" + scrollHeight);
+
+                //当滑动的距离 <= toolbar高度的时候，改变Toolbar背景色的透明度，达到渐变的效果
+                if (mDistanceY <= scrollHeight) {
+                    float scale = (float) mDistanceY / scrollHeight;
+                    float alpha = scale * 255;
+
+                    titlebar.setBackgroundColor(Color.argb((int) alpha, 245, 222, 132));
+                } else {
+                    //上述虽然判断了滑动距离与toolbar高度相等的情况，但是实际测试时发现，标题栏的背景色
+                    //很少能达到完全不透明的情况，所以这里又判断了滑动距离大于toolbar高度的情况，
+                    //将标题栏的颜色设置为完全不透明状态
+                    titlebar.setBackgroundResource(R.color.colorPrimary);
+                }
+            }
+        });
 
     }
 
