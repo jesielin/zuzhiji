@@ -42,18 +42,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-
+            android:layout_centerInParent="true"
             android:text="退出登录"
             android:textSize="16dp" />
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="21dp"
-            android:layout_marginRight="21dp"
-            android:src="@drawable/arrow_right" />
 
         <View
             android:layout_width="match_parent"

@@ -29,7 +29,7 @@
             android:textSize="20dp"
             android:singleLine="true"
             android:textColor="@color/md_black_1000"
-            android:text="养怡格足道" />
+            android:text="" />
 
         <TextView
             android:id="@+id/subtitle"
@@ -72,16 +72,19 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/icon_message" />
 
                 <TextView
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
                     android:id="@+id/comment_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:text="123"
+                    android:layout_marginLeft="4dp"
+                    android:text="0"
                     android:textColor="@color/text_hint"
                     android:textSize="16dp" />
             </LinearLayout>

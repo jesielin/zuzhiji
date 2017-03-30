@@ -9,6 +9,7 @@ import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.network.entity.UserInfoResult;
 
 import java.util.List;
 
@@ -111,6 +112,15 @@ public interface HttpService {
     );
 
 
+    /**
+     * 获取用户信息
+     *
+     * @param uuid
+     * @param sign
+     * @return
+     */
+    @GET("getUserinfo")
+    Observable<HttpResult<UserInfoResult>> getUserInfo(@Query("owner") String uuid, @Query("sign") String sign);
     /**
      * 查看朋友圈列表
      *

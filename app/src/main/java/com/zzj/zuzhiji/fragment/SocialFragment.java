@@ -23,16 +23,30 @@ import com.jaeger.ninegridimageview.NineGridImageView;
 import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
 import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.R;
+import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.network.ApiException;
+import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.entity.SocialItem;
+import com.zzj.zuzhiji.network.entity.SocialTotal;
+import com.zzj.zuzhiji.network.entity.UserInfoResult;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
+import static com.zzj.zuzhiji.R.id.date;
 import static com.zzj.zuzhiji.R.id.titlebar;
 
 /**
@@ -47,6 +61,11 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
     SwipeRefreshLayout swipeRefreshLayout;
 
     private SocialAdapter mAdapter = new SocialAdapter();
+
+    private int page = 1;
+    private int totalPage = 1;
+
+    private List<SocialItem> datas = new ArrayList<>();
 
     @Nullable
     @Override
@@ -95,6 +114,44 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
                 swipeRefreshLayout.setRefreshing(false);
             }
         }, 500);
+
+        try {
+            Network.getInstance().getSocialItems(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)
+                    , page, Constant.PAGE_SIZE)
+                    .observeOn(Schedulers.io())
+                    .map(new Func1<SocialTotal, List<SocialItem>>() {
+                        @Override
+                        public List<SocialItem> call(SocialTotal socialTotal) {
+                            totalPage = socialTotal.total;
+                            return socialTotal.list;
+                        }
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<List<SocialItem>>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onNext(List<SocialItem> socialItems) {
+                            if (socialItems != null) {
+                                datas.clear();
+                                datas.addAll(socialItems);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+        } catch (ApiException ex) {
+            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+        } finally {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     private String[] IMG_URL_LIST = {
@@ -112,6 +169,12 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
         @BindView(R.id.title)
         TextView tvTitle;
+        @BindView(R.id.subtitle)
+        TextView tvSubTitle;
+        @BindView(R.id.date)
+        TextView tvDate;
+        @BindView(R.id.comment_num)
+        TextView tvCommentNum;
         @BindView(R.id.image_group)
         NineGridImageView nineGridImageView;
 
@@ -119,6 +182,37 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             super(itemView);
             ButterKnife.bind(this, itemView);
             nineGridImageView.setAdapter(mImageAdapter);
+        }
+    }
+
+    private void getUserName(final TextView tv, final String ownerId) {
+        try {
+            Network.getInstance().getUserInfo(ownerId)
+                    .subscribe(new Subscriber<UserInfoResult>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onNext(UserInfoResult userInfoResult) {
+                            if (userInfoResult != null)
+                                tv.setText(userInfoResult.nickName);
+                            else {
+                                DebugLog.e("user owner:" + ownerId);
+                                //TODO:设置不上
+                                tv.setText(String.valueOf(ownerId));
+                            }
+
+                        }
+                    });
+        } catch (ApiException ex) {
+            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -131,12 +225,19 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
         @Override
         public void onBindViewHolder(SocialVH holder, int position) {
-            holder.nineGridImageView.setImagesData(Arrays.asList(IMG_URL_LIST).subList(0, (position + 2) % 9));
+            SocialItem item = datas.get(position);
+            holder.nineGridImageView.setImagesData(item.photos);
+            //TODO:
+//            getUserName(holder.tvTitle,item.momentOwner);
+            holder.tvTitle.setText(item.momentOwner);
+            holder.tvSubTitle.setText(item.message);
+            holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
+            holder.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
         }
 
         @Override
         public int getItemCount() {
-            return 10;
+            return datas.size();
         }
     }
 

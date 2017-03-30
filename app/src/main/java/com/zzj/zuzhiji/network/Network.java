@@ -10,6 +10,7 @@ import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.network.entity.UserInfoResult;
 import com.zzj.zuzhiji.util.DebugLog;
 
 import java.util.List;
@@ -181,6 +182,9 @@ public class Network {
         return compose(normalHttpService.getIndexAdvert(position, sign));
     }
 
+    public Observable<UserInfoResult> getUserInfo(String uuid) {
+        return compose(normalHttpService.getUserInfo(uuid, sign));
+    }
 
     private <T> Observable<T> compose(Observable<HttpResult<T>> o) throws ApiException {
         return o.subscribeOn(Schedulers.io())
