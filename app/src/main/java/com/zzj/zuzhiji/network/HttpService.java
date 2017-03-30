@@ -146,7 +146,7 @@ public interface HttpService {
     @POST("/sendMoment")
     Observable<HttpResult<Object>> sendMoment(@Part("owner") RequestBody uuid,
                                               @Part("message") RequestBody message,
-                                              @Part("photos") MultipartBody.Part[] parts,
+                                              @Part MultipartBody.Part[] parts,
                                               @Part("sign") RequestBody sign);
 
 

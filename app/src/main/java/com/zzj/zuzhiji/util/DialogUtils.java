@@ -18,7 +18,8 @@ public class DialogUtils {
                 .cancelable(false)
                 .progressIndeterminateStyle(false);
         MaterialDialog dialog = builder.build();
-        dialog.show();
+//        dialog.show();
+
         return dialog;
     }
 }

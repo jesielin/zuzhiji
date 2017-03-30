@@ -49,6 +49,8 @@ import rx.schedulers.Schedulers;
 
 public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    private static final int REQUEST_CODE_PUBLISH = 1;
+
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
     @BindView(R.id.refresh)
@@ -72,7 +74,16 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     @OnClick(R.id.publish)
     public void publish(View view) {
-        startActivity(new Intent(getActivity(), PublishActivity.class));
+        startActivityForResult(new Intent(getActivity(), PublishActivity.class),
+                REQUEST_CODE_PUBLISH);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PUBLISH && requestCode == PublishActivity.RESULT_CODE_PUBLISH_SUCCESS) {
+            doRefresh();
+        }
     }
 
     private void setupLayout() {
@@ -89,13 +100,17 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-                onRefresh();
+                doRefresh();
             }
         });
         recyclerView.setAdapter(mAdapter);
 
 
+    }
+
+    private void doRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        onRefresh();
     }
 
 
