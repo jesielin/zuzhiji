@@ -1,11 +1,10 @@
 package com.zzj.zuzhiji.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,7 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.jaeger.ninegridimageview.NineGridImageView;
 import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
-import com.zzj.zuzhiji.HomePageActivity;
+import com.zzj.zuzhiji.PublishActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.ApiException;
@@ -32,10 +31,8 @@ import com.zzj.zuzhiji.network.entity.UserInfoResult;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
-import com.zzj.zuzhiji.util.UIHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -45,9 +42,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-
-import static com.zzj.zuzhiji.R.id.date;
-import static com.zzj.zuzhiji.R.id.titlebar;
 
 /**
  * Created by shawn on 2017-03-29.
@@ -78,7 +72,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     @OnClick(R.id.publish)
     public void publish(View view) {
-        Toast.makeText(getActivity(), "发表朋友圈", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getActivity(), PublishActivity.class));
     }
 
     private void setupLayout() {

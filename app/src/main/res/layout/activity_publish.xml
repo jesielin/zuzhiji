@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/layout_bg"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="?attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="40dp"
+            android:layout_centerVertical="true"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发布案例"
+            android:textSize="20dp"
+            android:layout_centerInParent="true"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/title"
+                android:layout_marginTop="20dp"
+                android:background="@color/md_white_1000"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="标题"
+                android:textColor="@color/md_black_1000"
+                android:textColorHint="@color/text_hint"
+                android:paddingLeft="16dp"
+                android:singleLine="true"
+                android:textSize="20dp"
+
+                android:paddingRight="16dp"
+                android:gravity="center_vertical" />
+
+            <EditText
+                android:lines="5"
+                android:layout_marginTop="20dp"
+                android:background="@color/md_white_1000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="请输入内容..."
+                android:textColor="@color/md_black_1000"
+                android:textColorHint="@color/text_hint"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:id="@+id/subtitle"
+                android:gravity="start"
+                android:textSize="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
+
+            <com.jaeger.ninegridimageview.NineGridImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:id="@+id/image_group"
+                app:imgGap="4dp"
+                app:showStyle="grid"
+                android:background="@color/md_white_1000"></com.jaeger.ninegridimageview.NineGridImageView>
+
+            <Button
+                android:id="@+id/complete"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:text="完成"
+                android:layout_marginBottom="40dp"
+                android:textSize="20dp"
+
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="40dp"
+                android:textColor="@color/md_black_1000"
+                android:background="@drawable/btn_common_bg" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

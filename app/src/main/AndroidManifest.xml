@@ -42,6 +42,7 @@
         <activity android:name=".SearchActivity"></activity>
         <activity android:name=".SettingActivity"></activity>
         <activity android:name=".HomePageActivity"></activity>
+        <activity android:name=".PublishActivity"></activity>
 
 
     </application>
