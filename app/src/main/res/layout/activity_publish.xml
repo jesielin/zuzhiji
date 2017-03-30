@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/layout_bg"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
 
         <ImageView
             android:id="@+id/back"
             android:layout_width="40dp"
-            android:layout_centerVertical="true"
             android:layout_height="match_parent"
-            android:scaleType="centerInside"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:scaleType="centerInside"
             android:src="@drawable/back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="发布案例"
-            android:textSize="20dp"
             android:layout_centerInParent="true"
-            android:textColor="@color/colorPrimaryDark" />
+            android:text="发布案例"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp" />
 
 
     </RelativeLayout>
@@ -42,65 +42,82 @@
 
             <EditText
                 android:id="@+id/title"
-                android:layout_marginTop="20dp"
-                android:background="@color/md_white_1000"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:hint="标题"
-                android:textColor="@color/md_black_1000"
-                android:textColorHint="@color/text_hint"
-                android:paddingLeft="16dp"
-                android:singleLine="true"
-                android:textSize="20dp"
-
-                android:paddingRight="16dp"
-                android:gravity="center_vertical" />
-
-            <EditText
-                android:lines="5"
                 android:layout_marginTop="20dp"
                 android:background="@color/md_white_1000"
+                android:gravity="center_vertical"
+                android:hint="标题"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:singleLine="true"
+                android:textColor="@color/md_black_1000"
+
+                android:textColorHint="@color/text_hint"
+                android:textSize="20dp" />
+
+            <EditText
+                android:id="@+id/subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/md_white_1000"
+                android:gravity="start"
                 android:hint="请输入内容..."
+                android:lines="5"
+                android:paddingBottom="10dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="10dp"
                 android:textColor="@color/md_black_1000"
                 android:textColorHint="@color/text_hint"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:id="@+id/subtitle"
-                android:gravity="start"
-                android:textSize="16dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp" />
+                android:textSize="16dp" />
 
-            <com.jaeger.ninegridimageview.NineGridImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:layout_weight="1"
-                android:layout_marginTop="20dp"
+            <cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout
+                style="@style/WrapWrap"
                 android:id="@+id/image_group"
-                app:imgGap="4dp"
-                app:showStyle="grid"
-                android:background="@color/md_white_1000"></com.jaeger.ninegridimageview.NineGridImageView>
+                android:layout_margin="10dp"
+                app:bga_snpl_deleteDrawable="@mipmap/bga_pp_ic_delete"
+                app:bga_snpl_deleteDrawableOverlapQuarter="false"
+                app:bga_snpl_editable="true"
+                app:bga_snpl_itemCornerRadius="0dp"
+                app:bga_snpl_itemSpanCount="3"
+                app:bga_snpl_itemWhiteSpacing="4dp"
+                app:bga_snpl_itemWidth="0dp"
+                app:bga_snpl_maxItemCount="9"
+                app:bga_snpl_otherWhiteSpacing="100dp"
+                app:bga_snpl_placeholderDrawable="@mipmap/bga_pp_ic_holder_dark"
+                app:bga_snpl_plusDrawable="@mipmap/bga_pp_ic_plus"
+                app:bga_snpl_plusEnable="true"
+                app:bga_snpl_sortable="true" />
+            <!--<com.jaeger.ninegridimageview.NineGridImageView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingLeft="16dp"-->
+            <!--android:paddingRight="16dp"-->
+            <!--android:paddingTop="5dp"-->
+            <!--android:paddingBottom="5dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:id="@+id/image_group"-->
+            <!--app:imgGap="4dp"-->
+            <!--app:showStyle="grid"-->
+            <!--android:background="@color/md_white_1000"></com.jaeger.ninegridimageview.NineGridImageView>-->
 
             <Button
                 android:id="@+id/complete"
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
-                android:text="完成"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="40dp"
-                android:textSize="20dp"
+                android:layout_marginTop="40dp"
 
+                android:background="@drawable/btn_common_bg"
                 android:gravity="center"
                 android:padding="5dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="40dp"
+                android:text="完成"
                 android:textColor="@color/md_black_1000"
-                android:background="@drawable/btn_common_bg" />
+                android:textSize="20dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

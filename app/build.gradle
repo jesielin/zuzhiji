@@ -68,4 +68,13 @@ dependencies {
     //grid photo view
     compile 'com.jaeger.ninegridimageview:library:1.1.0'
 
+    //photo picker
+    compile 'cn.bingoogolapple:bga-photopicker:1.2.3@aar'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'cn.bingoogolapple:bga-adapter:1.1.8@aar'
+
+    //easy permission
+    compile 'pub.devrel:easypermissions:0.2.1'
+
 }
