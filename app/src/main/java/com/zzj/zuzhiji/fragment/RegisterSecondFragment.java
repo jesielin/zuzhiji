@@ -70,7 +70,6 @@ public class RegisterSecondFragment extends Fragment {
     }
 
 
-    //TODO:压缩图片
     @OnClick(R.id.complete)
     public void complete(View view) {
         if (TextUtils.isEmpty(etNickName.getText().toString().trim())) {
