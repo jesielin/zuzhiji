@@ -76,30 +76,29 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
     public void onRefresh() {
 
 
+        Network.getInstance().getNews("2")
+                .subscribe(new Subscriber<List<NewsResult>>() {
+                    @Override
+                    public void onCompleted() {
 
-            Network.getInstance().getNews("2")
-                    .subscribe(new Subscriber<List<NewsResult>>() {
-                        @Override
-                        public void onCompleted() {
+                    }
 
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onNext(List<NewsResult> newsResults) {
+                        if (newsResults != null) {
+                            datas.clear();
+                            datas.addAll(newsResults);
+                            videoNewsAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
                         }
-
-                        @Override
-                        public void onNext(List<NewsResult> newsResults) {
-                            if (newsResults != null) {
-                                datas.clear();
-                                datas.addAll(newsResults);
-                                videoNewsAdapter.notifyDataSetChanged();
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        }
-                    });
+                    }
+                });
 
     }
 

@@ -15,10 +15,12 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.util.ActivityManager;
+import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
@@ -38,7 +40,10 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 
 /**
  * Created by shawn on 2017-03-30.
@@ -58,6 +63,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
      */
     @BindView(R.id.image_group)
     BGASortableNinePhotoLayout mPhotosSnpl;
+    private MaterialDialog dialog;
     private Compressor compressor = new Compressor.Builder(App.getContext())
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
@@ -142,35 +148,63 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
             return;
         }
 
-        MaterialDialog dialog = DialogUtils.showProgressDialog(this, "发表案例", "正在上传...");
+        dialog = DialogUtils.showProgressDialog(this, "发表案例", "正在上传...");
         //TODO:DIALOG BUG
-        final List<File> files = new ArrayList<>();
-//        for (String path : paths){
-//            compressor.compressToFileAsObservable(new File(path)).
-//                    .subscribe(new Subscriber<File>() {
-//                        @Override
-//                        public void onCompleted() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        @Override
-//                        public void onNext(File file) {
-//                            files.add(file);
-//                        }
-//                    });
+
 //        }
+        Observable.create(new Observable.OnSubscribe<List<File>>() {
+            @Override
+            public void call(Subscriber<? super List<File>> subscriber) {
+                List<File> files = new ArrayList<File>();
+                for (String path : paths) {
+                    files.add(compressor.compressToFile(new File(path)));
+                }
+                DebugLog.e("files:" + new Gson().toJson(files));
+                subscriber.onNext(files);
+                subscriber.onCompleted();
+            }
+        })
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+//                        dialog = DialogUtils.showProgressDialog(PublishActivity.this, "发布", "正在上传，请稍等..."); // 需要在主线程执行
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<File>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                        Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dismissDialog();
+                    }
+
+                    @Override
+                    public void onNext(List<File> files) {
+                        DebugLog.e("files:" + new Gson().toJson(files));
+                        upload(files);
+                    }
+                });
 
     }
 
-    private void upload() {
-        MultipartBody.Part[] parts = new MultipartBody.Part[paths.size()];
-        for (int i = 0; i < paths.size(); i++) {
-            File file = compressor.compressToFile(new File(paths.get(i)));
+    private void dismissDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
+        }
+    }
+
+    private void upload(List<File> files) {
+        MultipartBody.Part[] parts = new MultipartBody.Part[files.size()];
+        for (int i = 0; i < files.size(); i++) {
+            File file = compressor.compressToFile(files.get(i));
 
             // 创建 RequestBody，用于封装构建RequestBody
             RequestBody requestFile =
@@ -194,24 +228,25 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
         Network.getInstance().postSocial(uuid, message, parts)
                 .subscribe(new Subscriber<Object>() {
-                        @Override
-                        public void onCompleted() {
+                    @Override
+                    public void onCompleted() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dismissDialog();
+                    }
 
-                        @Override
-                        public void onNext(Object o) {
+                    @Override
+                    public void onNext(Object o) {
 
-                            setResult(Constant.UI_CODE.RESULT_CODE_PUBLISH_SUCCESS);
-
-                            ActivityManager.getInstance().finshActivities(PublishActivity.class);
-                        }
-                    });
+                        setResult(Constant.UI_CODE.RESULT_CODE_PUBLISH_SUCCESS);
+                        dismissDialog();
+                        ActivityManager.getInstance().finshActivities(PublishActivity.class);
+                    }
+                });
     }
 
 
