@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.R;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.util.CommonUtils;
@@ -75,7 +74,7 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        try {
+
 
 
             Network.getInstance().getNews("2")
@@ -88,6 +87,7 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            swipeRefreshLayout.setRefreshing(false);
                         }
 
                         @Override
@@ -96,14 +96,11 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
                                 datas.clear();
                                 datas.addAll(newsResults);
                                 videoNewsAdapter.notifyDataSetChanged();
+                                swipeRefreshLayout.setRefreshing(false);
                             }
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            swipeRefreshLayout.setRefreshing(false);
-        }
+
     }
 
     class VideoNewsVH extends RecyclerView.ViewHolder {

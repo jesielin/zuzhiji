@@ -3,6 +3,7 @@ package com.zzj.zuzhiji.util;
 import android.content.Context;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 
 /**
  * Created by shawn on 2017-03-28.
@@ -11,14 +12,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 public class DialogUtils {
 
     public static MaterialDialog showProgressDialog(Context context,String title, String content){
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(context)
+        MaterialDialog dialog = new MaterialDialog.Builder(context)
                 .title(title)
                 .content(content)
                 .progress(true, 0)
                 .cancelable(false)
-                .progressIndeterminateStyle(false);
-        MaterialDialog dialog = builder.build();
-//        dialog.show();
+                .theme(Theme.LIGHT)
+                .progressIndeterminateStyle(false)
+                .show();
 
         return dialog;
     }

@@ -1,60 +1,44 @@
 package com.zzj.zuzhiji;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.jaeger.ninegridimageview.NineGridImageView;
-import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
+import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.util.ActivityManager;
-import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
-import com.zzj.zuzhiji.util.GlideCircleTransform;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
-import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 import cn.bingoogolapple.photopicker.widget.BGASortableNinePhotoLayout;
-import droidninja.filepicker.FilePickerBuilder;
-import droidninja.filepicker.FilePickerConst;
-import me.shaohui.advancedluban.Luban;
+import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
-import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by shawn on 2017-03-30.
@@ -65,20 +49,22 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
     private static final int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;
     private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
     private static final int REQUEST_CODE_PHOTO_PREVIEW = 2;
-
-    public static final int RESULT_CODE_PUBLISH_SUCCESS = 3;
     @BindView(R.id.title)
     EditText etTitle;
     @BindView(R.id.subtitle)
     EditText etSubTitle;
-
     /**
      * 拖拽排序九宫格控件
      */
     @BindView(R.id.image_group)
     BGASortableNinePhotoLayout mPhotosSnpl;
-
-
+    private Compressor compressor = new Compressor.Builder(App.getContext())
+            .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
+            .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
+            .setQuality(Constant.IMAGE_UPLOAD_QUALITY)
+            .setCompressFormat(Bitmap.CompressFormat.WEBP)
+            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getContext()).getAbsolutePath())
+            .build();
     private ArrayList<String> paths = new ArrayList<>();
 
     @Override
@@ -156,17 +142,58 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
             return;
         }
 
-        MaterialDialog dialog = DialogUtils.showProgressDialog(PublishActivity.this, "发表案例", "正在上传...");
-        dialog.show();
+        MaterialDialog dialog = DialogUtils.showProgressDialog(this, "发表案例", "正在上传...");
         //TODO:DIALOG BUG
-        List<File> files = new ArrayList<>();
-        for (String path : paths)
-            files.add(new File(path));
-        try {
-            Luban.compress(this, files)
-                    .putGear(Luban.CUSTOM_GEAR)
-                    .asListObservable()
-                    .subscribe(new Subscriber<List<File>>() {
+        final List<File> files = new ArrayList<>();
+//        for (String path : paths){
+//            compressor.compressToFileAsObservable(new File(path)).
+//                    .subscribe(new Subscriber<File>() {
+//                        @Override
+//                        public void onCompleted() {
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(Throwable e) {
+//                            Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void onNext(File file) {
+//                            files.add(file);
+//                        }
+//                    });
+//        }
+
+    }
+
+    private void upload() {
+        MultipartBody.Part[] parts = new MultipartBody.Part[paths.size()];
+        for (int i = 0; i < paths.size(); i++) {
+            File file = compressor.compressToFile(new File(paths.get(i)));
+
+            // 创建 RequestBody，用于封装构建RequestBody
+            RequestBody requestFile =
+                    RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+            // MultipartBody.Part  和后端约定好Key，这里的partName是用image
+            parts[i] = MultipartBody.Part.createFormData("photos", file.getName(), requestFile);
+        }
+
+
+        //uuid
+        String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
+        RequestBody uuid =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), uuidText);
+        // 添加message
+        String messageText = etTitle.getText().toString() + "\n" + etSubTitle.getText().toString();
+        RequestBody message =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), messageText);
+
+        Network.getInstance().postSocial(uuid, message, parts)
+                .subscribe(new Subscriber<Object>() {
                         @Override
                         public void onCompleted() {
 
@@ -178,59 +205,13 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                         }
 
                         @Override
-                        public void onNext(List<File> files) {
-                            MultipartBody.Part[] parts = new MultipartBody.Part[files.size()];
-                            for (int i = 0; i < files.size(); i++) {
-                                // 创建 RequestBody，用于封装构建RequestBody
-                                RequestBody requestFile =
-                                        RequestBody.create(MediaType.parse("multipart/form-data"), files.get(i));
+                        public void onNext(Object o) {
 
-                                // MultipartBody.Part  和后端约定好Key，这里的partName是用image
-                                parts[i] = MultipartBody.Part.createFormData("photos", files.get(i).getName(), requestFile);
+                            setResult(Constant.UI_CODE.RESULT_CODE_PUBLISH_SUCCESS);
 
-
-                            }
-
-                            //uuid
-                            String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
-                            RequestBody uuid =
-                                    RequestBody.create(
-                                            MediaType.parse("multipart/form-data"), uuidText);
-                            // 添加message
-                            String messageText = etTitle.getText().toString() + "\n" + etSubTitle.getText().toString();
-                            RequestBody message =
-                                    RequestBody.create(
-                                            MediaType.parse("multipart/form-data"), messageText);
-
-                            Network.getInstance().postSocial(uuid, message, parts)
-                                    .subscribe(new Subscriber<Object>() {
-                                        @Override
-                                        public void onCompleted() {
-
-                                        }
-
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-
-                                        @Override
-                                        public void onNext(Object o) {
-                                            setResult(RESULT_CODE_PUBLISH_SUCCESS);
-                                            ActivityManager.getInstance().finshActivities(PublishActivity.class);
-                                        }
-                                    });
+                            ActivityManager.getInstance().finshActivities(PublishActivity.class);
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-
-        } finally {
-            DebugLog.e("dismiss");
-            dialog.dismiss();
-        }
-
-
     }
 
 

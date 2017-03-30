@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.util.ActivityManager;
@@ -27,6 +26,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 
 /**
  * Created by shawn on 2017-03-28.
@@ -40,12 +41,11 @@ public class RegisterFirstFragment extends Fragment {
     EditText etVerify;
     @BindView(R.id.get_verify)
     TextView tvGetVerify;
-
-    private boolean isGetVerifyEnable = true;
-
     CountDownTimer timer;
-
+    private boolean isGetVerifyEnable = true;
     private String type = "0";
+
+    private MaterialDialog dialog;
 
     @Nullable
     @Override
@@ -80,23 +80,31 @@ public class RegisterFirstFragment extends Fragment {
             return;
         }
 
-        final MaterialDialog dialog = DialogUtils.showProgressDialog(getActivity(), "注册", "正在注册...");
-        try {
-            Network.getInstance().register(etTel.getText().toString().trim(), etVerify.getText().toString().trim(), type)
+
+        Network.getInstance().register(etTel.getText().toString().trim(), etVerify.getText().toString().trim(), type)
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        dialog = DialogUtils.showProgressDialog(getActivity(), "注册", "正在注册..."); // 需要在主线程执行
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<RegisterResult>() {
                         @Override
                         public void onCompleted() {
-
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                            dismissDialog();
+                            DebugLog.e("error");
                         }
 
                         @Override
                         public void onNext(RegisterResult registerResult) {
+
                             SharedPreferencesUtils.getInstance().setLogin(
                                     registerResult.uuid,
                                     "",
@@ -104,13 +112,22 @@ public class RegisterFirstFragment extends Fragment {
                                     registerResult.userType,
                                     registerResult.loginName
                             );
-                            dialog.dismiss();
+                            dismissDialog();
+                            DebugLog.e("next");
                             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, new RegisterSecondFragment(), "second").commit();
+
 
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+
+
+    }
+
+    private void dismissDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
+
         }
     }
 
@@ -127,8 +144,8 @@ public class RegisterFirstFragment extends Fragment {
         disableTvGetVerify();
         startCountDownTime(Constant.COUNT_DOWN_TIME);
 
-        try {
-            Network.getInstance().sendSms(etTel.getText().toString().trim())
+
+        Network.getInstance().sendSms(etTel.getText().toString().trim())
                     .subscribe(new Subscriber<Object>() {
                         @Override
                         public void onCompleted() {
@@ -145,9 +162,7 @@ public class RegisterFirstFragment extends Fragment {
 
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+
 
     }
 

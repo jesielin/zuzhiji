@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -72,7 +71,7 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
     public void onRefresh() {
 
         String uuid = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
-        try {
+
             Network.getInstance().getMyFriendship(uuid)
                     .subscribe(new Subscriber<List<MessageResult>>() {
                         @Override
@@ -83,6 +82,7 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            swipeRefreshLayout.setRefreshing(false);
                         }
 
                         @Override
@@ -91,14 +91,11 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                 datas.clear();
                                 datas.addAll(messageResults);
                                 mAdapter.notifyDataSetChanged();
+                                swipeRefreshLayout.setRefreshing(false);
                             }
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            swipeRefreshLayout.setRefreshing(false);
-        }
+
     }
 
 

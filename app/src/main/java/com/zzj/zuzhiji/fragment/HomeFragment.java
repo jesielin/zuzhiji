@@ -22,7 +22,6 @@ import com.youth.banner.loader.ImageLoader;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SearchActivity;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.Tech;
 
@@ -92,7 +91,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        try {
+
 
 
             Network.getInstance().getRecommendTech(Constant.PAGE_SIZE)
@@ -112,9 +111,7 @@ public class HomeFragment extends Fragment {
 
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+
     }
 
     private void setupRecyclerView() {
@@ -124,6 +121,25 @@ public class HomeFragment extends Fragment {
                 .getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void setupBanner() {
+        List<Integer> integers = Arrays.asList(R.drawable.placeholder_advert1, R.drawable.placeholder_advert2);
+
+        //设置图片加载器
+        banner.setImageLoader(new GlideImageLoader());
+        //设置图片集合
+        banner.setImages(integers);
+
+        banner.setDelayTime(3000);
+
+        //banner设置方法全部调用完毕时最后调用
+        banner.start();
+    }
+
+    @OnClick(R.id.search)
+    public void search(View view) {
+        startActivity(new Intent(getActivity(), SearchActivity.class));
     }
 
     public class RecommendVH extends RecyclerView.ViewHolder {
@@ -157,25 +173,6 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return datas.size();
         }
-    }
-
-    private void setupBanner() {
-        List<Integer> integers = Arrays.asList(R.drawable.placeholder_advert1, R.drawable.placeholder_advert2);
-
-        //设置图片加载器
-        banner.setImageLoader(new GlideImageLoader());
-        //设置图片集合
-        banner.setImages(integers);
-
-        banner.setDelayTime(3000);
-
-        //banner设置方法全部调用完毕时最后调用
-        banner.start();
-    }
-
-    @OnClick(R.id.search)
-    public void search(View view) {
-        startActivity(new Intent(getActivity(), SearchActivity.class));
     }
 
     private class GlideImageLoader extends ImageLoader {

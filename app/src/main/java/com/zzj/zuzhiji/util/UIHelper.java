@@ -20,6 +20,9 @@ import com.zzj.zuzhiji.app.App;
  */
 public class UIHelper {
 
+
+    //图片压缩
+
     // =============================================================tools
     // methods
 

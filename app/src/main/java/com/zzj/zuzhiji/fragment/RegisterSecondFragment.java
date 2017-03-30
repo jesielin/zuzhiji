@@ -2,12 +2,12 @@ package com.zzj.zuzhiji.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +21,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.util.ActivityManager;
-import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCircleTransform;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -39,11 +37,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
-import me.shaohui.advancedluban.Luban;
+import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 
 /**
  * Created by shawn on 2017-03-28.
@@ -57,6 +57,16 @@ public class RegisterSecondFragment extends Fragment {
     EditText etNickName;
 
     private String gender = "1";
+
+    private MaterialDialog dialog;
+
+    private Compressor compressor = new Compressor.Builder(App.getContext())
+            .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
+            .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
+            .setQuality(Constant.IMAGE_UPLOAD_QUALITY)
+            .setCompressFormat(Bitmap.CompressFormat.WEBP)
+            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getContext()).getAbsolutePath())
+            .build();
 
 
     private ArrayList<String> paths = new ArrayList<>();
@@ -82,14 +92,21 @@ public class RegisterSecondFragment extends Fragment {
             return;
         }
 
-        final MaterialDialog dialog = DialogUtils.showProgressDialog(getActivity(), "设置信息", "正在设置，请稍等...");
+
 
 
         File avatorFile = new File(paths.get(0));
 
-        Luban.compress(App.getContext(), avatorFile)
-                .putGear(Luban.CUSTOM_GEAR)
-                .asObservable()
+
+        compressor.compressToFileAsObservable(avatorFile)
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        dialog = DialogUtils.showProgressDialog(getActivity(), "设置信息", "正在设置，请稍等..."); // 需要在主线程执行
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<File>() {
                     @Override
                     public void onCompleted() {
@@ -99,11 +116,11 @@ public class RegisterSecondFragment extends Fragment {
                     @Override
                     public void onError(Throwable e) {
                         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dismissDialog();
                     }
 
                     @Override
                     public void onNext(File file) {
-                        Log.i("TAG", file.getAbsolutePath());
 
                         MultipartBody.Part avatorPart = null;
                         // 创建 RequestBody，用于封装构建RequestBody
@@ -130,7 +147,6 @@ public class RegisterSecondFragment extends Fragment {
                                 RequestBody.create(
                                         MediaType.parse("multipart/form-data"), sexText);
 
-                        try {
                             Network.getInstance().setUserInfo(uuid, nickName, sex, avatorPart)
                                     .subscribe(new Subscriber<SetInfoResult>() {
                                         @Override
@@ -139,9 +155,11 @@ public class RegisterSecondFragment extends Fragment {
 
                                         @Override
                                         public void onError(Throwable e) {
-                                            DebugLog.e("message:" + e.getMessage());
+
                                             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            dialog.dismiss();
+                                            dismissDialog();
+
+
                                         }
 
                                         @Override
@@ -150,19 +168,29 @@ public class RegisterSecondFragment extends Fragment {
                                             values.put(Constant.SHARED_KEY.AVATOR, setInfoResult.headSculpture);
                                             values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
                                             SharedPreferencesUtils.getInstance().setValues(values);
-                                            dialog.dismiss();
+                                            dismissDialog();
+
                                             getActivity().finish();
+
                                         }
                                     });
-                        } catch (ApiException ex) {
-                            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+
+
                     }
                 });
 
 
+    }
 
+    private void register(File file) {
 
+    }
+
+    private void dismissDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
+        }
     }
 
 
@@ -170,7 +198,7 @@ public class RegisterSecondFragment extends Fragment {
     public void chooseAvator(View view) {
         FilePickerBuilder.getInstance().setMaxCount(1)
                 .setSelectedFiles(paths)
-                .setActivityTheme(R.style.AppTheme_NoActionBar)
+                .setActivityTheme(R.style.AppTheme)
                 .pickPhoto(this);
 
     }

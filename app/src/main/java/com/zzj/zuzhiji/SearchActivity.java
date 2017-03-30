@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.util.ActivityManager;
@@ -100,8 +99,8 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
             return;
         }
 
-        try {
-            Network.getInstance().searchTech(
+
+        Network.getInstance().searchTech(
                     currentPage,
                     Constant.PAGE_SIZE,
                     etSearch.getText().toString().trim(),
@@ -131,10 +130,7 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
 
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-            refreshLayout.setRefreshing(false);
-        }
+
 
     }
 

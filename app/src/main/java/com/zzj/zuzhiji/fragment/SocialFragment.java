@@ -23,7 +23,6 @@ import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
 import com.zzj.zuzhiji.PublishActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SocialItem;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
@@ -43,13 +42,13 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+
 /**
  * Created by shawn on 2017-03-29.
  */
 
 public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final int REQUEST_CODE_PUBLISH = 1;
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
@@ -62,6 +61,40 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private int totalPage = 1;
 
     private List<SocialItem> datas = new ArrayList<>();
+    private String[] IMG_URL_LIST = {
+            "http://img3.imgtn.bdimg.com/it/u=1794894692,1423685501&fm=214&gp=0.jpg",
+            "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-480302.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/36f0523ee1888a57.jpg", "http://ac-QYgvX1CC.clouddn.com/07915a0154ac4a64.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/9ec4bc44bfaf07ed.jpg", "http://ac-QYgvX1CC.clouddn.com/fa85037f97e8191f.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/de13315600ba1cff.jpg", "http://ac-QYgvX1CC.clouddn.com/15c5c50e941ba6b0.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/10762c593798466a.jpg", "http://ac-QYgvX1CC.clouddn.com/eaf1c9d55c5f9afd.jpg"
+
+
+    };
+    private NineGridImageViewAdapter<String> mImageAdapter = new NineGridImageViewAdapter<String>() {
+        @Override
+        protected void onDisplayImage(Context context, ImageView imageView, String s) {
+            Glide.with(context).load(s)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.color.md_blue_grey_400)
+                    .into(imageView);
+        }
+
+        @Override
+        protected ImageView generateImageView(Context context) {
+            return super.generateImageView(context);
+        }
+
+        @Override
+        protected void onItemImageClick(Context context, ImageView imageView, int index, List<String> list) {
+            super.onItemImageClick(context, imageView, index, list);
+//            Intent intent = new Intent(mContext,PhotoReviewActivity.class);
+//            intent.putExtra("position",index);
+//            intent.putExtra("list", list.toArray(new String[0]));
+//            context.startActivity(intent);
+
+            Toast.makeText(context, "posi:" + index, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Nullable
     @Override
@@ -75,14 +108,21 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @OnClick(R.id.publish)
     public void publish(View view) {
         startActivityForResult(new Intent(getActivity(), PublishActivity.class),
-                REQUEST_CODE_PUBLISH);
+                Constant.UI_CODE.REQUEST_CODE_SOCIAL_FRAGMENT);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_PUBLISH && requestCode == PublishActivity.RESULT_CODE_PUBLISH_SUCCESS) {
-            doRefresh();
+        DebugLog.e("fragment on activity result::" + requestCode + "," + resultCode);
+        if (requestCode == Constant.UI_CODE.REQUEST_CODE_SOCIAL_FRAGMENT && resultCode == Constant.UI_CODE.RESULT_CODE_PUBLISH_SUCCESS) {
+            DebugLog.e("fragment on activity result");
+            swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    doRefresh();
+                }
+            });
         }
     }
 
@@ -113,7 +153,6 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
         onRefresh();
     }
 
-
     @Override
     public void onRefresh() {
         recyclerView.postDelayed(new Runnable() {
@@ -124,7 +163,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             }
         }, 500);
 
-        try {
+
             Network.getInstance().getSocialItems(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)
                     , page, Constant.PAGE_SIZE)
                     .observeOn(Schedulers.io())
@@ -145,6 +184,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            swipeRefreshLayout.setRefreshing(false);
                         }
 
                         @Override
@@ -153,50 +193,16 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
                                 datas.clear();
                                 datas.addAll(socialItems);
                                 mAdapter.notifyDataSetChanged();
+                                swipeRefreshLayout.setRefreshing(false);
                             }
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-    }
 
-    private String[] IMG_URL_LIST = {
-            "http://img3.imgtn.bdimg.com/it/u=1794894692,1423685501&fm=214&gp=0.jpg",
-            "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-480302.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/36f0523ee1888a57.jpg", "http://ac-QYgvX1CC.clouddn.com/07915a0154ac4a64.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/9ec4bc44bfaf07ed.jpg", "http://ac-QYgvX1CC.clouddn.com/fa85037f97e8191f.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/de13315600ba1cff.jpg", "http://ac-QYgvX1CC.clouddn.com/15c5c50e941ba6b0.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/10762c593798466a.jpg", "http://ac-QYgvX1CC.clouddn.com/eaf1c9d55c5f9afd.jpg"
-
-
-    };
-
-    public class SocialVH extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.title)
-        TextView tvTitle;
-        @BindView(R.id.subtitle)
-        TextView tvSubTitle;
-        @BindView(R.id.date)
-        TextView tvDate;
-        @BindView(R.id.comment_num)
-        TextView tvCommentNum;
-        @BindView(R.id.image_group)
-        NineGridImageView nineGridImageView;
-
-        public SocialVH(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            nineGridImageView.setAdapter(mImageAdapter);
-        }
     }
 
     private void getUserName(final TextView tv, final String ownerId) {
-        try {
-            Network.getInstance().getUserInfo(ownerId)
+
+        Network.getInstance().getUserInfo(ownerId)
                     .subscribe(new Subscriber<UserInfoResult>() {
                         @Override
                         public void onCompleted() {
@@ -220,8 +226,26 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+
+    }
+
+    public class SocialVH extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.title)
+        TextView tvTitle;
+        @BindView(R.id.subtitle)
+        TextView tvSubTitle;
+        @BindView(R.id.date)
+        TextView tvDate;
+        @BindView(R.id.comment_num)
+        TextView tvCommentNum;
+        @BindView(R.id.image_group)
+        NineGridImageView nineGridImageView;
+
+        public SocialVH(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            nineGridImageView.setAdapter(mImageAdapter);
         }
     }
 
@@ -249,29 +273,4 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             return datas.size();
         }
     }
-
-    private NineGridImageViewAdapter<String> mImageAdapter = new NineGridImageViewAdapter<String>() {
-        @Override
-        protected void onDisplayImage(Context context, ImageView imageView, String s) {
-            Glide.with(context).load(s)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.color.md_blue_grey_400)
-                    .into(imageView);
-        }
-
-        @Override
-        protected ImageView generateImageView(Context context) {
-            return super.generateImageView(context);
-        }
-
-        @Override
-        protected void onItemImageClick(Context context, ImageView imageView, int index, List<String> list) {
-            super.onItemImageClick(context, imageView, index, list);
-//            Intent intent = new Intent(mContext,PhotoReviewActivity.class);
-//            intent.putExtra("position",index);
-//            intent.putExtra("list", list.toArray(new String[0]));
-//            context.startActivity(intent);
-
-            Toast.makeText(context, "posi:" + index, Toast.LENGTH_SHORT).show();
-        }
-    };
 }

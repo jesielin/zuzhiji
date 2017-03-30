@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.ApiException;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.util.ActivityManager;
@@ -24,6 +23,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,10 +35,9 @@ public class LoginActivity extends AppCompatActivity {
     EditText etVerify;
     @BindView(R.id.get_verify)
     TextView tvGetVerify;
-
-    private boolean isGetVerifyEnable = true;
-
     CountDownTimer timer;
+    private boolean isGetVerifyEnable = true;
+    private MaterialDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +72,16 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        final MaterialDialog dialog = DialogUtils.showProgressDialog(this, "登录", "正在登录...");
-        try {
+
             Network.getInstance().login(etTel.getText().toString().trim(), etVerify.getText().toString().trim())
+                    .doOnSubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            dialog = DialogUtils.showProgressDialog(LoginActivity.this, "登录", "正在登录，请稍等..."); // 需要在主线程执行
+                        }
+                    })
+                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<LoginResult>() {
                         @Override
                         public void onCompleted() {
@@ -102,9 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         }
                     });
-        }catch (ApiException ex){
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+
 
     }
 
@@ -126,9 +131,10 @@ public class LoginActivity extends AppCompatActivity {
         disableTvGetVerify();
         startCountDownTime(Constant.COUNT_DOWN_TIME);
 
-        try {
-            Network.getInstance().sendSms(etTel.getText().toString().trim())
-                    .subscribe(new Subscriber<Object>() {
+
+        Network.getInstance().sendSms(etTel.getText().toString().trim())
+
+                .subscribe(new Subscriber<Object>() {
                         @Override
                         public void onCompleted() {
 
@@ -144,9 +150,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         }
                     });
-        } catch (ApiException ex) {
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+
 
     }
 
