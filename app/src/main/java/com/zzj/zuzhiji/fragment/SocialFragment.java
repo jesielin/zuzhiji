@@ -280,6 +280,31 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             holder.tvSubTitle.setText(item.message);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
             holder.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
+
+            //TODO:测试评论接口
+            if (position == 1) {
+                Network.getInstance().sendComment(item.momentsID, item.momentOwner,
+                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                        null, "测试评论android").subscribe(
+                        new Subscriber<Object>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                DebugLog.e("评论error:" + e.getMessage());
+                            }
+
+                            @Override
+                            public void onNext(Object o) {
+                                DebugLog.e("success");
+
+                            }
+                        }
+                );
+            }
         }
 
         @Override

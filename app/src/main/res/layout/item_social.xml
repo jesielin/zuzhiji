@@ -16,13 +16,15 @@
         android:src="@drawable/avator" />
 
     <LinearLayout
-        android:paddingRight="20dp"
-        android:layout_marginLeft="15dp"
+
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,6 +34,8 @@
             android:text="" />
 
         <TextView
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:id="@+id/subtitle"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
@@ -42,17 +46,23 @@
 
         <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
             android:id="@+id/image_group"
-            style="@style/MatchWrap"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             app:bga_npl_itemCornerRadius="0dp"
             app:bga_npl_itemSpanCount="3"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             app:bga_npl_itemWhiteSpacing="4dp"
+
             app:bga_npl_itemWidth="0dp"
-            app:bga_npl_otherWhiteSpacing="64dp"
+            app:bga_npl_otherWhiteSpacing="100dp"
             app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
             app:bga_npl_showAsLargeWhenOnlyOne="true" />
 
         <RelativeLayout
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,9 +22,15 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.entity.SocialItem;
+import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.util.ActivityManager;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -45,6 +52,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by shawn on 2017-03-29.
@@ -98,6 +107,10 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     private MaterialDialog dialog;
 
     private boolean isReserv;
+    private int page = 1;
+    private int totalPage = 1;
+
+    private List<SocialItem> datas = new ArrayList<>();
 
     public static Intent newIntent(Context context,
                                    String avator,
@@ -149,6 +162,25 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
             starLightsDown();
         }
 
+
+        Glide.with(this)
+                .load(friendAvator)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        DebugLog.e("load avator error");
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        DebugLog.e("load avator success");
+                        return false;
+                    }
+                })
+                .into(ivAvator);
 
     }
 
@@ -318,13 +350,39 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
-        recyclerView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }, 500);
+
+        Network.getInstance().getUserSocialItems(friendUuid, page, Constant.PAGE_SIZE)
+                .observeOn(Schedulers.io())
+                .map(new Func1<SocialTotal, List<SocialItem>>() {
+                    @Override
+                    public List<SocialItem> call(SocialTotal socialTotal) {
+                        totalPage = socialTotal.total;
+                        return socialTotal.list;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<SocialItem>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(HomePageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(List<SocialItem> socialItems) {
+                        if (socialItems != null) {
+                            datas.clear();
+                            datas.addAll(socialItems);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
     }
 
     private String[] IMG_URL_LIST = {
@@ -373,14 +431,18 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
         @Override
         public void onBindViewHolder(CaseVH holder, int position) {
-            ArrayList list = new ArrayList();
-            list.addAll(Arrays.asList(IMG_URL_LIST).subList(0, (position + 2) % 9));
-            holder.bgaNinePhotoLayout.setData(list);
+
+            SocialItem item = datas.get(position);
+            holder.bgaNinePhotoLayout.setData(item.photos);
+            holder.tvTitle.setText(friendNickName);
+            holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
+            holder.tvNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
+            holder.tvSubTitle.setText(item.message);
         }
 
         @Override
         public int getItemCount() {
-            return 10;
+            return datas.size();
         }
     }
 
