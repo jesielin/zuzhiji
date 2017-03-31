@@ -40,14 +40,17 @@
             android:textColor="@color/text_hint"
             android:text="简介:神经系统神经系统神经系统神经系统神经系统神经系统神经系统神经系统" />
 
-        <com.jaeger.ninegridimageview.NineGridImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
             android:id="@+id/image_group"
+            style="@style/MatchWrap"
             android:layout_marginTop="10dp"
-            app:imgGap="4dp"
-            app:showStyle="grid"
-            app:singleImgSize="100dp" />
+            app:bga_npl_itemCornerRadius="0dp"
+            app:bga_npl_itemSpanCount="3"
+            app:bga_npl_itemWhiteSpacing="4dp"
+            app:bga_npl_itemWidth="0dp"
+            app:bga_npl_otherWhiteSpacing="64dp"
+            app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+            app:bga_npl_showAsLargeWhenOnlyOne="true" />
 
         <RelativeLayout
             android:layout_marginTop="10dp"

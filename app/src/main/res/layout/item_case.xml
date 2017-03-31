@@ -46,18 +46,20 @@
             android:textColor="@color/text_hint"
             android:textSize="16dp" />
 
-        <com.jaeger.ninegridimageview.NineGridImageView
+        <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
             android:id="@+id/image_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/MatchWrap"
             android:paddingLeft="16dp"
             android:layout_marginTop="10dp"
-            app:imgGap="4dp"
-            app:showStyle="grid"
-            app:singleImgSize="100dp"
-            android:paddingRight="16dp">
+            android:paddingRight="16dp"
+            app:bga_npl_itemCornerRadius="0dp"
+            app:bga_npl_itemSpanCount="3"
+            app:bga_npl_itemWhiteSpacing="4dp"
+            app:bga_npl_itemWidth="0dp"
+            app:bga_npl_otherWhiteSpacing="64dp"
+            app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+            app:bga_npl_showAsLargeWhenOnlyOne="true" />
 
-        </com.jaeger.ninegridimageview.NineGridImageView>
 
         <View
             android:layout_width="match_parent"

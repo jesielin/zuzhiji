@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case Constant.UI_CODE.REQUEST_CODE_SOCIAL_FRAGMENT:
+            case Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT:
                 Fragment f = mNavigator.getFragment(1);
                 DebugLog.e("f:" + f);
                 if (f != null)

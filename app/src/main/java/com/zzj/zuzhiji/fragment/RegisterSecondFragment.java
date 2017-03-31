@@ -1,9 +1,11 @@
 package com.zzj.zuzhiji.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
@@ -24,6 +26,7 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.util.ActivityManager;
+import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCircleTransform;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -35,15 +38,20 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import droidninja.filepicker.FilePickerBuilder;
-import droidninja.filepicker.FilePickerConst;
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
+import rx.schedulers.Schedulers;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by shawn on 2017-03-28.
@@ -97,16 +105,10 @@ public class RegisterSecondFragment extends Fragment {
 
         File avatorFile = new File(paths.get(0));
 
-
+        dialog = DialogUtils.showProgressDialog(getActivity(), "设置信息", "正在设置，请稍等...");
         compressor.compressToFileAsObservable(avatorFile)
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        dialog = DialogUtils.showProgressDialog(getActivity(), "设置信息", "正在设置，请稍等..."); // 需要在主线程执行
-                    }
-                })
-                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.computation())
+
                 .subscribe(new Subscriber<File>() {
                     @Override
                     public void onCompleted() {
@@ -193,13 +195,23 @@ public class RegisterSecondFragment extends Fragment {
 
     @OnClick(R.id.avator)
     public void chooseAvator(View view) {
-        FilePickerBuilder.getInstance().setMaxCount(1)
-                .setSelectedFiles(paths)
-                .setActivityTheme(R.style.AppTheme)
-                .pickPhoto(this);
+        choicePhotoWrapper();
 
     }
 
+
+    @AfterPermissionGranted(Constant.REQUEST_CODE_PERMISSION_PHOTO_PICKER)
+    private void choicePhotoWrapper() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        if (EasyPermissions.hasPermissions(getActivity(), perms)) {
+            // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话就没有拍照功能
+            File takePhotoDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerTakePhoto");
+
+            startActivityForResult(BGAPhotoPickerActivity.newIntent(getActivity(), takePhotoDir, 1, paths, true), Constant.REQUEST_CODE_CHOOSE_PHOTO);
+        } else {
+            EasyPermissions.requestPermissions(this, "图片选择需要以下权限:\n\n1.访问设备上的照片\n\n2.拍照", Constant.REQUEST_CODE_PERMISSION_PHOTO_PICKER, perms);
+        }
+    }
 
     @OnClick({R.id.male, R.id.female})
     public void switchGender(View view) {
@@ -217,19 +229,16 @@ public class RegisterSecondFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        DebugLog.e("result:" + requestCode + "," + resultCode);
+        if (resultCode == RESULT_OK && requestCode == Constant.REQUEST_CODE_CHOOSE_PHOTO) {
+            paths.clear();
+            paths.addAll(BGAPhotoPickerActivity.getSelectedImages(data));
 
-        switch (requestCode) {
-            case FilePickerConst.REQUEST_CODE_PHOTO:
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    paths.clear();
-                    paths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
 
-                    Glide.with(getActivity()).load(paths.get(0))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.placeholder_avator)
-                            .transform(new GlideCircleTransform(getActivity()))
-                            .into(ivAvator);
-                }
-                break;
+            Glide.with(getActivity()).load(paths.get(0))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.placeholder_avator)
+                    .transform(new GlideCircleTransform(getActivity()))
+                    .into(ivAvator);
         }
 
     }

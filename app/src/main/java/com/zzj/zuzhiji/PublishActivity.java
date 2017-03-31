@@ -42,8 +42,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by shawn on 2017-03-30.
@@ -51,9 +50,9 @@ import rx.functions.Action0;
 
 public class PublishActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, BGASortableNinePhotoLayout.Delegate {
 
-    private static final int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;
-    private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
-    private static final int REQUEST_CODE_PHOTO_PREVIEW = 2;
+    //    private static final int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;
+//    private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
+//    private static final int REQUEST_CODE_PHOTO_PREVIEW = 2;
     @BindView(R.id.title)
     EditText etTitle;
     @BindView(R.id.subtitle)
@@ -92,16 +91,16 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
         mPhotosSnpl.setData(paths);
     }
 
-    @AfterPermissionGranted(REQUEST_CODE_PERMISSION_PHOTO_PICKER)
+    @AfterPermissionGranted(Constant.REQUEST_CODE_PERMISSION_PHOTO_PICKER)
     private void choicePhotoWrapper() {
         String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
         if (EasyPermissions.hasPermissions(this, perms)) {
             // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话就没有拍照功能
             File takePhotoDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerTakePhoto");
 
-            startActivityForResult(BGAPhotoPickerActivity.newIntent(this, takePhotoDir, mPhotosSnpl.getMaxItemCount(), paths, true), REQUEST_CODE_CHOOSE_PHOTO);
+            startActivityForResult(BGAPhotoPickerActivity.newIntent(this, takePhotoDir, mPhotosSnpl.getMaxItemCount(), paths, true), Constant.REQUEST_CODE_CHOOSE_PHOTO);
         } else {
-            EasyPermissions.requestPermissions(this, "图片选择需要以下权限:\n\n1.访问设备上的照片\n\n2.拍照", REQUEST_CODE_PERMISSION_PHOTO_PICKER, perms);
+            EasyPermissions.requestPermissions(this, "图片选择需要以下权限:\n\n1.访问设备上的照片\n\n2.拍照", Constant.REQUEST_CODE_PERMISSION_PHOTO_PICKER, perms);
         }
     }
 
@@ -117,7 +116,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        if (requestCode == REQUEST_CODE_PERMISSION_PHOTO_PICKER) {
+        if (requestCode == Constant.REQUEST_CODE_PERMISSION_PHOTO_PICKER) {
             Toast.makeText(this, "您拒绝了「图片选择」所需要的相关权限!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -125,11 +124,13 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CHOOSE_PHOTO) {
-            mPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedImages(data));
+        if (resultCode == RESULT_OK) {
+            if (requestCode == Constant.REQUEST_CODE_CHOOSE_PHOTO)
+                mPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedImages(data));
 
-        } else if (requestCode == REQUEST_CODE_PHOTO_PREVIEW) {
-            mPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedImages(data));
+            else if (requestCode == Constant.REQUEST_CODE_PHOTO_PREVIEW) {
+                mPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedImages(data));
+            }
         }
     }
 
@@ -163,25 +164,27 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                 subscriber.onNext(files);
                 subscriber.onCompleted();
             }
-        }).subscribe(new Subscriber<List<File>>() {
-            @Override
-            public void onCompleted() {
+        }).subscribeOn(Schedulers.computation())
 
-            }
+                .subscribe(new Subscriber<List<File>>() {
+                    @Override
+                    public void onCompleted() {
 
-            @Override
-            public void onError(Throwable e) {
-                DebugLog.e("error");
-                Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                dismissDialog();
-            }
+                    }
 
-            @Override
-            public void onNext(List<File> files) {
-                DebugLog.e("files:" + new Gson().toJson(files));
-                upload(files);
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugLog.e("error");
+                        Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dismissDialog();
+                    }
+
+                    @Override
+                    public void onNext(List<File> files) {
+                        DebugLog.e("files:" + new Gson().toJson(files));
+                        upload(files);
+                    }
+                });
 
     }
 
@@ -233,7 +236,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                     @Override
                     public void onNext(Object o) {
 
-                        setResult(Constant.UI_CODE.RESULT_CODE_PUBLISH_SUCCESS);
+                        setResult(Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS);
                         dismissDialog();
                         ActivityManager.getInstance().finshActivities(PublishActivity.class);
                     }
@@ -253,6 +256,6 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
     @Override
     public void onClickNinePhotoItem(BGASortableNinePhotoLayout sortableNinePhotoLayout, View view, int position, String model, ArrayList<String> models) {
-        startActivityForResult(BGAPhotoPickerPreviewActivity.newIntent(this, mPhotosSnpl.getMaxItemCount(), models, models, position, false), REQUEST_CODE_PHOTO_PREVIEW);
+        startActivityForResult(BGAPhotoPickerPreviewActivity.newIntent(this, mPhotosSnpl.getMaxItemCount(), models, models, position, false), Constant.REQUEST_CODE_PHOTO_PREVIEW);
     }
 }

@@ -1,9 +1,11 @@
 package com.zzj.zuzhiji;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,8 +21,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.jaeger.ninegridimageview.NineGridImageView;
-import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.util.ActivityManager;
@@ -29,13 +29,19 @@ import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
+import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -44,7 +50,7 @@ import rx.functions.Action0;
  * Created by shawn on 2017-03-29.
  */
 
-public class HomePageActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class HomePageActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, BGANinePhotoLayout.Delegate {
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
     @BindView(R.id.refresh)
@@ -74,7 +80,6 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     TextView tvName;
     @BindView(R.id.avator)
     CircleImageView ivAvator;
-
 
 
     private int mDistanceY;
@@ -194,8 +199,48 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                     });
         } else {
 
-            //TODO:取消关注
+            Network.getInstance().delFriend(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID), friendUuid)
+                    .doOnSubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            dialog = DialogUtils.showProgressDialog(HomePageActivity.this, "关注", "正在关注，请稍等..."); // 需要在主线程执行
+                        }
+                    })
+                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Object>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(HomePageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            dismissDialog();
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                            isReserv = false;
+                            starLightsDown();
+                            dismissDialog();
+                        }
+                    });
         }
+    }
+
+
+    private void setResultStatusChange() {
+        if ((Constant.USER_IS_FRIEND.equals(isFriend) && !isReserv) || (Constant.USER_NOT_FRIEND.equals(isFriend) && isReserv))
+            setResult(Constant.ACTIVITY_CODE.RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH);
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResultStatusChange();
+        super.onBackPressed();
+
     }
 
     private void dismissDialog() {
@@ -265,6 +310,8 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
     @OnClick(R.id.back)
     public void back(View view) {
+        if ((Constant.USER_IS_FRIEND.equals(isFriend) && !isReserv) || (Constant.USER_NOT_FRIEND.equals(isFriend) && isReserv))
+            setResult(Constant.ACTIVITY_CODE.RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH);
         ActivityManager.getInstance().finshActivities(getClass());
     }
 
@@ -291,17 +338,29 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
     };
 
+    @Override
+    public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
+        photoPreviewWrapper(ninePhotoLayout);
+    }
+
     public class CaseVH extends RecyclerView.ViewHolder {
 
         @BindView(R.id.title)
         TextView tvTitle;
         @BindView(R.id.image_group)
-        NineGridImageView nineGridImageView;
+        BGANinePhotoLayout bgaNinePhotoLayout;
+        @BindView(R.id.subtitle)
+        TextView tvSubTitle;
+        @BindView(R.id.date)
+        TextView tvDate;
+        @BindView(R.id.comment_num)
+        TextView tvNum;
 
         public CaseVH(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            nineGridImageView.setAdapter(mImageAdapter);
+            bgaNinePhotoLayout.setDelegate(HomePageActivity.this);
+
         }
     }
 
@@ -314,7 +373,9 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
         @Override
         public void onBindViewHolder(CaseVH holder, int position) {
-            holder.nineGridImageView.setImagesData(Arrays.asList(IMG_URL_LIST).subList(0, (position + 2) % 9));
+            ArrayList list = new ArrayList();
+            list.addAll(Arrays.asList(IMG_URL_LIST).subList(0, (position + 2) % 9));
+            holder.bgaNinePhotoLayout.setData(list);
         }
 
         @Override
@@ -323,28 +384,32 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         }
     }
 
-    private NineGridImageViewAdapter<String> mImageAdapter = new NineGridImageViewAdapter<String>() {
-        @Override
-        protected void onDisplayImage(Context context, ImageView imageView, String s) {
-            Glide.with(context).load(s)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.color.md_blue_grey_400)
-                    .into(imageView);
+
+    /**
+     * 图片预览，兼容6.0动态权限
+     */
+    @AfterPermissionGranted(Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW)
+    private void photoPreviewWrapper(BGANinePhotoLayout bgaNinePhotoLayout) {
+        if (bgaNinePhotoLayout == null) {
+            return;
         }
 
-        @Override
-        protected ImageView generateImageView(Context context) {
-            return super.generateImageView(context);
-        }
+        // 保存图片的目录，改成你自己要保存图片的目录。如果不传递该参数的话就不会显示右上角的保存按钮
+        File downloadDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerDownload");
 
-        @Override
-        protected void onItemImageClick(Context context, ImageView imageView, int index, List<String> list) {
-            super.onItemImageClick(context, imageView, index, list);
-//            Intent intent = new Intent(mContext,PhotoReviewActivity.class);
-//            intent.putExtra("position",index);
-//            intent.putExtra("list", list.toArray(new String[0]));
-//            context.startActivity(intent);
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            if (bgaNinePhotoLayout.getItemCount() == 1) {
+                // 预览单张图片
 
-            Toast.makeText(context, "posi:" + index, Toast.LENGTH_SHORT).show();
+                startActivity(BGAPhotoPreviewActivity.newIntent(this, downloadDir, bgaNinePhotoLayout.getCurrentClickItem()));
+            } else if (bgaNinePhotoLayout.getItemCount() > 1) {
+                // 预览多张图片
+
+                startActivity(BGAPhotoPreviewActivity.newIntent(this, downloadDir, bgaNinePhotoLayout.getData(), bgaNinePhotoLayout.getCurrentClickItemPosition()));
+            }
+        } else {
+            EasyPermissions.requestPermissions(this, "图片预览需要以下权限:\n\n1.访问设备上的照片", Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW, perms);
         }
-    };
+    }
 }

@@ -158,6 +158,14 @@ public class Network {
         return compose(normalHttpService.searchTechs(currentPage, size, title, owner, sign));
     }
 
+    public Observable<Object> delFriend(String ownerUUID, String friendUUID) {
+        return compose(normalHttpService.delFriend(ownerUUID, friendUUID, sign));
+    }
+
+    public Observable<SocialTotal> getUserSocialItems(String uuid, int page, int rows) {
+        return compose(normalHttpService.getUserMoment(uuid, page, rows, sign));
+    }
+
     public Observable<List<Tech>> getRecommendTech(int size) {
         return compose(normalHttpService.getRecommendTechs(size, sign));
     }

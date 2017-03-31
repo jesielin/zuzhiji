@@ -1,8 +1,10 @@
 package com.zzj.zuzhiji.fragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,8 +20,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.jaeger.ninegridimageview.NineGridImageView;
-import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
 import com.zzj.zuzhiji.PublishActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
@@ -31,12 +31,17 @@ import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
+import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -47,7 +52,7 @@ import rx.schedulers.Schedulers;
  * Created by shawn on 2017-03-29.
  */
 
-public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, BGANinePhotoLayout.Delegate {
 
 
     @BindView(R.id.recyclerview)
@@ -71,30 +76,6 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
 
     };
-    private NineGridImageViewAdapter<String> mImageAdapter = new NineGridImageViewAdapter<String>() {
-        @Override
-        protected void onDisplayImage(Context context, ImageView imageView, String s) {
-            Glide.with(context).load(s)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.color.md_blue_grey_400)
-                    .into(imageView);
-        }
-
-        @Override
-        protected ImageView generateImageView(Context context) {
-            return super.generateImageView(context);
-        }
-
-        @Override
-        protected void onItemImageClick(Context context, ImageView imageView, int index, List<String> list) {
-            super.onItemImageClick(context, imageView, index, list);
-//            Intent intent = new Intent(mContext,PhotoReviewActivity.class);
-//            intent.putExtra("position",index);
-//            intent.putExtra("list", list.toArray(new String[0]));
-//            context.startActivity(intent);
-
-            Toast.makeText(context, "posi:" + index, Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Nullable
     @Override
@@ -108,14 +89,14 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
     @OnClick(R.id.publish)
     public void publish(View view) {
         startActivityForResult(new Intent(getActivity(), PublishActivity.class),
-                Constant.UI_CODE.REQUEST_CODE_SOCIAL_FRAGMENT);
+                Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         DebugLog.e("fragment on activity result::" + requestCode + "," + resultCode);
-        if (requestCode == Constant.UI_CODE.REQUEST_CODE_SOCIAL_FRAGMENT && resultCode == Constant.UI_CODE.RESULT_CODE_PUBLISH_SUCCESS) {
+        if (requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS) {
             DebugLog.e("fragment on activity result");
             swipeRefreshLayout.post(new Runnable() {
                 @Override
@@ -229,6 +210,39 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     }
 
+    @Override
+    public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
+        photoPreviewWrapper(ninePhotoLayout);
+    }
+
+    /**
+     * 图片预览，兼容6.0动态权限
+     */
+    @AfterPermissionGranted(Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW)
+    private void photoPreviewWrapper(BGANinePhotoLayout bgaNinePhotoLayout) {
+        if (bgaNinePhotoLayout == null) {
+            return;
+        }
+
+        // 保存图片的目录，改成你自己要保存图片的目录。如果不传递该参数的话就不会显示右上角的保存按钮
+        File downloadDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerDownload");
+
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(getActivity(), perms)) {
+            if (bgaNinePhotoLayout.getItemCount() == 1) {
+                // 预览单张图片
+
+                startActivity(BGAPhotoPreviewActivity.newIntent(getActivity(), downloadDir, bgaNinePhotoLayout.getCurrentClickItem()));
+            } else if (bgaNinePhotoLayout.getItemCount() > 1) {
+                // 预览多张图片
+
+                startActivity(BGAPhotoPreviewActivity.newIntent(getActivity(), downloadDir, bgaNinePhotoLayout.getData(), bgaNinePhotoLayout.getCurrentClickItemPosition()));
+            }
+        } else {
+            EasyPermissions.requestPermissions(this, "图片预览需要以下权限:\n\n1.访问设备上的照片", Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW, perms);
+        }
+    }
+
     public class SocialVH extends RecyclerView.ViewHolder {
 
         @BindView(R.id.title)
@@ -240,12 +254,12 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
         @BindView(R.id.comment_num)
         TextView tvCommentNum;
         @BindView(R.id.image_group)
-        NineGridImageView nineGridImageView;
+        BGANinePhotoLayout bgaNinePhotoLayout;
 
         public SocialVH(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            nineGridImageView.setAdapter(mImageAdapter);
+            bgaNinePhotoLayout.setDelegate(SocialFragment.this);
         }
     }
 
@@ -259,7 +273,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
         @Override
         public void onBindViewHolder(SocialVH holder, int position) {
             SocialItem item = datas.get(position);
-            holder.nineGridImageView.setImagesData(item.photos);
+            holder.bgaNinePhotoLayout.setData(item.photos);
             //TODO:
 //            getUserName(holder.tvTitle,item.momentOwner);
             holder.tvTitle.setText(item.momentOwner);

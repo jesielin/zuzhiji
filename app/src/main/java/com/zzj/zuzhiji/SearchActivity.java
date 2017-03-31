@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,6 +21,7 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.util.ActivityManager;
+import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
 
@@ -73,8 +75,7 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
                     // 先隐藏键盘
                     UIHelper.hideInputMethod(etSearch);
                     //进行搜索操作的方法，在该方法中可以加入mEditSearchUser的非空判断
-                    refreshLayout.setRefreshing(true);
-                    onRefresh();
+                    doRefresh();
 
                 }
                 return false;
@@ -89,6 +90,11 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(android.R.color.holo_orange_light, android.R.color.holo_blue_light, android.R.color.holo_green_light, android.R.color.holo_red_light);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void doRefresh() {
+        refreshLayout.setRefreshing(true);
+        onRefresh();
     }
 
     @Override
@@ -169,13 +175,13 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(HomePageActivity.newIntent(SearchActivity.this,
+                    startActivityForResult(HomePageActivity.newIntent(SearchActivity.this,
                             item.headSculpture,
                             item.nickName,
                             item.summary,
                             item.userType,
                             item.uuid,
-                            item.isFriend));
+                            item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE);
                 }
             });
 
@@ -184,6 +190,15 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
         @Override
         public int getItemCount() {
             return datas.size();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        DebugLog.e("result:" + requestCode + "," + resultCode);
+        if (requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH) {
+            doRefresh();
         }
     }
 }

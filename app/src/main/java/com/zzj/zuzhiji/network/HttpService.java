@@ -165,6 +165,18 @@ public interface HttpService {
     Observable<HttpResult<Object>> sendComment(@Query("momentsID") String momentsID, @Query("ownerUUID") String ownerUUID, @Query("commenterUUID") String commenterUUID, @Query("friendUUID")
             String friendUUID, @Query("message") String message, @Query("sign") String sign);
 
+    ///getUserMoment?userUUID=FF3&page=8&rows=3&sign=123
+
+    /**
+     * 查看我的朋友圈
+     * @param userUUID
+     * @param page
+     * @param rows
+     * @param sign
+     * @return
+     */
+    @GET("getUserMoment")
+    Observable<HttpResult<SocialTotal>> getUserMoment(@Query("userUUID") String userUUID, @Query("page") int page, @Query("rows") int rows, @Query("sign") String sign);
 
     /**
      * 获取短信验证码
@@ -222,5 +234,17 @@ public interface HttpService {
     @GET("/getIndexAdvert")
     Observable<HttpResult<List<AdvertResult>>> getIndexAdvert(@Query("position") String position, @Query("sign") String sign);
 
+    ///delFriend?ownerUUID=FFF1-33&friendUUID=EEE1&sign=123
+
+    /**
+     * 删除好友
+     *
+     * @param ownerUUID
+     * @param friendUUID
+     * @param sign
+     * @return
+     */
+    @GET("delFriend")
+    Observable<HttpResult<Object>> delFriend(@Query("ownerUUID") String ownerUUID, @Query("friendUUID") String friendUUID, @Query("sign") String sign);
 
 }

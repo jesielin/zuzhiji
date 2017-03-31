@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji.network.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
 public class SocialItem {
     public String momentsID;
     public String momentOwner;
-    public List<String> photos;
+    public ArrayList<String> photos;
     public String message;
     public List<CommentItem> comments;
     public String createDate;

@@ -20,59 +20,45 @@ android {
 }
 apply plugin: 'com.neenbedankt.android-apt'
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     testCompile 'junit:junit:4.12'
-
     //rx& retrofit
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0'
-
     //butterknife
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-
     //okhttp log
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
-
     //dialog
     compile 'com.afollestad.material-dialogs:core:0.9.2.1'
     compile 'com.afollestad.material-dialogs:commons:0.9.2.1'
-
-    //photopicker
-    compile 'com.droidninja:filepicker:2.0.3'
-
     //glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
     //fragment manager
     compile 'com.github.Aspsine:FragmentNavigator:1.0.2'
-
     //circle image view
     compile 'de.hdodenhof:circleimageview:2.1.0'
-
     //banner
     compile 'com.youth.banner:banner:1.4.9'
-
     //compress image
     compile 'id.zelory:compressor:1.0.4'
-
     //float button
     compile 'com.github.jorgecastilloprz:fabprogresscircle:1.01@aar'
-
-    //grid photo view
-    compile 'com.jaeger.ninegridimageview:library:1.1.0'
-
     //photo picker
     compile 'cn.bingoogolapple:bga-photopicker:1.2.3@aar'
     compile 'cn.bingoogolapple:bga-adapter:1.1.8@aar'
-
     //easy permission
     compile 'pub.devrel:easypermissions:0.2.1'
-
+    //leakcanary
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    compile 'com.android.support:design:25.2.0'
 }

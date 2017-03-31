@@ -17,6 +17,11 @@ public interface Constant {
     String BASE_URL_NOR = "http://101.201.155.115:6068";
     String BASE_URL_SMS = "http://101.201.155.115:8086";
 
+    int REQUEST_CODE_PERMISSION_PHOTO_PREVIEW = 1;
+    int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;
+    int REQUEST_CODE_CHOOSE_PHOTO = 1;
+    int REQUEST_CODE_PHOTO_PREVIEW = 2;
+
     String USER_TYPE_SINGLE = "0";
     String USER_TYPE_TECH = "1";
 
@@ -32,9 +37,13 @@ public interface Constant {
 
     }
 
-    interface UI_CODE {
+    interface ACTIVITY_CODE {
         int REQUEST_CODE_SOCIAL_FRAGMENT = 0x01;
         int RESULT_CODE_PUBLISH_SUCCESS = 0x02;
+
+        int REQUEST_CODE_SEARCH_TO_HOME_PAGE = 0x03;
+        int RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH = 0x04;
+
     }
 
     interface CASE_DETAIL_KEYS {
