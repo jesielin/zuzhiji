@@ -1,7 +1,6 @@
 package com.zzj.zuzhiji.fragment;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,12 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.zzj.zuzhiji.CaseDetailActivity;
 import com.zzj.zuzhiji.PublishActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
@@ -255,6 +252,8 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
         TextView tvCommentNum;
         @BindView(R.id.image_group)
         BGANinePhotoLayout bgaNinePhotoLayout;
+        @BindView(R.id.container)
+        View clickAreaView;
 
         public SocialVH(View itemView) {
             super(itemView);
@@ -281,30 +280,13 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
             holder.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
 
-            //TODO:测试评论接口
-            if (position == 1) {
-                Network.getInstance().sendComment(item.momentsID, item.momentOwner,
-                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                        null, "测试评论android").subscribe(
-                        new Subscriber<Object>() {
-                            @Override
-                            public void onCompleted() {
 
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                DebugLog.e("评论error:" + e.getMessage());
-                            }
-
-                            @Override
-                            public void onNext(Object o) {
-                                DebugLog.e("success");
-
-                            }
-                        }
-                );
-            }
+            holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(), CaseDetailActivity.class));
+                }
+            });
         }
 
         @Override

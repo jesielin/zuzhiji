@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/layout_bg"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,4 +30,132 @@
 
 
     </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/scroll_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/md_white_1000"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:orientation="horizontal"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="10dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avator"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/avator" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp">
+
+                        <LinearLayout
+                            android:id="@+id/left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="陈小刚"
+                                android:textColor="@color/md_black_1000"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:id="@+id/subtitle"
+                                android:text="擅长推拿、高级足疗"
+                                android:textColor="@color/text_hint"
+                                android:textSize="14dp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignTop="@id/left"
+                            android:text="2016年12月24日"
+                            android:textSize="14dp" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/md_white_1000"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingBottom="10dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:id="@+id/message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付
+            代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付"
+                        android:textColor="@color/text_hint"
+                        android:textSize="16dp" />
+
+                    <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
+                        android:id="@+id/image_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:bga_npl_itemCornerRadius="0dp"
+                        app:bga_npl_itemSpanCount="3"
+                        app:bga_npl_itemWhiteSpacing="4dp"
+
+                        app:bga_npl_itemWidth="0dp"
+                        app:bga_npl_otherWhiteSpacing="32dp"
+                        app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                        app:bga_npl_showAsLargeWhenOnlyOne="true" />
+
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/md_white_1000"
+                    android:nestedScrollingEnabled="false" />
+
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
 </LinearLayout>

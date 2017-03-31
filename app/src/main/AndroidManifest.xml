@@ -43,6 +43,7 @@
         <activity android:name=".SettingActivity"></activity>
         <activity android:name=".HomePageActivity"></activity>
         <activity android:name=".PublishActivity"></activity>
+        <activity android:name=".CaseDetailActivity"></activity>
 
 
     </application>
