@@ -12,7 +12,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,7 +28,6 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SocialItem;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
-import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
@@ -38,7 +36,6 @@ import com.zzj.zuzhiji.util.UIHelper;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -189,7 +186,6 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         ButterKnife.bind(this);
-        ActivityManager.getInstance().addActivity(this);
 
         setupLayout();
         resolveIntent();
@@ -344,7 +340,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     public void back(View view) {
         if ((Constant.USER_IS_FRIEND.equals(isFriend) && !isReserv) || (Constant.USER_NOT_FRIEND.equals(isFriend) && isReserv))
             setResult(Constant.ACTIVITY_CODE.RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH);
-        ActivityManager.getInstance().finshActivities(getClass());
+        finish();
     }
 
 

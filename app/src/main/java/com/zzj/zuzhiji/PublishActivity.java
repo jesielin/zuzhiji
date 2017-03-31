@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
-import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -78,7 +77,6 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish);
         ButterKnife.bind(this);
-        ActivityManager.getInstance().addActivity(this);
 
         setupLayout();
     }
@@ -136,7 +134,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
     @OnClick(R.id.back)
     public void back(View view) {
-        ActivityManager.getInstance().finshActivities(this.getClass());
+        finish();
     }
 
     @OnClick(R.id.complete)
@@ -238,7 +236,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
                         setResult(Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS);
                         dismissDialog();
-                        ActivityManager.getInstance().finshActivities(PublishActivity.class);
+                        finish();
                     }
                 });
     }

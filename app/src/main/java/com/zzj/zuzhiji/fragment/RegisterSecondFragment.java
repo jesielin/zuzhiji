@@ -1,7 +1,6 @@
 package com.zzj.zuzhiji.fragment;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
-import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCircleTransform;
@@ -39,7 +37,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
-import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerPreviewActivity;
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -47,8 +44,6 @@ import okhttp3.RequestBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
@@ -245,6 +240,6 @@ public class RegisterSecondFragment extends Fragment {
 
     @OnClick(R.id.back)
     public void back(View view) {
-        ActivityManager.getInstance().finshActivities(getActivity().getClass());
+        getActivity().finish();
     }
 }

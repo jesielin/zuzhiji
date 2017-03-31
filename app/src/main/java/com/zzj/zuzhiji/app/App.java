@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.squareup.leakcanary.LeakCanary;
+import com.yayandroid.theactivitymanager.TheActivityManager;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 /**
@@ -29,6 +30,7 @@ public class App extends Application {
         }
         LeakCanary.install(this);
 
+        TheActivityManager.getInstance().configure(this);
 
         SharedPreferencesUtils.getInstance().init(this);
         context = this;

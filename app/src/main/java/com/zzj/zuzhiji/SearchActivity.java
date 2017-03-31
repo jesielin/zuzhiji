@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.Tech;
-import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
@@ -58,7 +57,6 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        ActivityManager.getInstance().addActivity(this);
         ButterKnife.bind(this);
         setupLayout();
     }
@@ -142,7 +140,7 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
 
     @OnClick(R.id.cancel)
     public void cancel(View view) {
-        ActivityManager.getInstance().finshActivities(this.getClass());
+        finish();
     }
 
     public class SearchVH extends RecyclerView.ViewHolder {

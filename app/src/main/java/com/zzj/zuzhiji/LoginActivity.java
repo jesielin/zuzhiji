@@ -14,7 +14,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.LoginResult;
-import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -47,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        ActivityManager.getInstance().addActivity(this);
         ButterKnife.bind(this);
     }
 
@@ -56,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onResume();
         if (SharedPreferencesUtils.getInstance().isLogin()) {
             startActivity(new Intent(this, MainActivity.class));
-            ActivityManager.getInstance().finshActivities(this.getClass());
+            finish();
         }
     }
 

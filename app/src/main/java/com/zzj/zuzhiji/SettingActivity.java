@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.zzj.zuzhiji.util.ActivityManager;
+import com.yayandroid.theactivitymanager.TheActivityManager;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import butterknife.ButterKnife;
@@ -22,14 +22,13 @@ public class SettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
-        ActivityManager.getInstance().addActivity(this);
     }
 
     @OnClick(R.id.logout)
     public void logout(View view) {
 
         SharedPreferencesUtils.getInstance().setLogout();
-        ActivityManager.getInstance().finshAllActivities();
+        TheActivityManager.getInstance().finishAll();
 //        android.os.Process.killProcess(android.os.Process.myPid()) ;  //获取PID
 //        System.exit(0);   //常规java、c#的标准退出法，返回值为0代表正常退出
 

@@ -15,7 +15,6 @@ import com.zzj.zuzhiji.fragment.MeFragment;
 import com.zzj.zuzhiji.fragment.MessageFragment;
 import com.zzj.zuzhiji.fragment.NewsFragment;
 import com.zzj.zuzhiji.fragment.SocialFragment;
-import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
 
 import butterknife.BindView;
@@ -36,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        ActivityManager.getInstance().addActivity(this);
         mNavigator = new FragmentNavigator(getSupportFragmentManager(), new MainFragmentAdapter(), R.id.container);
         // set default tab position
         mNavigator.setDefaultPosition(0);
