@@ -150,6 +150,12 @@ public interface HttpService {
                                               @Part("sign") RequestBody sign);
 
 
+//    RequestParam(value = "momentsID", required = true) String momentsID,
+//    @RequestParam(value = "ownerUUID", required = true) String ownerUUID,
+//    @RequestParam(value = "commenterUUID", required = true) String commenterUUID,
+//    @RequestParam(value = "friendUUID", required = false) String friendUUID,
+//    @RequestParam(value = "message", required = true) String message,
+//    @RequestParam(value = "sign", required = true) String sign,
     /**
      * 发表评论
      *
@@ -162,8 +168,12 @@ public interface HttpService {
      * @return
      */
     @GET("sendComment")
-    Observable<HttpResult<Object>> sendComment(@Query("momentsID") String momentsID, @Query("ownerUUID") String ownerUUID, @Query("commenterUUID") String commenterUUID, @Query("friendUUID")
-            String friendUUID, @Query("message") String message, @Query("sign") String sign);
+    Observable<HttpResult<Object>> sendComment(@Query("momentsID") String momentsID,
+                                               @Query("ownerUUID") String ownerUUID,
+                                               @Query("commenterUUID") String commenterUUID,
+                                               @Query("friendUUID") String friendUUID,
+                                               @Query("message") String message,
+                                               @Query("sign") String sign);
 
     ///getUserMoment?userUUID=FF3&page=8&rows=3&sign=123
 

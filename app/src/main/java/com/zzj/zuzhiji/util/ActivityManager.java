@@ -9,6 +9,7 @@ import java.util.LinkedList;
  * Created by shawn on 17/3/29.
  */
 
+//TODO:leak
 public class ActivityManager {
 
     private LinkedList<Activity> activityLinkedList = new LinkedList<Activity>();
