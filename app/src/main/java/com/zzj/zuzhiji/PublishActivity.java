@@ -72,6 +72,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
             .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getContext()).getAbsolutePath())
             .build();
     private ArrayList<String> paths = new ArrayList<>();
+//    private List<File> files = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -151,7 +152,6 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
         dialog = DialogUtils.showProgressDialog(this, "发表案例", "正在上传...");
         //TODO:DIALOG BUG
 
-//        }
         Observable.create(new Observable.OnSubscribe<List<File>>() {
             @Override
             public void call(Subscriber<? super List<File>> subscriber) {
@@ -163,34 +163,25 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                 subscriber.onNext(files);
                 subscriber.onCompleted();
             }
-        })
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-//                        dialog = DialogUtils.showProgressDialog(PublishActivity.this, "发布", "正在上传，请稍等..."); // 需要在主线程执行
-                    }
-                })
-                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<File>>() {
-                    @Override
-                    public void onCompleted() {
+        }).subscribe(new Subscriber<List<File>>() {
+            @Override
+            public void onCompleted() {
 
-                    }
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
+            @Override
+            public void onError(Throwable e) {
+                DebugLog.e("error");
+                Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                dismissDialog();
+            }
 
-                        Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        dismissDialog();
-                    }
-
-                    @Override
-                    public void onNext(List<File> files) {
-                        DebugLog.e("files:" + new Gson().toJson(files));
-                        upload(files);
-                    }
-                });
+            @Override
+            public void onNext(List<File> files) {
+                DebugLog.e("files:" + new Gson().toJson(files));
+                upload(files);
+            }
+        });
 
     }
 
@@ -204,14 +195,13 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
     private void upload(List<File> files) {
         MultipartBody.Part[] parts = new MultipartBody.Part[files.size()];
         for (int i = 0; i < files.size(); i++) {
-            File file = compressor.compressToFile(files.get(i));
 
             // 创建 RequestBody，用于封装构建RequestBody
             RequestBody requestFile =
-                    RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                    RequestBody.create(MediaType.parse("multipart/form-data"), files.get(i));
 
             // MultipartBody.Part  和后端约定好Key，这里的partName是用image
-            parts[i] = MultipartBody.Part.createFormData("photos", file.getName(), requestFile);
+            parts[i] = MultipartBody.Part.createFormData("photos", files.get(i).getName(), requestFile);
         }
 
 
@@ -235,6 +225,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
                     @Override
                     public void onError(Throwable e) {
+                        DebugLog.e("error");
                         Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         dismissDialog();
                     }
