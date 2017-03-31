@@ -1,40 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/layout_bg"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary">
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/back" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="详情"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="20dp" />
-
-
-    </RelativeLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/scroll_container"
@@ -81,16 +58,16 @@
                                 android:id="@+id/title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="陈小刚"
+                                android:text=""
                                 android:textColor="@color/md_black_1000"
                                 android:textSize="20dp" />
 
                             <TextView
+                                android:id="@+id/subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
-                                android:id="@+id/subtitle"
-                                android:text="擅长推拿、高级足疗"
+                                android:text=""
                                 android:textColor="@color/text_hint"
                                 android:textSize="14dp" />
                         </LinearLayout>
@@ -101,7 +78,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_alignTop="@id/left"
-                            android:text="2016年12月24日"
+                            android:text=""
                             android:textSize="14dp" />
                     </RelativeLayout>
 
@@ -109,13 +86,15 @@
 
 
                 <LinearLayout
+                    android:id="@+id/content"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:background="@color/md_white_1000"
+                    android:background="@drawable/touch_bg"
                     android:orientation="vertical"
-                    android:paddingLeft="16dp"
                     android:paddingBottom="10dp"
+                    android:paddingLeft="16dp"
                     android:paddingRight="16dp">
 
                     <TextView
@@ -123,8 +102,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付
-            代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付代收代付"
                         android:textColor="@color/text_hint"
                         android:textSize="16dp" />
 
@@ -157,5 +134,70 @@
         </android.support.v4.widget.NestedScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="详情"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_chat"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/md_blue_grey_300" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/md_white_1000"
+
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/comment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/comment_et_bg"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp" />
+
+            <TextView
+                android:id="@+id/send_comment"
+                android:layout_width="55dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="发送"
+                android:textColor="@color/md_black_1000"
+                android:textSize="16dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

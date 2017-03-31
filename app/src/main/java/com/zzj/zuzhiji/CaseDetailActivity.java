@@ -1,6 +1,8 @@
 package com.zzj.zuzhiji;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -10,12 +12,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.network.entity.CommentItem;
+import com.zzj.zuzhiji.network.entity.SocialItem;
+import com.zzj.zuzhiji.util.CommonUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,7 +67,20 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
     @BindView(R.id.image_group)
     BGANinePhotoLayout bgaNinePhotoLayout;
 
+    @BindView(R.id.bottom_chat)
+    View bottomChat;
+    @BindView(R.id.comment)
+    EditText etComment;
+    @BindView(R.id.send_comment)
+    TextView tvSendComment;
+
+    @BindView(R.id.content)
+    View vContent;
+
+    private SocialItem item;
+
     private CommentAdapter mAdapter = new CommentAdapter();
+    private List<CommentItem> comments = new ArrayList<>();
 
     private String[] IMG_URL_LIST = {
             "http://img3.imgtn.bdimg.com/it/u=1794894692,1423685501&fm=214&gp=0.jpg",
@@ -70,6 +93,25 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
 
     };
 
+    public static Intent newIntent(Context context, String itemJson) {
+        Intent intent = new Intent(context, CaseDetailActivity.class);
+
+        intent.putExtra(Constant.CASE_DETAIL_KEYS.ITEM_JSON, itemJson);
+
+        return intent;
+    }
+
+    private void resolveIntent() {
+        Intent intent = getIntent();
+        String itemJson = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.ITEM_JSON);
+        if (TextUtils.isEmpty(itemJson)) {
+            Toast.makeText(this, "intent error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        item = new Gson().fromJson(itemJson, SocialItem.class);
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,8 +119,15 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
         setContentView(R.layout.activity_case_detail);
         ButterKnife.bind(this);
 
+        resolveIntent();
         setupLayout();
     }
+
+    @OnClick(R.id.content)
+    public void content(View view) {
+        Toast.makeText(this, "评论", Toast.LENGTH_SHORT).show();
+    }
+
 
     private void setupLayout() {
 
@@ -99,11 +148,30 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
         });
         recyclerView.setAdapter(mAdapter);
         bgaNinePhotoLayout.setDelegate(this);
-        ArrayList<String> list = new ArrayList();
-        for (String url : IMG_URL_LIST) {
-            list.add(url);
+
+
+        if (item != null) {
+
+            //TODO:
+            Glide.with(this)
+                    .load(R.drawable.avator)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(ivAvator);
+
+            tvTitle.setText(item.momentOwner);
+            tvMessage.setText(item.message);
+            tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
+
+
+            if (item.photos != null)
+                bgaNinePhotoLayout.setData(item.photos);
+
+            if (item.comments != null && item.comments.size() > 0) {
+                comments.clear();
+                comments.addAll(item.comments);
+                mAdapter.notifyDataSetChanged();
+            }
         }
-        bgaNinePhotoLayout.setData(list);
 
 
     }
@@ -160,6 +228,19 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
 
         @Override
         public void onBindViewHolder(CommentVH holder, final int position) {
+            CommentItem comment = comments.get(position);
+            holder.tvCommenterName.setText(comment.commenterUUID);
+            holder.tvSubTitle.setText(comment.message);
+            if (comment.targetCommenterUUID == null) {
+                holder.tvTextHuiFu.setVisibility(View.GONE);
+                holder.tvFriendName.setVisibility(View.GONE);
+            } else {
+                holder.tvTextHuiFu.setVisibility(View.VISIBLE);
+                holder.tvFriendName.setVisibility(View.VISIBLE);
+                holder.tvFriendName.setText(comment.targetCommenterUUID);
+            }
+
+
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -170,7 +251,7 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
 
         @Override
         public int getItemCount() {
-            return 10;
+            return comments.size();
         }
     }
 

@@ -16,6 +16,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.zzj.zuzhiji.CaseDetailActivity;
 import com.zzj.zuzhiji.PublishActivity;
 import com.zzj.zuzhiji.R;
@@ -29,6 +38,7 @@ import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,68 +152,68 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
         }, 500);
 
 
-            Network.getInstance().getSocialItems(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)
-                    , page, Constant.PAGE_SIZE)
-                    .observeOn(Schedulers.io())
-                    .map(new Func1<SocialTotal, List<SocialItem>>() {
-                        @Override
-                        public List<SocialItem> call(SocialTotal socialTotal) {
-                            totalPage = socialTotal.total;
-                            return socialTotal.list;
-                        }
-                    })
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<List<SocialItem>>() {
-                        @Override
-                        public void onCompleted() {
+        Network.getInstance().getSocialItems(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)
+                , page, Constant.PAGE_SIZE)
+                .observeOn(Schedulers.io())
+                .map(new Func1<SocialTotal, List<SocialItem>>() {
+                    @Override
+                    public List<SocialItem> call(SocialTotal socialTotal) {
+                        totalPage = socialTotal.total;
+                        return socialTotal.list;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<SocialItem>>() {
+                    @Override
+                    public void onCompleted() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(List<SocialItem> socialItems) {
+                        if (socialItems != null) {
+                            datas.clear();
+                            datas.addAll(socialItems);
+                            mAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
                         }
-
-                        @Override
-                        public void onNext(List<SocialItem> socialItems) {
-                            if (socialItems != null) {
-                                datas.clear();
-                                datas.addAll(socialItems);
-                                mAdapter.notifyDataSetChanged();
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        }
-                    });
+                    }
+                });
 
     }
 
     private void getUserName(final TextView tv, final String ownerId) {
 
         Network.getInstance().getUserInfo(ownerId)
-                    .subscribe(new Subscriber<UserInfoResult>() {
-                        @Override
-                        public void onCompleted() {
+                .subscribe(new Subscriber<UserInfoResult>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(UserInfoResult userInfoResult) {
+                        if (userInfoResult != null)
+                            tv.setText(userInfoResult.nickName);
+                        else {
+                            DebugLog.e("user owner:" + ownerId);
+                            //TODO:设置不上
+                            tv.setText(String.valueOf(ownerId));
                         }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onNext(UserInfoResult userInfoResult) {
-                            if (userInfoResult != null)
-                                tv.setText(userInfoResult.nickName);
-                            else {
-                                DebugLog.e("user owner:" + ownerId);
-                                //TODO:设置不上
-                                tv.setText(String.valueOf(ownerId));
-                            }
-
-                        }
-                    });
+                    }
+                });
 
     }
 
@@ -264,14 +274,21 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private class SocialAdapter extends RecyclerView.Adapter<SocialVH> {
 
+        private Gson gson;
+
+        SocialAdapter() {
+            GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
+            gson = gsonBuilder.create();
+        }
+
         @Override
         public SocialVH onCreateViewHolder(ViewGroup parent, int viewType) {
             return new SocialVH(View.inflate(parent.getContext(), R.layout.item_social, null));
         }
 
         @Override
-        public void onBindViewHolder(SocialVH holder, int position) {
-            SocialItem item = datas.get(position);
+        public void onBindViewHolder(final SocialVH holder, int position) {
+            final SocialItem item = datas.get(position);
             holder.bgaNinePhotoLayout.setData(item.photos);
             //TODO:
 //            getUserName(holder.tvTitle,item.momentOwner);
@@ -284,9 +301,25 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getActivity(), CaseDetailActivity.class));
+                    startActivity(CaseDetailActivity.newIntent(getActivity(), gson.toJson(item)));
                 }
             });
+        }
+
+        public class StringConverter implements JsonSerializer<String>, JsonDeserializer<String> {
+            public JsonElement serialize(String src, Type typeOfSrc, JsonSerializationContext context) {
+                if (src == null) {
+                    return new JsonPrimitive("");
+                } else {
+                    return new JsonPrimitive(src.toString());
+                }
+            }
+
+            public String deserialize(JsonElement json, Type typeOfT,
+                                      JsonDeserializationContext context)
+                    throws JsonParseException {
+                return json.getAsJsonPrimitive().getAsString();
+            }
         }
 
         @Override

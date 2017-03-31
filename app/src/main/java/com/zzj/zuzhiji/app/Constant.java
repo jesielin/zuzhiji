@@ -46,7 +46,7 @@ public interface Constant {
 
     }
 
-    interface CASE_DETAIL_KEYS {
+    interface HOME_PAGE_KEYS {
         String FRIEND_UUID = "FRIEND_UUID";
         String IS_FRIEND = "IS_FRIEND";
         String FRIEND_AVATOR = "FRIEND_AVATOR";
@@ -54,5 +54,9 @@ public interface Constant {
         String FRIEND_SUMMARY = "FRIEND_SUMMARY";
         String FRIEND_TYPE = "FRIEND_TYPE";
 
+    }
+
+    interface CASE_DETAIL_KEYS {
+        String ITEM_JSON = "ITEM_JSON";
     }
 }

@@ -117,12 +117,12 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                                    String friendUuid,
                                    String isFriend) {
         Intent intent = new Intent(context, HomePageActivity.class);
-        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_AVATOR, avator);
-        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_NICKNAME, nickName);
-        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_SUMMARY, summary);
-        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_TYPE, type);
-        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_UUID, friendUuid);
-        intent.putExtra(Constant.CASE_DETAIL_KEYS.IS_FRIEND, isFriend);
+        intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_AVATOR, avator);
+        intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_NICKNAME, nickName);
+        intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY, summary);
+        intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE, type);
+        intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID, friendUuid);
+        intent.putExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND, isFriend);
         return intent;
     }
 
@@ -130,12 +130,12 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         Intent intent = getIntent();
         if (intent != null) {
 
-            friendAvator = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_AVATOR) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_AVATOR);
-            friendNickName = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_NICKNAME) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_NICKNAME);
-            friendSummary = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_SUMMARY) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_SUMMARY);
-            friendType = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_TYPE) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_TYPE);
-            friendUuid = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_UUID) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_UUID);
-            isFriend = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.IS_FRIEND) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.IS_FRIEND);
+            friendAvator = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_AVATOR) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_AVATOR);
+            friendNickName = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_NICKNAME) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_NICKNAME);
+            friendSummary = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY);
+            friendType = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE);
+            friendUuid = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID);
+            isFriend = intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND);
 
         }
 
