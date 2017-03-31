@@ -163,12 +163,19 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
 
         @Override
         public void onBindViewHolder(final SearchVH holder, final int position) {
-            holder.tvTitle.setText(datas.get(position).nickName);
-            holder.tvSubTitle.setText(datas.get(position).summary);
+            final Tech item = datas.get(position);
+            holder.tvTitle.setText(item.nickName);
+            holder.tvSubTitle.setText(item.summary);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(SearchActivity.this, "aaa", Toast.LENGTH_SHORT).show();
+                    startActivity(HomePageActivity.newIntent(SearchActivity.this,
+                            item.headSculpture,
+                            item.nickName,
+                            item.summary,
+                            item.userType,
+                            item.uuid,
+                            item.isFriend));
                 }
             });
 

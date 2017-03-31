@@ -1,6 +1,7 @@
 package com.zzj.zuzhiji;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,12 +16,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.jaeger.ninegridimageview.NineGridImageView;
 import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
+import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.util.ActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.DialogUtils;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
 
 import java.util.Arrays;
@@ -28,6 +34,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 
 /**
  * Created by shawn on 2017-03-29.
@@ -43,11 +54,98 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     @BindView(R.id.titlebar)
     View titlebar;
 
+    @BindView(R.id.back)
+    ImageView btnBack;
+    @BindView(R.id.star_text)
+    TextView tvStar;
+    @BindView(R.id.star_icon)
+    ImageView ivStar;
+
+    @BindView(R.id.bottom_nav)
+    View bottomNav;
+
+    @BindView(R.id.edit)
+    View editButton;
+    @BindView(R.id.title)
+    TextView tvTitle;
+    @BindView(R.id.summary)
+    TextView tvSummary;
+    @BindView(R.id.nickname)
+    TextView tvName;
+    @BindView(R.id.avator)
+    CircleImageView ivAvator;
+
+
+
     private int mDistanceY;
 
     private CaseAdapter mAdapter = new CaseAdapter();
 
     private int scrollHeight;
+
+    private String friendAvator;
+    private String friendUuid;
+    private String isFriend;
+    private String friendType;
+    private String friendSummary;
+    private String friendNickName;
+
+    private MaterialDialog dialog;
+
+    private boolean isReserv;
+
+    public static Intent newIntent(Context context,
+                                   String avator,
+                                   String nickName,
+                                   String summary,
+                                   String type,
+                                   String friendUuid,
+                                   String isFriend) {
+        Intent intent = new Intent(context, HomePageActivity.class);
+        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_AVATOR, avator);
+        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_NICKNAME, nickName);
+        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_SUMMARY, summary);
+        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_TYPE, type);
+        intent.putExtra(Constant.CASE_DETAIL_KEYS.FRIEND_UUID, friendUuid);
+        intent.putExtra(Constant.CASE_DETAIL_KEYS.IS_FRIEND, isFriend);
+        return intent;
+    }
+
+    private void resolveIntent() {
+        Intent intent = getIntent();
+        if (intent != null) {
+
+            friendAvator = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_AVATOR) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_AVATOR);
+            friendNickName = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_NICKNAME) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_NICKNAME);
+            friendSummary = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_SUMMARY) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_SUMMARY);
+            friendType = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_TYPE) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_TYPE);
+            friendUuid = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_UUID) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.FRIEND_UUID);
+            isFriend = intent.getStringExtra(Constant.CASE_DETAIL_KEYS.IS_FRIEND) == null ? "" : intent.getStringExtra(Constant.CASE_DETAIL_KEYS.IS_FRIEND);
+
+        }
+
+        if (SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID).equals(friendUuid)) {
+            editButton.setVisibility(View.VISIBLE);
+            bottomNav.setVisibility(View.GONE);
+        } else {
+            editButton.setVisibility(View.GONE);
+            bottomNav.setVisibility(View.VISIBLE);
+        }
+
+        tvTitle.setText(friendNickName);
+        tvSummary.setText(friendSummary);
+        tvName.setText(friendNickName);
+
+        if (Constant.USER_IS_FRIEND.equals(isFriend)) {
+            isReserv = true;
+            starLightsUp();
+        } else {
+            isReserv = false;
+            starLightsDown();
+        }
+
+
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,9 +155,66 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         ActivityManager.getInstance().addActivity(this);
 
         setupLayout();
+        resolveIntent();
 
     }
 
+
+    @OnClick(R.id.star)
+    public void star() {
+
+        if (!isReserv) {
+            Network.getInstance().addFriend(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID), friendUuid)
+                    .doOnSubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            dialog = DialogUtils.showProgressDialog(HomePageActivity.this, "关注", "正在关注，请稍等..."); // 需要在主线程执行
+                        }
+                    })
+                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Object>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(HomePageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            dismissDialog();
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                            isReserv = true;
+                            starLightsUp();
+                            dismissDialog();
+                        }
+                    });
+        } else {
+
+            //TODO:取消关注
+        }
+    }
+
+    private void dismissDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
+        }
+    }
+
+    public void starLightsUp() {
+        tvStar.setText("已关注");
+        ivStar.setImageResource(R.drawable.star_pressed);
+
+    }
+
+    public void starLightsDown() {
+        tvStar.setText("关注");
+        ivStar.setImageResource(R.drawable.star_nor);
+    }
 
     private void setupLayout() {
 
@@ -91,17 +246,26 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                 if (mDistanceY <= scrollHeight) {
                     float scale = (float) mDistanceY / scrollHeight;
                     float alpha = scale * 255;
-
+                    tvTitle.setText("");
+                    btnBack.setImageResource(R.drawable.back_white);
                     titlebar.setBackgroundColor(Color.argb((int) alpha, 245, 222, 132));
                 } else {
                     //上述虽然判断了滑动距离与toolbar高度相等的情况，但是实际测试时发现，标题栏的背景色
                     //很少能达到完全不透明的情况，所以这里又判断了滑动距离大于toolbar高度的情况，
                     //将标题栏的颜色设置为完全不透明状态
                     titlebar.setBackgroundResource(R.color.colorPrimary);
+                    tvTitle.setText(friendNickName);
+                    btnBack.setImageResource(R.drawable.back);
+
                 }
             }
         });
 
+    }
+
+    @OnClick(R.id.back)
+    public void back(View view) {
+        ActivityManager.getInstance().finshActivities(getClass());
     }
 
 

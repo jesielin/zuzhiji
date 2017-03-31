@@ -16,6 +16,7 @@ package com.zzj.zuzhiji.network.entity;
  * "uuid": "1",
  * "createDate": 1486189251000,
  * "status": 1,
+ * "isFriend": 0,
  * "headSculpture": "1"
  * <p>
  * <p>
@@ -33,4 +34,5 @@ public class Tech {
     public String createDate;
     public String status;
     public String headSculpture;
+    public String isFriend;
 }

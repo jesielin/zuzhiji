@@ -10,8 +10,8 @@
         android:layout_height="match_parent">
 
         <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
             android:id="@+id/scroll_container"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <LinearLayout
@@ -23,13 +23,13 @@
 
 
                 <LinearLayout
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:fitsSystemWindows="true"
                     android:id="@+id/banner"
                     android:layout_width="match_parent"
                     android:layout_height="240dp"
                     android:background="@drawable/placeholder_banner"
+                    android:fitsSystemWindows="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:orientation="vertical">
 
                     <RelativeLayout
@@ -39,10 +39,10 @@
                         android:layout_marginTop="60dp">
 
                         <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/avator"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
                             android:layout_centerInParent="true"
-
                             android:src="@drawable/avator"
                             app:civ_border_color="@color/md_white_1000"
                             app:civ_border_width="1dp" />
@@ -57,7 +57,7 @@
                     </RelativeLayout>
 
                     <TextView
-                        android:id="@+id/title"
+                        android:id="@+id/nickname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -67,7 +67,7 @@
                         android:textSize="18dp" />
 
                     <TextView
-                        android:id="@+id/subtitle"
+                        android:id="@+id/summary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -80,9 +80,9 @@
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerview"
-                    android:nestedScrollingEnabled="false"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
@@ -104,11 +104,90 @@
             android:src="@drawable/back_white" />
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:gravity="center"
-            android:text="个人资料"
-            android:textColor="@color/md_white_1000"
+
+            android:text=""
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:id="@+id/bottom_nav"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+
+            android:background="@color/md_grey_300" />
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/md_white_1000"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/star"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/touch_bg"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/star_icon"
+                    android:src="@drawable/star_nor" />
+
+                <TextView
+                    android:id="@+id/star_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="关注"
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/text_hint" />
+
+            <LinearLayout
+                android:id="@+id/reserve"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/touch_bg"
+
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/reservation_nor" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="预约"
+                    android:textSize="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </FrameLayout>

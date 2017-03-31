@@ -182,9 +182,6 @@ public class RegisterSecondFragment extends Fragment {
 
     }
 
-    private void register(File file) {
-
-    }
 
     private void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {
