@@ -6,16 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +25,8 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.entity.CommentItem;
 import com.zzj.zuzhiji.network.entity.SocialItem;
 import com.zzj.zuzhiji.util.CommonUtils;
+import com.zzj.zuzhiji.util.KeyboardControlMnanager;
+import com.zzj.zuzhiji.view.NestedListView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,14 +45,12 @@ import pub.devrel.easypermissions.EasyPermissions;
  * Created by shawn on 17/3/31.
  */
 
-public class CaseDetailActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, BGANinePhotoLayout.Delegate {
+public class CaseDetailActivity extends AppCompatActivity implements BGANinePhotoLayout.Delegate {
 
-    @BindView(R.id.recyclerview)
-    RecyclerView recyclerView;
-    @BindView(R.id.refresh)
-    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.list)
+    NestedListView listView;
     @BindView(R.id.scroll_container)
-    NestedScrollView nestedScrollView;
+    ScrollView scrollView;
 
     @BindView(R.id.avator)
     CircleImageView ivAvator;
@@ -81,17 +80,6 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
 
     private CommentAdapter mAdapter = new CommentAdapter();
     private List<CommentItem> comments = new ArrayList<>();
-
-    private String[] IMG_URL_LIST = {
-            "http://img3.imgtn.bdimg.com/it/u=1794894692,1423685501&fm=214&gp=0.jpg",
-            "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-480302.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/36f0523ee1888a57.jpg", "http://ac-QYgvX1CC.clouddn.com/07915a0154ac4a64.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/9ec4bc44bfaf07ed.jpg", "http://ac-QYgvX1CC.clouddn.com/fa85037f97e8191f.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/de13315600ba1cff.jpg", "http://ac-QYgvX1CC.clouddn.com/15c5c50e941ba6b0.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/10762c593798466a.jpg"
-
-
-    };
 
     public static Intent newIntent(Context context, String itemJson) {
         Intent intent = new Intent(context, CaseDetailActivity.class);
@@ -132,21 +120,7 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
     private void setupLayout() {
 
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, linearLayoutManager
-                .getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
-
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_orange_light, android.R.color.holo_blue_light, android.R.color.holo_green_light, android.R.color.holo_red_light);
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                doRefresh();
-            }
-        });
-        recyclerView.setAdapter(mAdapter);
+        listView.setAdapter(mAdapter);
         bgaNinePhotoLayout.setDelegate(this);
 
 
@@ -173,86 +147,84 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
             }
         }
 
-
-    }
-
-    private void doRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
-        onRefresh();
-    }
-
-    @Override
-    public void onRefresh() {
-        swipeRefreshLayout.postDelayed(new Runnable() {
+        setupKeyboardAction();
+        KeyboardControlMnanager.observerKeyboardVisibleChange(this, new KeyboardControlMnanager.OnKeyboardStateChangeListener() {
             @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(false);
+            public void onKeyboardChange(int displayHeight, int statusbarHeight, boolean isVisible) {
+
+                int[] contentLocation = new int[2];
+                int[] chatLocation = new int[2];
+
+                vContent.getLocationInWindow(contentLocation);
+                bottomChat.getLocationInWindow(chatLocation);
+
+//                scrollView.scrollTo(scrollView.getScrollX(),scrollView.getTop()+
+//                        ());
+                scrollView.scrollBy(0, contentLocation[1] + vContent.getMeasuredHeight() - chatLocation[1]);
             }
-        }, 2000);
+        });
+
+
+
+
+
+    }
+
+    private void setupKeyboardAction() {
+        etComment.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!etComment.isFocused()) {
+                    etComment.setFocusable(true);
+                    etComment.setFocusableInTouchMode(true);
+                }
+                return false;
+            }
+        });
+        etComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    setEditableState(true);
+                } else {
+                    setEditableState(false);
+                }
+            }
+        });
+    }
+
+    /**
+     * display soft keyboard
+     */
+    protected void openSoftKeyboard(EditText et) {
+        InputMethodManager inputManager = (InputMethodManager) et.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(et, 0);
+    }
+
+    /**
+     * close soft keyboard
+     */
+    protected void closeSoftKeyboard(EditText et) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null && getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    private void setEditableState(boolean b) {
+        if (b) {
+            etComment.setFocusable(true);
+            etComment.setFocusableInTouchMode(true);
+            etComment.requestFocus();
+        } else {
+            etComment.setFocusable(false);
+            etComment.setFocusableInTouchMode(false);
+        }
     }
 
     @Override
     public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
         photoPreviewWrapper(ninePhotoLayout);
-    }
-
-    public class CommentVH extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.avator)
-        CircleImageView ivAvator;
-        @BindView(R.id.commenter_name)
-        TextView tvCommenterName;
-        @BindView(R.id.text_huifu)
-        TextView tvTextHuiFu;
-        @BindView(R.id.friend_name)
-        TextView tvFriendName;
-        @BindView(R.id.date)
-        TextView tvDate;
-        @BindView(R.id.subtitle)
-        TextView tvSubTitle;
-        @BindView(R.id.container)
-        View clickAreaView;
-
-        public CommentVH(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-    }
-
-    private class CommentAdapter extends RecyclerView.Adapter<CommentVH> {
-
-        @Override
-        public CommentVH onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new CommentVH(View.inflate(parent.getContext(), R.layout.item_comment, null));
-        }
-
-        @Override
-        public void onBindViewHolder(CommentVH holder, final int position) {
-            CommentItem comment = comments.get(position);
-            holder.tvCommenterName.setText(comment.commenterUUID);
-            holder.tvSubTitle.setText(comment.message);
-            if (comment.targetCommenterUUID == null) {
-                holder.tvTextHuiFu.setVisibility(View.GONE);
-                holder.tvFriendName.setVisibility(View.GONE);
-            } else {
-                holder.tvTextHuiFu.setVisibility(View.VISIBLE);
-                holder.tvFriendName.setVisibility(View.VISIBLE);
-                holder.tvFriendName.setText(comment.targetCommenterUUID);
-            }
-
-
-            holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(CaseDetailActivity.this, position + "", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return comments.size();
-        }
     }
 
     /**
@@ -286,6 +258,80 @@ public class CaseDetailActivity extends AppCompatActivity implements SwipeRefres
     @OnClick(R.id.back)
     public void back() {
         finish();
+    }
+
+    public class CommentAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return comments.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return comments.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View view, ViewGroup parent) {
+            ViewHolder holder;
+            if (view != null) {
+                holder = (ViewHolder) view.getTag();
+            } else {
+                view = View.inflate(parent.getContext(), R.layout.item_comment, null);
+                holder = new ViewHolder(view);
+                view.setTag(holder);
+            }
+
+            CommentItem comment = comments.get(position);
+            holder.tvCommenterName.setText(comment.commenterUUID);
+            holder.tvSubTitle.setText(comment.message);
+            if (comment.targetCommenterUUID == null) {
+                holder.tvTextHuiFu.setVisibility(View.GONE);
+                holder.tvFriendName.setVisibility(View.GONE);
+            } else {
+                holder.tvTextHuiFu.setVisibility(View.VISIBLE);
+                holder.tvFriendName.setVisibility(View.VISIBLE);
+                holder.tvFriendName.setText(comment.targetCommenterUUID);
+            }
+
+
+            holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(CaseDetailActivity.this, position + "", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+            return view;
+        }
+
+        public class ViewHolder {
+            @BindView(R.id.avator)
+            CircleImageView ivAvator;
+            @BindView(R.id.commenter_name)
+            TextView tvCommenterName;
+            @BindView(R.id.text_huifu)
+            TextView tvTextHuiFu;
+            @BindView(R.id.friend_name)
+            TextView tvFriendName;
+            @BindView(R.id.date)
+            TextView tvDate;
+            @BindView(R.id.subtitle)
+            TextView tvSubTitle;
+            @BindView(R.id.container)
+            View clickAreaView;
+
+            public ViewHolder(View view) {
+                ButterKnife.bind(this, view);
+            }
+        }
     }
 
 
