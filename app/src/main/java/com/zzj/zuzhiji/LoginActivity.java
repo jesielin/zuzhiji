@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
+                            dismissDialog();
                         }
 
                         @Override
@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                                     loginResult.userType,
                                     loginResult.loginName
                             );
-                            dialog.dismiss();
+                            dismissDialog();
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
                             finish();
 
@@ -109,6 +109,13 @@ public class LoginActivity extends AppCompatActivity {
                     });
 
 
+    }
+
+    private void dismissDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
+        }
     }
 
     @OnClick(R.id.register)

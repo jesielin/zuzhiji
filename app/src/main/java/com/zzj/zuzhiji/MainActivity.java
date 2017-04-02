@@ -100,11 +100,13 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT:
+            case Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_TO_DETAIL:
                 Fragment f = mNavigator.getFragment(1);
                 DebugLog.e("f:" + f);
                 if (f != null)
                     f.onActivityResult(requestCode, resultCode, data);
                 break;
+
         }
     }
 

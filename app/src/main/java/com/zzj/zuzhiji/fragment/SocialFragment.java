@@ -103,7 +103,10 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         DebugLog.e("fragment on activity result::" + requestCode + "," + resultCode);
-        if (requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS) {
+        if ((requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT
+                && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS)
+                || (requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_TO_DETAIL
+                && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_DETAIL_CHANGE_STATUS_BACK_TO_SOCIAL)) {
             DebugLog.e("fragment on activity result");
             swipeRefreshLayout.post(new Runnable() {
                 @Override
@@ -301,9 +304,15 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(CaseDetailActivity.newIntent(getActivity(), gson.toJson(item)));
+                    startActivityForResult(CaseDetailActivity.newIntent(getActivity(), gson.toJson(item)),
+                            Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_TO_DETAIL);
                 }
             });
+        }
+
+        @Override
+        public int getItemCount() {
+            return datas.size();
         }
 
         public class StringConverter implements JsonSerializer<String>, JsonDeserializer<String> {
@@ -320,11 +329,6 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
                     throws JsonParseException {
                 return json.getAsJsonPrimitive().getAsString();
             }
-        }
-
-        @Override
-        public int getItemCount() {
-            return datas.size();
         }
     }
 }

@@ -16,4 +16,10 @@ public class CommentItem {
     public String targetCommenterUUID;
     public String message;
 
+
+    public CommentItem(String commenterUUID, String targetCommenterUUID, String message) {
+        this.commenterUUID = commenterUUID;
+        this.targetCommenterUUID = targetCommenterUUID;
+        this.message = message;
+    }
 }

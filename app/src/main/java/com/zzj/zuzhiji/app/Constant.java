@@ -44,6 +44,9 @@ public interface Constant {
         int REQUEST_CODE_SEARCH_TO_HOME_PAGE = 0x03;
         int RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH = 0x04;
 
+        int REQUEST_CODE_SOCIAL_TO_DETAIL = 0x05;
+        int RESULT_CODE_DETAIL_CHANGE_STATUS_BACK_TO_SOCIAL = 0x06;
+
     }
 
     interface HOME_PAGE_KEYS {

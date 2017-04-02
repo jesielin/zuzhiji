@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/container"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@drawable/touch_bg"
     android:clickable="true"
-    android:id="@+id/container"
 
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
     <LinearLayout
 
@@ -51,9 +51,9 @@
 
                     <TextView
                         android:id="@+id/text_huifu"
-                        android:layout_marginLeft="2dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
                         android:text="回复"
                         android:textColor="@color/text_hint"
                         android:textSize="16dp" />
@@ -62,17 +62,17 @@
                         android:id="@+id/friend_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="陈小刚"
                         android:layout_marginLeft="2dp"
+                        android:text="陈小刚"
                         android:textColor="@color/md_black_1000"
                         android:textSize="16dp" />
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:id="@+id/subtitle"
                     android:text="擅长推拿、高级足疗"
                     android:textColor="@color/text_hint"
                     android:textSize="14dp" />
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignTop="@id/left"
-                android:text="2016年12月24日"
+
                 android:textSize="14dp" />
         </RelativeLayout>
 

@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +20,19 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.CommentItem;
 import com.zzj.zuzhiji.network.entity.SocialItem;
 import com.zzj.zuzhiji.util.CommonUtils;
+import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.KeyboardControlMnanager;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.view.NestedListView;
 
 import java.io.File;
@@ -40,6 +47,9 @@ import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 
 /**
  * Created by shawn on 17/3/31.
@@ -76,7 +86,17 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
     @BindView(R.id.content)
     View vContent;
 
+    View targetCommentView;
+
     private SocialItem item;
+
+    private boolean isChangeComment = false;
+
+    private boolean isChatThis = true;
+
+    private String targetFriend = "";
+
+    private MaterialDialog dialog;
 
     private CommentAdapter mAdapter = new CommentAdapter();
     private List<CommentItem> comments = new ArrayList<>();
@@ -119,6 +139,8 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
     private void setupLayout() {
 
+        targetCommentView = vContent;
+
 
         listView.setAdapter(mAdapter);
         bgaNinePhotoLayout.setDelegate(this);
@@ -148,33 +170,151 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
         }
 
         setupKeyboardAction();
+
+        vContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                setEditableState(true);
+                isChatThis = true;
+                targetFriend = "";
+                etComment.setHint("添加评论:");
+                targetCommentView = vContent;
+                CommonUtils.showSoftInput(CaseDetailActivity.this, etComment);
+            }
+        });
+
         KeyboardControlMnanager.observerKeyboardVisibleChange(this, new KeyboardControlMnanager.OnKeyboardStateChangeListener() {
             @Override
             public void onKeyboardChange(int displayHeight, int statusbarHeight, boolean isVisible) {
 
                 int[] contentLocation = new int[2];
                 int[] chatLocation = new int[2];
+                int itemHeight;
 
-                vContent.getLocationInWindow(contentLocation);
+
+                targetCommentView.getLocationInWindow(contentLocation);
                 bottomChat.getLocationInWindow(chatLocation);
+                itemHeight = targetCommentView.getMeasuredHeight();
 
-//                scrollView.scrollTo(scrollView.getScrollX(),scrollView.getTop()+
-//                        ());
-                scrollView.scrollBy(0, contentLocation[1] + vContent.getMeasuredHeight() - chatLocation[1]);
+
+                scrollView.scrollBy(0, contentLocation[1] + itemHeight - chatLocation[1]);
             }
         });
 
+        scrollView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (CommonUtils.isShowSoftInput(CaseDetailActivity.this))
+                        CommonUtils.hideSoftInput(CaseDetailActivity.this, etComment);
+
+                }
+                return false;
+
+            }
+        });
+
+        etComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!TextUtils.isEmpty(s))
+                    enableSendButton();
+                else
+                    disableSendButton();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        tvSendComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CommonUtils.isShowSoftInput(CaseDetailActivity.this))
+                    CommonUtils.hideSoftInput(CaseDetailActivity.this, etComment);
+
+                Network.getInstance().sendComment(item.momentsID, item.momentOwner, SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                        targetFriend, etComment.getText().toString())
+                        .doOnSubscribe(new Action0() {
+                            @Override
+                            public void call() {
+                                dialog = DialogUtils.showProgressDialog(CaseDetailActivity.this, "评论", "正在评论，请稍等..."); // 需要在主线程执行
+                            }
+                        })
+                        .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Subscriber<Object>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(CaseDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                dismissDialog();
+                            }
+
+                            @Override
+                            public void onNext(Object o) {
+                                isChangeComment = true;
+                                comments.add(new CommentItem(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                                        targetFriend, etComment.getText().toString()));
+                                mAdapter.notifyDataSetChanged();
+                                etComment.setText("");
+                                dismissDialog();
+                            }
+                        });
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResultStatusChange();
+        super.onBackPressed();
+    }
+
+    private void setResultStatusChange() {
+        if (isChangeComment)
+            setResult(Constant.ACTIVITY_CODE.RESULT_CODE_DETAIL_CHANGE_STATUS_BACK_TO_SOCIAL);
+    }
+
+    private void dismissDialog() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+            dialog = null;
+        }
+    }
+
+    private void enableSendButton() {
+        tvSendComment.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        tvSendComment.setClickable(true);
+    }
 
 
-
-
+    private void disableSendButton() {
+        tvSendComment.setTextColor(getResources().getColor(R.color.text_hint));
+        tvSendComment.setClickable(false);
     }
 
     private void setupKeyboardAction() {
         etComment.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                DebugLog.e("event:" + event);
                 if (!etComment.isFocused()) {
+
                     etComment.setFocusable(true);
                     etComment.setFocusableInTouchMode(true);
                 }
@@ -192,6 +332,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
             }
         });
     }
+
 
     /**
      * display soft keyboard
@@ -213,6 +354,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
     private void setEditableState(boolean b) {
         if (b) {
+
             etComment.setFocusable(true);
             etComment.setFocusableInTouchMode(true);
             etComment.requestFocus();
@@ -257,6 +399,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
     @OnClick(R.id.back)
     public void back() {
+        setResultStatusChange();
         finish();
     }
 
@@ -279,7 +422,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
         @Override
         public View getView(final int position, View view, ViewGroup parent) {
-            ViewHolder holder;
+            final ViewHolder holder;
             if (view != null) {
                 holder = (ViewHolder) view.getTag();
             } else {
@@ -288,10 +431,10 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                 view.setTag(holder);
             }
 
-            CommentItem comment = comments.get(position);
+            final CommentItem comment = comments.get(position);
             holder.tvCommenterName.setText(comment.commenterUUID);
             holder.tvSubTitle.setText(comment.message);
-            if (comment.targetCommenterUUID == null) {
+            if (TextUtils.isEmpty(comment.targetCommenterUUID)) {
                 holder.tvTextHuiFu.setVisibility(View.GONE);
                 holder.tvFriendName.setVisibility(View.GONE);
             } else {
@@ -304,6 +447,14 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    setEditableState(true);
+                    targetFriend = comment.commenterUUID;
+                    isChatThis = false;
+                    targetCommentView = holder.clickAreaView;
+                    etComment.setHint("回复" + comment.commenterUUID + ":");
+
+                    CommonUtils.showSoftInput(CaseDetailActivity.this, etComment);
+
                     Toast.makeText(CaseDetailActivity.this, position + "", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -311,6 +462,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
             return view;
         }
+
 
         public class ViewHolder {
             @BindView(R.id.avator)
