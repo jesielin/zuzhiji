@@ -24,8 +24,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:design:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
     testCompile 'junit:junit:4.12'
     //rx& retrofit
     compile 'io.reactivex:rxandroid:1.1.0'
@@ -64,4 +64,7 @@ dependencies {
 
     //activity manager
     compile 'com.yayandroid:TheActivityManager:1.0.6'
+
+    //video player
+    compile 'com.shuyu:GSYVideoPlayer:1.6.1'
 }

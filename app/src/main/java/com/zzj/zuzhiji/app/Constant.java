@@ -62,4 +62,8 @@ public interface Constant {
     interface CASE_DETAIL_KEYS {
         String ITEM_JSON = "ITEM_JSON";
     }
+
+    interface VIDEO_PLAY_KEYS {
+        String VIDEO_URL = "VIDEO_URL";
+    }
 }

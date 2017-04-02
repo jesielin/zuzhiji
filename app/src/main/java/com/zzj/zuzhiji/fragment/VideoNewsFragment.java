@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.R;
+import com.zzj.zuzhiji.VideoPlayActivity;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.util.CommonUtils;
@@ -144,7 +146,7 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "dianle", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getActivity(), VideoPlayActivity.class));
                 }
             });
 

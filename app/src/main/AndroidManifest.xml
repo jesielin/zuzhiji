@@ -47,6 +47,10 @@
             android:name=".CaseDetailActivity"
             android:windowSoftInputMode="stateUnspecified|adjustResize"></activity>
 
+        <activity
+            android:name=".VideoPlayActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"></activity>
 
     </application>
 
