@@ -10,6 +10,7 @@ import java.util.List;
 /*
 {
     "momentOwner": "FFF1-33",
+    "momentUserNickname":null
     "comments": {
         "commenterUUID": "FF2",
         "targetCommenterUUID": "1",
@@ -22,6 +23,7 @@ import java.util.List;
 }
  */
 public class SocialItem {
+    public String momentUserNickname;
     public String momentsID;
     public String momentOwner;
     public ArrayList<String> photos;
@@ -31,10 +33,7 @@ public class SocialItem {
     public boolean isExpand;
 
     public boolean hasComments() {
-        if (comments != null && comments.size() > 0)
-            return true;
-        else
-            return false;
+        return comments != null && comments.size() > 0;
     }
 
     public boolean isExpand() {

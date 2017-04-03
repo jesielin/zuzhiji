@@ -211,13 +211,19 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
         RequestBody uuid =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), uuidText);
+
+        //uuid
+        String nickNameText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME);
+        RequestBody nickName =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), nickNameText);
         // 添加message
         String messageText = etTitle.getText().toString() + "\n" + etSubTitle.getText().toString();
         RequestBody message =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), messageText);
 
-        Network.getInstance().postSocial(uuid, message, parts)
+        Network.getInstance().postSocial(uuid, message, nickName, parts)
                 .subscribe(new Subscriber<Object>() {
                     @Override
                     public void onCompleted() {

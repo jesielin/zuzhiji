@@ -108,8 +108,19 @@
                 android:textSize="14dp" />
         </RelativeLayout>
 
+        <EditText
+            android:id="@+id/nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="昵称"
+            android:maxLength="11"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColorHint="@color/text_hint"
+            android:textSize="18dp" />
         <Button
-            android:id="@+id/next"
+            android:id="@+id/register"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -118,7 +129,7 @@
             android:background="@drawable/btn_common_bg"
             android:gravity="center"
             android:padding="5dp"
-            android:text="下一步"
+            android:text="注册"
             android:textColor="@color/md_black_1000"
             android:textSize="20dp" />
 

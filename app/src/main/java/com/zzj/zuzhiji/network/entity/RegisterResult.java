@@ -18,4 +18,5 @@ public class RegisterResult {
     public String uuid;
     public String status;
     public String createDate;
+    public String nickName;
 }

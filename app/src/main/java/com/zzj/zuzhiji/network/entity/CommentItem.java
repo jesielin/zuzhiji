@@ -6,20 +6,26 @@ package com.zzj.zuzhiji.network.entity;
 
 /**
  * {
+ * "targetCommenterNickname":null
+ * "commenterNickname":null
  * "commenterUUID": "FF2",
  * "targetCommenterUUID": "1",
  * "message": "不错"
  * }
  */
 public class CommentItem {
+    public String targetCommenterNickname;
+    public String commenterNickname;
     public String commenterUUID;
     public String targetCommenterUUID;
     public String message;
 
 
-    public CommentItem(String commenterUUID, String targetCommenterUUID, String message) {
+    public CommentItem(String commenterUUID, String commenterNickname, String targetCommenterUUID, String targetCommenterNickname, String message) {
         this.commenterUUID = commenterUUID;
+        this.commenterNickname = commenterNickname;
         this.targetCommenterUUID = targetCommenterUUID;
+        this.targetCommenterNickname = targetCommenterNickname;
         this.message = message;
     }
 }

@@ -40,6 +40,9 @@ public class RegisterFirstFragment extends Fragment {
     EditText etVerify;
     @BindView(R.id.get_verify)
     TextView tvGetVerify;
+    @BindView(R.id.nickname)
+    EditText etNickName;
+
     CountDownTimer timer;
     private boolean isGetVerifyEnable = true;
     private String type = "0";
@@ -67,7 +70,7 @@ public class RegisterFirstFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.next)
+    @OnClick(R.id.register)
     public void next(View view) {
         if (TextUtils.isEmpty(etTel.getText().toString().trim()) || TextUtils.getTrimmedLength(etTel.getText().toString()) != 11) {
             Toast.makeText(getActivity(), "请输入正确的手机号", Toast.LENGTH_SHORT).show();
@@ -79,8 +82,13 @@ public class RegisterFirstFragment extends Fragment {
             return;
         }
 
+        if (TextUtils.isEmpty(etNickName.getText().toString().trim())) {
+            Toast.makeText(getActivity(), "请输入昵称", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        Network.getInstance().register(etTel.getText().toString().trim(), etVerify.getText().toString().trim(), type)
+
+        Network.getInstance().register(etTel.getText().toString().trim(), etVerify.getText().toString().trim(), type, etNickName.getText().toString())
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
@@ -89,35 +97,36 @@ public class RegisterFirstFragment extends Fragment {
                 })
                 .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
                 .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<RegisterResult>() {
-                        @Override
-                        public void onCompleted() {
-                        }
+                .subscribe(new Subscriber<RegisterResult>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dismissDialog();
-                            DebugLog.e("error");
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dismissDialog();
+                        DebugLog.e("error");
+                    }
 
-                        @Override
-                        public void onNext(RegisterResult registerResult) {
+                    @Override
+                    public void onNext(RegisterResult registerResult) {
 
-                            SharedPreferencesUtils.getInstance().setLogin(
-                                    registerResult.uuid,
-                                    "",
-                                    "",
-                                    registerResult.userType,
-                                    registerResult.loginName
-                            );
-                            dismissDialog();
-                            DebugLog.e("next");
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, new RegisterSecondFragment(), "second").commit();
+                        SharedPreferencesUtils.getInstance().setLogin(
+                                registerResult.uuid,
+                                registerResult.nickName,
+                                "http://101.201.155.115:3113/heads/default/default.png",
+                                registerResult.userType,
+                                registerResult.loginName
+                        );
+                        dismissDialog();
+                        DebugLog.e("next");
+//                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, new RegisterSecondFragment(), "second").commit();
+                        getActivity().finish();
 
 
-                        }
-                    });
+                    }
+                });
 
 
     }
@@ -145,22 +154,22 @@ public class RegisterFirstFragment extends Fragment {
 
 
         Network.getInstance().sendSms(etTel.getText().toString().trim())
-                    .subscribe(new Subscriber<Object>() {
-                        @Override
-                        public void onCompleted() {
+                .subscribe(new Subscriber<Object>() {
+                    @Override
+                    public void onCompleted() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
 
-                        @Override
-                        public void onNext(Object o) {
+                    @Override
+                    public void onNext(Object o) {
 
-                        }
-                    });
+                    }
+                });
 
 
     }

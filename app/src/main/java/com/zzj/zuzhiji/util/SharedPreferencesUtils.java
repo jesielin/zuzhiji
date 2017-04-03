@@ -12,14 +12,14 @@ import java.util.Map;
  * Created by shawn on 17/3/28.
  */
 public class SharedPreferencesUtils {
-    private SharedPreferences mSharedPreference;
     private static SharedPreferencesUtils ourInstance = new SharedPreferencesUtils();
+    private SharedPreferences mSharedPreference;
+
+    private SharedPreferencesUtils() {
+    }
 
     public static SharedPreferencesUtils getInstance() {
         return ourInstance;
-    }
-
-    private SharedPreferencesUtils() {
     }
 
     public void init(Context context) {
@@ -27,9 +27,7 @@ public class SharedPreferencesUtils {
     }
 
     public boolean isLogin() {
-        if (TextUtils.isEmpty(mSharedPreference.getString(Constant.SHARED_KEY.UUID, "")))
-            return false;
-        return true;
+        return !TextUtils.isEmpty(mSharedPreference.getString(Constant.SHARED_KEY.UUID, ""));
     }
 
     public void setLogin(String uuid,String nickName,String avator,String userType,String loginName){
@@ -62,5 +60,14 @@ public class SharedPreferencesUtils {
             edit.putString(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
         }
         edit.apply();
+    }
+
+    public boolean isEmLogin() {
+
+        return mSharedPreference.getBoolean("EM_LOGIN", false);
+    }
+
+    public void setEmLogin(boolean isLogin) {
+        mSharedPreference.edit().putBoolean("EM_LOGIN", isLogin).apply();
     }
 }

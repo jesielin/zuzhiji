@@ -9,6 +9,7 @@ import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
+import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.network.entity.UserInfoResult;
 import com.zzj.zuzhiji.util.DebugLog;
@@ -35,50 +36,6 @@ import rx.schedulers.Schedulers;
  */
 
 public class Network {
-
-
-    private Retrofit normalRetrofit;
-    private Retrofit smsRetrofit;
-    private HttpService normalHttpService;
-    private HttpService smsHttpService;
-
-    //构造方法私有
-    private Network() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        //手动创建一个OkHttpClient并设置超时时间
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        httpClientBuilder.addInterceptor(logging);
-        httpClientBuilder.connectTimeout(Constant.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-
-        normalRetrofit = new Retrofit.Builder()
-                .client(httpClientBuilder.build())
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(Constant.BASE_URL_NOR)
-                .build();
-
-        normalHttpService = normalRetrofit.create(HttpService.class);
-
-        smsRetrofit = new Retrofit.Builder()
-                .client(httpClientBuilder.build())
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(Constant.BASE_URL_SMS)
-                .build();
-
-        smsHttpService = smsRetrofit.create(HttpService.class);
-    }
-
-    //在访问HttpMethods时创建单例
-    private static class SingletonHolder {
-        private static final Network INSTANCE = new Network();
-    }
-
-    //获取单例
-    public static Network getInstance() {
-        return SingletonHolder.INSTANCE;
-    }
 
 
     /**
@@ -119,7 +76,43 @@ public class Network {
 
 
     private static String sign = "123";
+    private Retrofit normalRetrofit;
+    private Retrofit smsRetrofit;
+    private HttpService normalHttpService;
+    private HttpService smsHttpService;
 
+    //构造方法私有
+    private Network() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        //手动创建一个OkHttpClient并设置超时时间
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+        httpClientBuilder.addInterceptor(logging);
+        httpClientBuilder.connectTimeout(Constant.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+
+        normalRetrofit = new Retrofit.Builder()
+                .client(httpClientBuilder.build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .baseUrl(Constant.BASE_URL_NOR)
+                .build();
+
+        normalHttpService = normalRetrofit.create(HttpService.class);
+
+        smsRetrofit = new Retrofit.Builder()
+                .client(httpClientBuilder.build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .baseUrl(Constant.BASE_URL_SMS)
+                .build();
+
+        smsHttpService = smsRetrofit.create(HttpService.class);
+    }
+
+    //获取单例
+    public static Network getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
 
     public Observable<List<NewsResult>> getNews(String type) {
         return compose(normalHttpService.getNews(type, sign));
@@ -129,8 +122,8 @@ public class Network {
         return compose(normalHttpService.addFriend(ownerUUID, friendUUID, sign));
     }
 
-    public Observable<RegisterResult> register(String loginName, String verifyCode, String type) {
-        return compose(normalHttpService.register(loginName, verifyCode, type, sign));
+    public Observable<RegisterResult> register(String loginName, String verifyCode, String type, String nickName) {
+        return compose(normalHttpService.register(loginName, verifyCode, type, nickName, sign));
     }
 
     public Observable<LoginResult> login(String loginName, String identifyCode) {
@@ -141,18 +134,18 @@ public class Network {
         return compose(normalHttpService.getSocialItems(userUUID, page, rows, sign));
     }
 
-    public Observable<Object> postSocial(RequestBody uuid, RequestBody message, MultipartBody.Part[] part) {
+    public Observable<Object> postSocial(RequestBody uuid, RequestBody message, RequestBody ownerNickName, MultipartBody.Part[] part) {
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), sign);
-        return compose(normalHttpService.sendMoment(uuid, message, part, description));
+        return compose(normalHttpService.sendMoment(uuid, message, part, ownerNickName, description));
     }
 
-    public Observable<Object> sendComment(String momentsID, String ownerUUID, String commenterUUID, String friendUUID, String message) {
+    public Observable<Object> sendComment(String momentsID, String ownerUUID, String commenterUUID, String friendUUID, String message
+            , String commenterNickName, String friendNickName) {
 
-        return compose(normalHttpService.sendComment(momentsID, ownerUUID, commenterUUID, friendUUID, message, sign));
+        return compose(normalHttpService.sendComment(momentsID, ownerUUID, commenterUUID, friendUUID, message, commenterNickName, friendNickName, sign));
     }
-
 
     public Observable<List<Tech>> searchTech(int currentPage, int size, String title, String owner) {
         return compose(normalHttpService.searchTechs(currentPage, size, title, owner, sign));
@@ -160,6 +153,10 @@ public class Network {
 
     public Observable<Object> delFriend(String ownerUUID, String friendUUID) {
         return compose(normalHttpService.delFriend(ownerUUID, friendUUID, sign));
+    }
+
+    public Observable<List<StudioItem>> getAllStudio() {
+        return compose(normalHttpService.getAllStudio(sign));
     }
 
     public Observable<SocialTotal> getUserSocialItems(String uuid, int page, int rows) {
@@ -203,6 +200,11 @@ public class Network {
                 ;
     }
 
+    //在访问HttpMethods时创建单例
+    private static class SingletonHolder {
+        private static final Network INSTANCE = new Network();
+    }
+
     /**
      * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
      *
@@ -212,7 +214,7 @@ public class Network {
 
         @Override
         public T call(HttpResult<T> httpResult) {
-            DebugLog.e("result:"+new Gson().toJson(httpResult));
+            DebugLog.e("result:" + new Gson().toJson(httpResult));
             if (httpResult == null || "error".equals(httpResult.result))
                 throw new ApiException(httpResult == null ? "网络错误!" : httpResult.msg);
             return httpResult.data;

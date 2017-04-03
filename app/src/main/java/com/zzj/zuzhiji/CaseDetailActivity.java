@@ -94,7 +94,8 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
     private boolean isChatThis = true;
 
-    private String targetFriend = "";
+    private String targetFriendId = "";
+    private String targetFriendNickName = "";
 
     private MaterialDialog dialog;
 
@@ -154,7 +155,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(ivAvator);
 
-            tvTitle.setText(item.momentOwner);
+            tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
             tvMessage.setText(item.message);
             tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
 
@@ -177,7 +178,8 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
                 setEditableState(true);
                 isChatThis = true;
-                targetFriend = "";
+                targetFriendId = "";
+                targetFriendNickName = "";
                 etComment.setHint("添加评论:");
                 targetCommentView = vContent;
                 CommonUtils.showSoftInput(CaseDetailActivity.this, etComment);
@@ -242,7 +244,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                     CommonUtils.hideSoftInput(CaseDetailActivity.this, etComment);
 
                 Network.getInstance().sendComment(item.momentsID, item.momentOwner, SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                        targetFriend, etComment.getText().toString())
+                        targetFriendId, etComment.getText().toString(), SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME), targetFriendNickName)
                         .doOnSubscribe(new Action0() {
                             @Override
                             public void call() {
@@ -266,8 +268,14 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                             @Override
                             public void onNext(Object o) {
                                 isChangeComment = true;
-                                comments.add(new CommentItem(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                                        targetFriend, etComment.getText().toString()));
+                                //TODO:
+                                comments.add(new CommentItem(
+                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME),
+                                        targetFriendId,
+                                        targetFriendNickName,
+                                        etComment.getText().toString()
+                                ));
                                 mAdapter.notifyDataSetChanged();
                                 etComment.setText("");
                                 dismissDialog();
@@ -432,7 +440,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
             }
 
             final CommentItem comment = comments.get(position);
-            holder.tvCommenterName.setText(comment.commenterUUID);
+            holder.tvCommenterName.setText(comment.commenterNickname == null ? comment.commenterUUID : comment.commenterNickname);
             holder.tvSubTitle.setText(comment.message);
             if (TextUtils.isEmpty(comment.targetCommenterUUID)) {
                 holder.tvTextHuiFu.setVisibility(View.GONE);
@@ -440,7 +448,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
             } else {
                 holder.tvTextHuiFu.setVisibility(View.VISIBLE);
                 holder.tvFriendName.setVisibility(View.VISIBLE);
-                holder.tvFriendName.setText(comment.targetCommenterUUID);
+                holder.tvFriendName.setText(comment.targetCommenterNickname == null ? comment.targetCommenterUUID : comment.targetCommenterNickname);
             }
 
 
@@ -448,7 +456,8 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                 @Override
                 public void onClick(View v) {
                     setEditableState(true);
-                    targetFriend = comment.commenterUUID;
+                    targetFriendNickName = comment.commenterNickname;
+                    targetFriendId = comment.commenterUUID;
                     isChatThis = false;
                     targetCommentView = holder.clickAreaView;
                     etComment.setHint("回复" + comment.commenterUUID + ":");

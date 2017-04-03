@@ -8,15 +8,15 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.ArrayMap;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.R;
@@ -24,6 +24,7 @@ import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
+import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCircleTransform;
@@ -31,6 +32,7 @@ import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -44,6 +46,8 @@ import okhttp3.RequestBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
@@ -56,8 +60,8 @@ public class RegisterSecondFragment extends Fragment {
 
     @BindView(R.id.avator)
     ImageView ivAvator;
-    @BindView(R.id.nickname)
-    EditText etNickName;
+    @BindView(R.id.choose_studio)
+    Button btnChooseStudio;
 
     private String gender = "1";
 
@@ -82,13 +86,66 @@ public class RegisterSecondFragment extends Fragment {
         return contentView;
     }
 
+    @OnClick(R.id.choose_studio)
+    public void chooseStudio(View view) {
+
+        Network.getInstance().getAllStudio()
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        dialog = new MaterialDialog.Builder(getActivity())
+                                .title("工作室")
+                                .content("获取列表中..")
+                                .progress(true, 0)
+                                .cancelable(false)
+                                .theme(Theme.LIGHT)
+                                .progressIndeterminateStyle(false)
+                                .show();
+
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<StudioItem>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "获取工作室错误:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        dismissDialog();
+                    }
+
+                    @Override
+                    public void onNext(List<StudioItem> studioItems) {
+                        List<String> items = new ArrayList<String>();
+                        for (StudioItem i : studioItems) {
+                            items.add(i.title);
+                        }
+
+                        dialog.getBuilder()
+                                .title("选择工作室")
+                                .items(items)
+                                .cancelable(true)
+                                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                        Toast.makeText(getActivity(), which + "", Toast.LENGTH_SHORT).show();
+                                        dismissDialog();
+                                        return false;
+                                    }
+                                })
+                                .positiveText("确定").show();
+                    }
+                });
+
+    }
 
     @OnClick(R.id.complete)
     public void complete(View view) {
-        if (TextUtils.isEmpty(etNickName.getText().toString().trim())) {
-            Toast.makeText(getActivity(), "请输入昵称", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
 
         if (paths.size() == 0) {
             Toast.makeText(getActivity(), "请选择头像", Toast.LENGTH_SHORT).show();
@@ -134,7 +191,7 @@ public class RegisterSecondFragment extends Fragment {
                                 RequestBody.create(
                                         MediaType.parse("multipart/form-data"), uuidText);
                         // 添加nickname
-                        String nickNameText = etNickName.getText().toString().trim();
+                        String nickNameText = "";
                         RequestBody nickName =
                                 RequestBody.create(
                                         MediaType.parse("multipart/form-data"), nickNameText);
@@ -144,7 +201,7 @@ public class RegisterSecondFragment extends Fragment {
                                 RequestBody.create(
                                         MediaType.parse("multipart/form-data"), sexText);
 
-                            Network.getInstance().setUserInfo(uuid, nickName, sex, avatorPart)
+                        Network.getInstance().setUserInfo(uuid, nickName, sex, avatorPart)
                                     .subscribe(new Subscriber<SetInfoResult>() {
                                         @Override
                                         public void onCompleted() {

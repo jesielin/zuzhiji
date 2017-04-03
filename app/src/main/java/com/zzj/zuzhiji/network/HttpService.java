@@ -8,6 +8,7 @@ import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
+import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.network.entity.UserInfoResult;
 
@@ -51,7 +52,7 @@ public interface HttpService {
      * @return
      */
     @GET("/register")
-    Observable<HttpResult<RegisterResult>> register(@Query("loginName") String loginName, @Query("identifyingCode") String identifyingCode, @Query("regType") String regType, @Query("sign") String sign);
+    Observable<HttpResult<RegisterResult>> register(@Query("loginName") String loginName, @Query("identifyingCode") String identifyingCode, @Query("regType") String regType, @Query("nickname") String nickName, @Query("sign") String sign);
 
     /**
      * 首页动态
@@ -133,12 +134,24 @@ public interface HttpService {
     @GET("/getAllMoment")
     Observable<HttpResult<SocialTotal>> getSocialItems(@Query("userUUID") String userUUID, @Query("page") int page, @Query("rows") int rows, @Query("sign") String sign);
 
+
+    ///getAllStudio?sign=123
+
+    /**
+     * 获取工作室列表
+     * @param sign
+     * @return
+     */
+    @GET("/getAllStudio")
+    Observable<HttpResult<List<StudioItem>>> getAllStudio(@Query("sign") String sign);
+
     /**
      * 发表朋友圈
      *
      * @param uuid
      * @param message
      * @param parts
+     * @param ownerNickname
      * @param sign
      * @return
      */
@@ -147,6 +160,7 @@ public interface HttpService {
     Observable<HttpResult<Object>> sendMoment(@Part("owner") RequestBody uuid,
                                               @Part("message") RequestBody message,
                                               @Part MultipartBody.Part[] parts,
+                                              @Part("ownerNickname") RequestBody ownerNickname,
                                               @Part("sign") RequestBody sign);
 
 
@@ -167,12 +181,28 @@ public interface HttpService {
      * @param sign
      * @return
      */
+
+    /**
+     * 发表评论
+     *
+     * @param momentsID         朋友圈id
+     * @param ownerUUID         朋友圈发布者id
+     * @param commenterUUID     评论者id
+     * @param friendUUID        被评论人id 可为空
+     * @param message           评论内容
+     * @param commenterNickname 评论者昵称
+     * @param friendNickname    被评论人昵称
+     * @param sign
+     * @return
+     */
     @GET("sendComment")
     Observable<HttpResult<Object>> sendComment(@Query("momentsID") String momentsID,
                                                @Query("ownerUUID") String ownerUUID,
                                                @Query("commenterUUID") String commenterUUID,
                                                @Query("friendUUID") String friendUUID,
                                                @Query("message") String message,
+                                               @Query("commenterNickname") String commenterNickname,
+                                               @Query("friendNickname") String friendNickname,
                                                @Query("sign") String sign);
 
     ///getUserMoment?userUUID=FF3&page=8&rows=3&sign=123

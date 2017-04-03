@@ -32,7 +32,6 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SocialItem;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
-import com.zzj.zuzhiji.network.entity.UserInfoResult;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -191,34 +190,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     }
 
-    private void getUserName(final TextView tv, final String ownerId) {
 
-        Network.getInstance().getUserInfo(ownerId)
-                .subscribe(new Subscriber<UserInfoResult>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(UserInfoResult userInfoResult) {
-                        if (userInfoResult != null)
-                            tv.setText(userInfoResult.nickName);
-                        else {
-                            DebugLog.e("user owner:" + ownerId);
-                            //TODO:设置不上
-                            tv.setText(String.valueOf(ownerId));
-                        }
-
-                    }
-                });
-
-    }
 
     @Override
     public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
@@ -293,9 +265,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
         public void onBindViewHolder(final SocialVH holder, int position) {
             final SocialItem item = datas.get(position);
             holder.bgaNinePhotoLayout.setData(item.photos);
-            //TODO:
-//            getUserName(holder.tvTitle,item.momentOwner);
-            holder.tvTitle.setText(item.momentOwner);
+            holder.tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
             holder.tvSubTitle.setText(item.message);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
             holder.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
