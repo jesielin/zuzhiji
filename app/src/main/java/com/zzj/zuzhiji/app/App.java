@@ -2,6 +2,7 @@ package com.zzj.zuzhiji.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.controller.EaseUI;
@@ -41,4 +42,9 @@ public class App extends Application {
         context = this;
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 }

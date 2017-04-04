@@ -8,13 +8,54 @@ android {
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // Enabling multidex support.
+        multiDexEnabled true
     }
+
+    lintOptions{
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    signingConfigs {
+
+
+        release {
+            storeFile file("zzj.jks")
+            storePassword "zzjrelease"
+            keyAlias "zzj"
+            keyPassword "zzjrelease"
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+
+            signingConfig signingConfigs.release
+
+
+            // 混淆
+            minifyEnabled true
+            // Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        // 输出apk名称为appname-1.0-beta1-xxxx-xx-xx.apk
+                        def fileName = "app-${defaultConfig.versionName}-beta2.apk"
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
         }
     }
 }
@@ -41,7 +82,7 @@ dependencies {
     compile 'com.afollestad.material-dialogs:core:0.9.2.1'
     compile 'com.afollestad.material-dialogs:commons:0.9.2.1'
     //glide
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+//    compile 'com.github.bumptech.glide:glide:3.7.0'
     //fragment manager
     compile 'com.github.Aspsine:FragmentNavigator:1.0.2'
     //circle image view
@@ -61,10 +102,11 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-
     //activity manager
     compile 'com.yayandroid:TheActivityManager:1.0.6'
-
     //video player
     compile 'com.shuyu:GSYVideoPlayer:1.6.1'
+    compile project(':easeUI_CN')
+
+    compile 'com.android.support:multidex:1.0.0'
 }
