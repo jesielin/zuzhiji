@@ -29,8 +29,11 @@ public class SettingActivity extends AppCompatActivity {
 
         SharedPreferencesUtils.getInstance().setLogout();
         TheActivityManager.getInstance().finishAll();
-//        android.os.Process.killProcess(android.os.Process.myPid()) ;  //获取PID
-//        System.exit(0);   //常规java、c#的标准退出法，返回值为0代表正常退出
+
+    }
+
+    @OnClick(R.id.question)
+    public void question() {
 
     }
 }

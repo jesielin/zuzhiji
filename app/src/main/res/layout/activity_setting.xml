@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:background="@color/layout_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -29,9 +30,177 @@
 
     </RelativeLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:background="@color/divider" />
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/about"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="关于我们"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:background="@color/divider" />
+
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/question"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="意见反馈"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/divider" />
+
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/check_version"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="检查更新"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/divider" />
+
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/clean_cache"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="清除缓存"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/divider" />
+
     <RelativeLayout
         android:clickable="true"
         android:id="@+id/logout"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/touch_bg">

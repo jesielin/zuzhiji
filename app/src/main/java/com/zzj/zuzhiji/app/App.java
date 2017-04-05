@@ -40,6 +40,15 @@ public class App extends Application {
 
         SharedPreferencesUtils.getInstance().init(this);
         context = this;
+
+        //当程序发生Uncaught异常时捕获
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable e) {
+                //做你要做的处理，比如把e.getMessage()保存到文件，发送一个email等等，不是本篇重点，不再赘述
+                //TODO:
+            }
+        });
     }
 
     @Override

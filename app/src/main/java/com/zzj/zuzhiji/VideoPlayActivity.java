@@ -17,6 +17,7 @@ import com.shuyu.gsyvideoplayer.GSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.util.DebugLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,6 +55,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_play);
         ButterKnife.bind(this);
+        resolveIntent();
         init();
     }
 
@@ -64,7 +66,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         String source1 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
 
         String source2 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f30.mp4";
-
+//
         if (TextUtils.isEmpty(videoUrl)) {
             videoUrl = "";
         }
@@ -73,6 +75,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         //videoPlayer.setUp(url, true, new File(FileUtils.getPath()), "");
 
 
+        DebugLog.e("videoUrl:" + videoUrl);
         videoPlayer.setUp(videoUrl, true, null, "");
 
         //增加title

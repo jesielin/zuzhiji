@@ -31,19 +31,33 @@
 
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".LoginActivity">
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".SearchActivity"></activity>
-        <activity android:name=".SettingActivity"></activity>
-        <activity android:name=".HomePageActivity"></activity>
-        <activity android:name=".PublishActivity"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".SearchActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".SettingActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".HomePageActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".PublishActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".CaseDetailActivity"
             android:windowSoftInputMode="stateUnspecified|adjustResize"></activity>
@@ -53,7 +67,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".ChatActivity"></activity>
+        <activity
+            android:name=".ChatActivity"
+            android:screenOrientation="portrait"></activity>
 
 
         <!-- 设置环信应用的AppKey -->

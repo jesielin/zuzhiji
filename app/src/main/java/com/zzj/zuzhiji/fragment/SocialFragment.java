@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -46,6 +48,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
+import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
@@ -227,6 +230,8 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     public class SocialVH extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.avator)
+        CircleImageView ivAvator;
         @BindView(R.id.title)
         TextView tvTitle;
         @BindView(R.id.subtitle)
@@ -269,7 +274,10 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             holder.tvSubTitle.setText(item.message);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
             holder.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
-
+            Glide.with(getActivity())
+                    .load(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivAvator);
 
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
                 @Override
