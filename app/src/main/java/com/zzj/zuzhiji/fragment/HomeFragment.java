@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(getActivity(), tab.getText(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), tab.getText(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

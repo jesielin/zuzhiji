@@ -12,6 +12,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="50dp"
         android:layout_height="55dp"
+
         android:id="@+id/avator"
         android:src="@drawable/avator" />
 

@@ -14,125 +14,125 @@
     <!--&gt;-->
 
     <ScrollView
-            android:id="@+id/scroll_container"
-            android:layout_width="match_parent"
+        android:id="@+id/scroll_container"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/actionBarSize"
         android:layout_marginTop="?attr/actionBarSize"
         android:overScrollMode="always">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/md_white_1000"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="10dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:background="@color/md_white_1000"
-                    android:orientation="horizontal"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="10dp">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avator"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/avator" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/avator"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:src="@drawable/avator" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp">
-
-                        <LinearLayout
-                            android:id="@+id/left"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=""
-                                android:textColor="@color/md_black_1000"
-                                android:textSize="20dp" />
-
-                            <TextView
-                                android:id="@+id/subtitle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text=""
-                                android:textColor="@color/text_hint"
-                                android:textSize="14dp" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignTop="@id/left"
-                            android:text=""
-                            android:textSize="14dp" />
-                    </RelativeLayout>
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/content"
-
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/touch_bg"
-                    android:orientation="vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp">
-
-                    <TextView
-                        android:id="@+id/message"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:textColor="@color/text_hint"
-                        android:textSize="16dp" />
-
-                    <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
-                        android:id="@+id/image_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        app:bga_npl_itemCornerRadius="0dp"
-                        app:bga_npl_itemSpanCount="3"
-                        app:bga_npl_itemWhiteSpacing="4dp"
-
-                        app:bga_npl_itemWidth="0dp"
-                        app:bga_npl_otherWhiteSpacing="32dp"
-                        app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
-                        app:bga_npl_showAsLargeWhenOnlyOne="true" />
-
-
-                </LinearLayout>
-
-                <com.zzj.zuzhiji.view.NestedListView
-                    android:id="@+id/list"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="20dp"
-                    android:background="@color/md_white_1000" />
+                    android:layout_marginLeft="10dp">
+
+                    <LinearLayout
+                        android:id="@+id/left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/md_black_1000"
+                            android:textSize="20dp" />
+
+                        <TextView
+                            android:id="@+id/subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text=""
+                            android:textColor="@color/text_hint"
+                            android:textSize="14dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@id/left"
+                        android:text=""
+                        android:textSize="14dp" />
+                </RelativeLayout>
 
             </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/content"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/touch_bg"
+                android:orientation="vertical"
+                android:paddingBottom="10dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/text_hint"
+                    android:textSize="16dp" />
+
+                <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
+                    android:id="@+id/image_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:bga_npl_itemCornerRadius="0dp"
+                    app:bga_npl_itemSpanCount="3"
+                    app:bga_npl_itemWhiteSpacing="4dp"
+
+                    app:bga_npl_itemWidth="0dp"
+                    app:bga_npl_otherWhiteSpacing="32dp"
+                    app:bga_npl_placeholderDrawable="@mipmap/bga_pp_ic_holder_light"
+                    app:bga_npl_showAsLargeWhenOnlyOne="true" />
+
+
+            </LinearLayout>
+
+            <com.zzj.zuzhiji.view.NestedListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:background="@color/md_white_1000" />
+
+        </LinearLayout>
     </ScrollView>
     <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 

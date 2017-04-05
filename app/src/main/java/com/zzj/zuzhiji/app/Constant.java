@@ -66,4 +66,5 @@ public interface Constant {
     interface VIDEO_PLAY_KEYS {
         String VIDEO_URL = "VIDEO_URL";
     }
+
 }

@@ -13,6 +13,8 @@ package com.zzj.zuzhiji.util;
 
 import android.util.Log;
 
+import com.zzj.zuzhiji.BuildConfig;
+
 
 public class DebugLog {
 
@@ -26,8 +28,7 @@ public class DebugLog {
     }
 
     public static boolean isDebuggable() {
-//        return BuildConfig.DEBUG;
-        return true;
+        return BuildConfig.DEBUG;
     }
 
     private static String createLog(String log) {

@@ -136,7 +136,7 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public void onBindViewHolder(VideoNewsVH holder, int position) {
 
-            NewsResult item = datas.get(position);
+            final NewsResult item = datas.get(position);
             Glide.with(getActivity()).load(item.titleImgUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.placeholder_no_pic)
                     .into(holder.imv);
@@ -146,6 +146,7 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    startActivity(VideoPlayActivity.newIntent(getActivity(), item.contents));
                     startActivity(new Intent(getActivity(), VideoPlayActivity.class));
                 }
             });

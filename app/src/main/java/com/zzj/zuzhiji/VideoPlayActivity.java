@@ -1,18 +1,22 @@
 package com.zzj.zuzhiji;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.View;
 
 import com.shuyu.gsyvideoplayer.GSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
+import com.zzj.zuzhiji.app.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +33,20 @@ public class VideoPlayActivity extends AppCompatActivity {
     OrientationUtils orientationUtils;
     private Transition transition;
     private boolean isTransition = true;
+    private String videoUrl;
+
+    public static Intent newIntent(Context context, String videoUrl) {
+
+        Intent intent = new Intent(context, VideoPlayActivity.class);
+        intent.putExtra(Constant.VIDEO_PLAY_KEYS.VIDEO_URL, videoUrl);
+
+        return intent;
+    }
+
+    private void resolveIntent() {
+        Intent intent = getIntent();
+        videoUrl = intent.getStringExtra(Constant.VIDEO_PLAY_KEYS.VIDEO_URL);
+    }
 
 
     @Override
@@ -41,16 +59,21 @@ public class VideoPlayActivity extends AppCompatActivity {
 
     private void init() {
         String url = "http://baobab.wdjcdn.com/14564977406580.mp4";
-        //需要路径的
-        //videoPlayer.setUp(url, true, new File(FileUtils.getPath()), "");
 
         //借用了jjdxm_ijkplayer的URL
         String source1 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
 
         String source2 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f30.mp4";
 
+        if (TextUtils.isEmpty(videoUrl)) {
+            videoUrl = "";
+        }
 
-        videoPlayer.setUp(source1, true, null, "");
+        //需要路径的
+        //videoPlayer.setUp(url, true, new File(FileUtils.getPath()), "");
+
+
+        videoPlayer.setUp(videoUrl, true, null, "");
 
         //增加title
         videoPlayer.getTitleTextView().setVisibility(View.VISIBLE);
@@ -90,6 +113,9 @@ public class VideoPlayActivity extends AppCompatActivity {
 
         //过渡动画
         initTransition();
+//        }else {
+//            Toast.makeText(this, "视频错误！", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
