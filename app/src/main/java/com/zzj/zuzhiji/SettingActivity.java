@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -33,7 +34,13 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.question)
-    public void question() {
+    public void question(View view) {
 
     }
+
+    @OnClick(R.id.about)
+    public void about(View view) {
+        startActivity(new Intent(this, AboutActivity.class));
+    }
+
 }

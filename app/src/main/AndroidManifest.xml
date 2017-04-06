@@ -71,6 +71,10 @@
             android:name=".ChatActivity"
             android:screenOrientation="portrait"></activity>
 
+        <activity
+            android:name=".AboutActivity"
+            android:screenOrientation="portrait"></activity>
+
 
         <!-- 设置环信应用的AppKey -->
         <meta-data
