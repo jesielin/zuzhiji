@@ -50,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         mNavigator.onSaveInstanceState(outState);
     }
 
+    public void switchFragment(int index){
+        setCurrentTab(index);
+
+    }
+
     @OnClick({R.id.home, R.id.social, R.id.news, R.id.message, R.id.me})
     public void navCheck(View view) {
         switch (view.getId()) {

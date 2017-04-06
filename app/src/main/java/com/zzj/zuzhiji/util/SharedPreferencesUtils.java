@@ -62,6 +62,12 @@ public class SharedPreferencesUtils {
         edit.apply();
     }
 
+    public void setValue(String key,String value){
+        SharedPreferences.Editor edit = mSharedPreference.edit();
+            edit.putString(key,  value);
+        edit.apply();
+    }
+
     public boolean isEmLogin() {
 
         return mSharedPreference.getBoolean("EM_LOGIN", false);

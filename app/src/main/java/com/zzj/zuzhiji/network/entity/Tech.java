@@ -35,4 +35,6 @@ public class Tech {
     public String status;
     public String headSculpture;
     public String isFriend;
+
+
 }

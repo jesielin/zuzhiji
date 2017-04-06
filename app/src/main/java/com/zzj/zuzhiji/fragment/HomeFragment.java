@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +19,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
+import com.zzj.zuzhiji.MainActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SearchActivity;
+import com.zzj.zuzhiji.ServiceActivity;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,10 +44,13 @@ import rx.Subscriber;
  * Created by shawn on 2017-03-29.
  */
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.banner)
     Banner banner;
+
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
@@ -88,33 +97,39 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    @OnClick(R.id.service)
+    public void service(View view){
+        startActivity(new Intent(getActivity(), ServiceActivity.class));
+    }
 
+    @OnClick(R.id.video)
+    public void video(View view){
+        MainActivity activity = (MainActivity) getActivity();
 
+        SharedPreferencesUtils.getInstance().setValue(Constant.SHARED_KEY.NEWS_TAB_INDEX,Constant.SHARED_VALUES.NEWS_VIDEO_TAB_INDEX);
+        activity.switchFragment(2);
+    }
 
-            Network.getInstance().getRecommendTech(Constant.PAGE_SIZE)
-                    .subscribe(new Subscriber<List<Tech>>() {
-                        @Override
-                        public void onCompleted() {
+    @OnClick(R.id.news)
+    public void news(View view){
+        MainActivity activity = (MainActivity) getActivity();
 
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onNext(List<Tech> teches) {
-
-                        }
-                    });
-
+        SharedPreferencesUtils.getInstance().setValue(Constant.SHARED_KEY.NEWS_TAB_INDEX,Constant.SHARED_VALUES.NEWS_TEXT_TAB_INDEX);
+        activity.switchFragment(2);
     }
 
     private void setupRecyclerView() {
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_orange_light, android.R.color.holo_blue_light, android.R.color.holo_green_light, android.R.color.holo_red_light);
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+                onRefresh();
+            }
+        });
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager
@@ -142,6 +157,35 @@ public class HomeFragment extends Fragment {
         startActivity(new Intent(getActivity(), SearchActivity.class));
     }
 
+    @Override
+    public void onRefresh() {
+        Network.getInstance().getRecommendTech(Constant.PAGE_SIZE)
+                .subscribe(new Subscriber<List<Tech>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(List<Tech> teches) {
+
+                        if (teches != null && teches.size()>0) {
+                            datas.clear();
+                            datas.addAll(teches);
+                            mAdapter.notifyDataSetChanged();
+
+                        }
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+    }
+
     public class RecommendVH extends RecyclerView.ViewHolder {
         @BindView(R.id.avator)
         ImageView ivAvator;
@@ -149,6 +193,8 @@ public class HomeFragment extends Fragment {
         TextView tvTitle;
         @BindView(R.id.subtitle)
         TextView tvSubTitle;
+        @BindView(R.id.clickArea)
+        View clickArea;
 
         public RecommendVH(View itemView) {
             super(itemView);
@@ -164,9 +210,19 @@ public class HomeFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(RecommendVH holder, int position) {
-            holder.tvTitle.setText(datas.get(position).id);
-            holder.tvSubTitle.setText(datas.get(position).summary);
+        public void onBindViewHolder(RecommendVH holder, final int position) {
+            Tech item = datas.get(position);
+            holder.tvTitle.setText(TextUtils.isEmpty(item.nickName)?item.id:item.nickName);
+            holder.tvSubTitle.setText(item.summary);
+
+            Glide.with(getActivity()).load(item.headSculpture).diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.avator).into(holder.ivAvator);
+
+            holder.clickArea.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), datas.get(position).toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         @Override

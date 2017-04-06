@@ -23,6 +23,12 @@
             android:text="搜索技师"
             android:textColor="@color/colorPrimaryDark" />
     </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent">
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -95,6 +101,7 @@
                             android:background="@drawable/touch_bg"
                             android:clickable="true"
                             android:gravity="center"
+
                             android:orientation="vertical">
 
                             <ImageView
@@ -142,6 +149,7 @@
                         android:layout_weight="1">
 
                         <LinearLayout
+
                             android:id="@+id/video"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -271,4 +279,5 @@
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

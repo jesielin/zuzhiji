@@ -7,14 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zzj.zuzhiji.R;
+import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,15 +39,43 @@ public class NewsFragment extends Fragment {
         View contentView = View.inflate(getActivity(), R.layout.fragment_news, null);
         ButterKnife.bind(this, contentView);
 
+
+
         setupViewPager();
+        resolveTabIndex();
 
         return contentView;
+    }
+
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        DebugLog.e("hidden:"+hidden);
+
+        if (hidden){
+            SharedPreferencesUtils.getInstance().setValue(Constant.SHARED_KEY.NEWS_TAB_INDEX,String.valueOf(tabLayout.getSelectedTabPosition()));
+        }else {
+            resolveTabIndex();
+        }
+    }
+
+
+    private void resolveTabIndex(){
+        String index = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NEWS_TAB_INDEX);
+        DebugLog.e("position:"+Integer.valueOf(index));
+        if (!"".equals(index)){
+            viewPager.setCurrentItem(Integer.valueOf(index));
+
+        }
     }
 
     private void setupViewPager() {
 
         viewPager.setAdapter(new NewsPagerAdapter(getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
 

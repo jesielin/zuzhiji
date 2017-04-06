@@ -35,6 +35,14 @@ public interface Constant {
         String NICK_NAME = "NICK_NAME";
         String USER_TYPE = "USER_TYPE";
 
+        String NEWS_TAB_INDEX = "NEWS_TAB_INDEX";
+
+
+    }
+
+    interface SHARED_VALUES{
+        String NEWS_VIDEO_TAB_INDEX = "0";
+        String NEWS_TEXT_TAB_INDEX = "1";
     }
 
     interface ACTIVITY_CODE {
