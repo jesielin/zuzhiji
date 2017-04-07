@@ -124,7 +124,13 @@ public class MeFragment extends Fragment {
 
     @OnClick({R.id.dongtai, R.id.anli})
     public void toHomePage(View view) {
-        startActivity(new Intent(getActivity(), HomePageActivity.class));
+        startActivity(HomePageActivity.newIntent(getActivity(),
+                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR),
+                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME),
+                "",
+                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_TYPE),
+                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                Constant.USER_IS_FRIEND));
     }
 
     @OnClick(R.id.shezhi)

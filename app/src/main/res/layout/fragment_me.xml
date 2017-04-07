@@ -133,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -176,7 +176,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
 
@@ -220,7 +220,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
 
@@ -263,7 +263,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -355,7 +355,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <ImageView
                     android:layout_width="24dp"
