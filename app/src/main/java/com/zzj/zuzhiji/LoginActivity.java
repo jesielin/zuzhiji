@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.LoginResult;
@@ -99,9 +101,39 @@ public class LoginActivity extends AppCompatActivity {
                                     loginResult.nickName,
                                     loginResult.headSculpture,
                                     loginResult.userType,
-                                    loginResult.loginName
+                                    loginResult.loginName,
+                                    loginResult.sex
                             );
-                            dismissDialog();
+
+
+                            DebugLog.e("uuid:" + loginResult.uuid);
+
+                            EMClient.getInstance().login(loginResult.uuid, "123456", new EMCallBack() {//回调
+                                @Override
+                                public void onSuccess() {
+                                    EMClient.getInstance().groupManager().loadAllGroups();
+                                    EMClient.getInstance().chatManager().loadAllConversations();
+
+                                    DebugLog.d("登录聊天服务器成功！");
+                                    SharedPreferencesUtils.getInstance().setEmLogin(true);
+                                    dismissDialog();
+
+                                }
+
+                                @Override
+                                public void onProgress(int progress, String status) {
+
+                                }
+
+                                @Override
+                                public void onError(int code, String message) {
+                                    DebugLog.d("code:"+code+",MESSAGE:"+message);
+                                    SharedPreferencesUtils.getInstance().setEmLogin(false);
+                                    dismissDialog();
+                                }
+                            });
+
+
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
                             finish();
 

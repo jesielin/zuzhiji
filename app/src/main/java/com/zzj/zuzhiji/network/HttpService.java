@@ -112,6 +112,32 @@ public interface HttpService {
 
     );
 
+    /**
+     * 更新用户信息
+     * uuid 用户唯一标示
+     * nickName 用户昵称
+     * status 用户状态  0未启用 1启用
+     * userType 用户类型 1技师 2普通用户
+     * level 用户等级
+     * isRecommend 是否推荐技师  1推荐
+     * summary 简介
+     * headSculpture 头像
+     * sex 性别  1男 0女
+     *
+     * @return
+     */
+    @Multipart
+    @POST("/setUserinfo")
+    Observable<HttpResult<SetInfoResult>> setUserinfoWithStudio(
+            @Part("uuid") RequestBody uuid,
+            @Part("nickName") RequestBody nickName,
+            @Part("sex") RequestBody sex,
+            @Part("studio") RequestBody studio,
+            @Part MultipartBody.Part imgs,
+            @Part("sign") RequestBody sign
+
+    );
+
 
     /**
      * 获取用户信息

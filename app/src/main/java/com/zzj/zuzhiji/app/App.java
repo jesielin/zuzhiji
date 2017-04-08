@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.controller.EaseUI;
 import com.squareup.leakcanary.LeakCanary;
 import com.yayandroid.theactivitymanager.TheActivityManager;
@@ -33,8 +34,13 @@ public class App extends Application {
         }
         LeakCanary.install(this);
 
+        //TODO:
+        EMOptions options = new EMOptions();
+        options.setAutoLogin(true);
+//        EaseUI.getInstance().getNotifier().init(this);
+
         EaseUI.getInstance().init(this, null);
-        EMClient.getInstance().setDebugMode(false);
+        EMClient.getInstance().setDebugMode(true);
 
         TheActivityManager.getInstance().configure(this);
 

@@ -152,7 +152,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
             //TODO:
             Glide.with(this)
                     .load(R.drawable.avator)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(ivAvator);
 
             tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);

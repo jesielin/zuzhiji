@@ -36,4 +36,8 @@ public class CommonUtils {
         //获取状态信息
         return imm.isActive();//true 打开
     }
+
+    public static String getAvatorAddress(String uuid){
+        return String.format("http://101.201.155.115:3113/heads/%s-head.jpg",uuid);
+    }
 }

@@ -30,13 +30,14 @@ public class SharedPreferencesUtils {
         return !TextUtils.isEmpty(mSharedPreference.getString(Constant.SHARED_KEY.UUID, ""));
     }
 
-    public void setLogin(String uuid,String nickName,String avator,String userType,String loginName){
+    public void setLogin(String uuid,String nickName,String avator,String userType,String loginName,String sex){
         mSharedPreference.edit()
                 .putString(Constant.SHARED_KEY.UUID,uuid)
                 .putString(Constant.SHARED_KEY.NICK_NAME,nickName)
                 .putString(Constant.SHARED_KEY.AVATOR,avator)
                 .putString(Constant.SHARED_KEY.USER_TYPE,userType)
                 .putString(Constant.SHARED_KEY.LOGIN_NAME,loginName)
+                .putString(Constant.SHARED_KEY.USER_GENDER,sex)
                 .apply();
     }
 
@@ -47,6 +48,8 @@ public class SharedPreferencesUtils {
                 .putString(Constant.SHARED_KEY.AVATOR,"")
                 .putString(Constant.SHARED_KEY.USER_TYPE,"")
                 .putString(Constant.SHARED_KEY.LOGIN_NAME,"")
+                .putString(Constant.SHARED_KEY.USER_GENDER,"")
+                .putString(Constant.SHARED_KEY.USER_STUDIO,"")
                 .apply();
     }
 
@@ -58,7 +61,9 @@ public class SharedPreferencesUtils {
         SharedPreferences.Editor edit = mSharedPreference.edit();
         for (Map.Entry entry : items.entrySet()) {
             edit.putString(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
+            DebugLog.e(entry.getKey()+":"+entry.getValue());
         }
+
         edit.apply();
     }
 

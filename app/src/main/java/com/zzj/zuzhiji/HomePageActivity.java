@@ -3,6 +3,7 @@ package com.zzj.zuzhiji;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -142,9 +143,14 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         if (SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID).equals(friendUuid)) {
             editButton.setVisibility(View.VISIBLE);
             bottomNav.setVisibility(View.GONE);
+            swipeRefreshLayout.setPadding(0,0,0,0);
         } else {
             editButton.setVisibility(View.GONE);
             bottomNav.setVisibility(View.VISIBLE);
+            final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
+                    new int[] { android.R.attr.actionBarSize });
+            int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
+            swipeRefreshLayout.setPadding(0,0,0,mActionBarSize);
         }
 
         tvTitle.setText(friendNickName);
@@ -162,7 +168,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
         Glide.with(this)
                 .load(friendAvator)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {

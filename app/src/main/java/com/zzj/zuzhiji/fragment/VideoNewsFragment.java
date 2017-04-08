@@ -138,7 +138,7 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
 
             final NewsResult item = datas.get(position);
             Glide.with(getActivity()).load(item.titleImgUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.placeholder_no_pic)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.drawable.placeholder_no_pic)
                     .into(holder.imv);
             holder.tvTitle.setText(item.title);
             holder.tvHot.setText(item.hot);

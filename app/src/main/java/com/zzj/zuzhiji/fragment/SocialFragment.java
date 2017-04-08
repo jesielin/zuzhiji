@@ -274,9 +274,11 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             holder.tvSubTitle.setText(item.message);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
             holder.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
+            DebugLog.e("avator address:"+CommonUtils.getAvatorAddress(item.momentOwner));
             Glide.with(getActivity())
-                    .load(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .load(CommonUtils.getAvatorAddress(item.momentOwner))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .error(R.drawable.avator)
                     .into(holder.ivAvator);
 
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {

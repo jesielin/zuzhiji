@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="?attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="40dp"
+            android:layout_centerVertical="true"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="生活中6个坏习惯让胃癌找上你"
+            android:singleLine="true"
+            android:maxLength="12"
+            android:id="@+id/title"
+            android:textSize="20dp"
+            android:layout_centerInParent="true"
+            android:textColor="@color/colorPrimaryDark" />
+
+
+    </RelativeLayout>
+
+    <WebView
+        android:layout_width="match_parent"
+        android:id="@+id/web"
+        android:layout_height="match_parent"></WebView>
+</LinearLayout>

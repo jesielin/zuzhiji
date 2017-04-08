@@ -14,14 +14,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 import com.zzj.zuzhiji.ChatActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.MessageResult;
-import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -49,9 +46,20 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View contentView = View.inflate(getActivity(), R.layout.fragment_message, null);
         ButterKnife.bind(this, contentView);
-        loginEm();
+
+
+
         setupLayout();
         return contentView;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden && !swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(true);
+            onRefresh();
+        }
     }
 
     private void setupLayout() {
@@ -104,29 +112,7 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     }
 
-    private void loginEm() {
-        DebugLog.e("uuid:" + SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID));
-        EMClient.getInstance().login(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID), "123456", new EMCallBack() {//回调
-            @Override
-            public void onSuccess() {
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                DebugLog.d("登录聊天服务器成功！");
-                SharedPreferencesUtils.getInstance().setEmLogin(true);
-            }
 
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String message) {
-                DebugLog.d("登录聊天服务器失败！");
-                SharedPreferencesUtils.getInstance().setEmLogin(false);
-            }
-        });
-    }
 
     public class MessageVH extends RecyclerView.ViewHolder {
 
@@ -152,11 +138,16 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!SharedPreferencesUtils.getInstance().isEmLogin()) {
-                        Toast.makeText(getActivity(), "账户错误！", Toast.LENGTH_SHORT).show();
-                        loginEm();
-                        return;
-                    }
+//                    if (!SharedPreferencesUtils.getInstance().isEmLogin()) {
+//                        Toast.makeText(getActivity(), "账户错误！", Toast.LENGTH_SHORT).show();
+//                        loginEm();
+//                        return;
+//                    }
+//                    if (!EMClient.getInstance().isConnected()){
+//                        Toast.makeText(getActivity(), "账户错误！", Toast.LENGTH_SHORT).show();
+//
+//                        return;
+//                    }
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
                     intent.putExtra("UUID", datas.get(position).uuid);
                     startActivity(intent);

@@ -167,12 +167,19 @@ public class Network {
         return compose(normalHttpService.getRecommendTechs(size, sign));
     }
 
-    public Observable<SetInfoResult> setUserInfo(RequestBody uuid, RequestBody nickName, RequestBody sex, MultipartBody.Part avator) {
+    public Observable<SetInfoResult> setUserInfo(RequestBody uuid, RequestBody nickName, RequestBody sex, RequestBody studio, MultipartBody.Part avator) {
 
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), sign);
-        return compose(normalHttpService.setUserinfo(uuid, nickName, sex, avator, description));
+//        if (studio == null) {
+//            DebugLog.e("without studio");
+            return compose(normalHttpService.setUserinfo(uuid, nickName, sex, avator, description));
+//        }
+//        else {
+//            DebugLog.e("with studio");
+//            return compose(normalHttpService.setUserinfoWithStudio(uuid, nickName, sex, studio, avator, description));
+//        }
     }
 
     public Observable<Object> sendSms(String mobile) {

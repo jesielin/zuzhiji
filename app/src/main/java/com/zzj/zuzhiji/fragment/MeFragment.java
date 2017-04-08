@@ -18,6 +18,7 @@ import com.bumptech.glide.request.target.Target;
 import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SettingActivity;
+import com.zzj.zuzhiji.UserInfoSettingActivity;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -68,8 +69,13 @@ public class MeFragment extends Fragment {
         return contentView;
     }
 
-    private void setupLayout() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadAvatorAndName();
+    }
 
+    private void loadAvatorAndName(){
         String avator = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR);
         String title = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME);
         DebugLog.e("avator:" + avator);
@@ -77,10 +83,11 @@ public class MeFragment extends Fragment {
             title = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.LOGIN_NAME);
         }
         tvTitle.setText(title);
+
         if (!TextUtils.isEmpty(avator)) {
             Glide.with(getActivity())
                     .load(avator)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -97,15 +104,20 @@ public class MeFragment extends Fragment {
                     })
                     .into(ivAvator);
         }
+    }
+
+    private void setupLayout() {
+//        loadAvatorAndName();
 
 
+        shipin.setVisibility(View.GONE);
         userType = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_TYPE);
         switch (userType) {
             case "0":
                 dongtai.setVisibility(View.VISIBLE);
                 anli.setVisibility(View.GONE);
                 jibie.setVisibility(View.GONE);
-                shipin.setVisibility(View.GONE);
+//                shipin.setVisibility(View.GONE);
                 huifu.setVisibility(View.GONE);
                 guanzhu.setVisibility(View.VISIBLE);
                 fensi.setVisibility(View.GONE);
@@ -114,7 +126,7 @@ public class MeFragment extends Fragment {
                 dongtai.setVisibility(View.GONE);
                 anli.setVisibility(View.VISIBLE);
                 jibie.setVisibility(View.VISIBLE);
-                shipin.setVisibility(View.VISIBLE);
+//                shipin.setVisibility(View.VISIBLE);
                 huifu.setVisibility(View.VISIBLE);
                 guanzhu.setVisibility(View.GONE);
                 fensi.setVisibility(View.VISIBLE);
@@ -139,4 +151,8 @@ public class MeFragment extends Fragment {
     }
 
 
+    @OnClick(R.id.header)
+    public void setInfo(View view){
+        startActivity(new Intent(getActivity(), UserInfoSettingActivity.class));
+    }
 }

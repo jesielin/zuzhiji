@@ -71,7 +71,7 @@ public class RegisterSecondFragment extends Fragment {
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
             .setQuality(Constant.IMAGE_UPLOAD_QUALITY)
-            .setCompressFormat(Bitmap.CompressFormat.WEBP)
+            .setCompressFormat(Bitmap.CompressFormat.JPEG)
             .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getContext()).getAbsolutePath())
             .build();
 
@@ -201,7 +201,7 @@ public class RegisterSecondFragment extends Fragment {
                                 RequestBody.create(
                                         MediaType.parse("multipart/form-data"), sexText);
 
-                        Network.getInstance().setUserInfo(uuid, nickName, sex, avatorPart)
+                        Network.getInstance().setUserInfo(uuid, nickName, sex, sex,avatorPart)
                                     .subscribe(new Subscriber<SetInfoResult>() {
                                         @Override
                                         public void onCompleted() {

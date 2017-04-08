@@ -2,6 +2,7 @@ package com.zzj.zuzhiji.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -22,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
+import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.MainActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SearchActivity;
@@ -95,6 +97,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
             }
         });
+    }
+
+    @OnClick(R.id.customer_service)
+    public void call(View view){
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:01085911987"));
+        startActivity(intent);
     }
 
     @OnClick(R.id.service)
@@ -202,6 +210,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+
+
     private class RecommendAdapter extends RecyclerView.Adapter<RecommendVH> {
 
         @Override
@@ -211,16 +221,22 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         @Override
         public void onBindViewHolder(RecommendVH holder, final int position) {
-            Tech item = datas.get(position);
+            final Tech item = datas.get(position);
             holder.tvTitle.setText(TextUtils.isEmpty(item.nickName)?item.id:item.nickName);
             holder.tvSubTitle.setText(item.summary);
 
-            Glide.with(getActivity()).load(item.headSculpture).diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.avator).into(holder.ivAvator);
+            Glide.with(getActivity()).load(item.headSculpture).diskCacheStrategy(DiskCacheStrategy.NONE).error(R.drawable.avator).into(holder.ivAvator);
 
             holder.clickArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), datas.get(position).toString(), Toast.LENGTH_SHORT).show();
+                    startActivityForResult(HomePageActivity.newIntent(getActivity(),
+                            item.headSculpture,
+                            item.nickName,
+                            item.summary,
+                            item.userType,
+                            item.uuid,
+                            item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_HOME_TO_HOME_PAGE);
                 }
             });
         }

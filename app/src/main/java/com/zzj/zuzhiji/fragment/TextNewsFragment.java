@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.zzj.zuzhiji.ArticleActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.NewsResult;
@@ -134,9 +135,9 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
         @Override
         public void onBindViewHolder(TextNewsVH holder, int position) {
 
-            NewsResult item = datas.get(position);
+            final NewsResult item = datas.get(position);
             Glide.with(getActivity()).load(item.titleImgUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.placeholder_no_pic)
                     .into(holder.imv);
             holder.tvTitle.setText(item.title);
@@ -147,7 +148,8 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "dianle", Toast.LENGTH_SHORT).show();
+                    startActivity(ArticleActivity.newIntent(getActivity(),item.title,item.contents));
+//                    Toast.makeText(getActivity(), "dianle", Toast.LENGTH_SHORT).show();
                 }
             });
         }

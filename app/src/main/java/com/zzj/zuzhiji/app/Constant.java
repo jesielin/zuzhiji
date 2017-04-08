@@ -27,6 +27,9 @@ public interface Constant {
 
     String USER_IS_FRIEND = "1";
     String USER_NOT_FRIEND = "0";
+
+    String GENDER_MALE = "1";
+    String GENDER_FEMALE = "0";
     interface SHARED_KEY {
         String SHARED_FILE_NAME = "ZZJ";
         String UUID = "UUID";
@@ -34,6 +37,8 @@ public interface Constant {
         String LOGIN_NAME = "LOGIN_NAME";
         String NICK_NAME = "NICK_NAME";
         String USER_TYPE = "USER_TYPE";
+        String USER_GENDER = "USER_GENDER";
+        String USER_STUDIO = "USER_STUDIO";
 
         String NEWS_TAB_INDEX = "NEWS_TAB_INDEX";
 
@@ -55,6 +60,8 @@ public interface Constant {
         int REQUEST_CODE_SOCIAL_TO_DETAIL = 0x05;
         int RESULT_CODE_DETAIL_CHANGE_STATUS_BACK_TO_SOCIAL = 0x06;
 
+        int REQUEST_CODE_HOME_TO_HOME_PAGE = 0x07;
+
     }
 
     interface HOME_PAGE_KEYS {
@@ -73,6 +80,11 @@ public interface Constant {
 
     interface VIDEO_PLAY_KEYS {
         String VIDEO_URL = "VIDEO_URL";
+    }
+
+    interface ARTICLE_KEYS{
+        String ARTICLE_CONTENTS = "ARTICLE_CONTENTS";
+        String ARTICLE_TITLE = "ARTICLE_TITLE";
     }
 
 }

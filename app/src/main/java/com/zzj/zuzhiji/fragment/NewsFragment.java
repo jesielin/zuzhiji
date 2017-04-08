@@ -64,7 +64,7 @@ public class NewsFragment extends Fragment {
 
     private void resolveTabIndex(){
         String index = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NEWS_TAB_INDEX);
-        DebugLog.e("position:"+Integer.valueOf(index));
+        DebugLog.e("position:"+index);
         if (!"".equals(index)){
             viewPager.setCurrentItem(Integer.valueOf(index));
 

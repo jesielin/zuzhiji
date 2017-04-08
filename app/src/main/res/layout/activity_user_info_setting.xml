@@ -1,32 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
 
         <ImageView
             android:id="@+id/back"
             android:layout_width="40dp"
-            android:layout_centerVertical="true"
             android:layout_height="match_parent"
-            android:scaleType="centerInside"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:scaleType="centerInside"
             android:src="@drawable/back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="编辑资料"
-            android:textSize="20dp"
             android:layout_centerInParent="true"
-            android:textColor="@color/colorPrimaryDark" />
+            android:text="编辑资料"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp" />
 
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/placeholder_banner">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avator"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/placeholder_avator"
+            app:civ_border_color="@color/md_white_1000"
+            app:civ_border_width="1dp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/nickname_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="姓名"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text=""
+            android:id="@+id/nickname"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="65dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/gender_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="性别"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text=""
+            android:id="@+id/gender"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="65dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:clickable="true"
+        android:id="@+id/studio_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="工作室"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text=""
+            android:id="@+id/studio"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="65dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/complete"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/btn_common_bg"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="完成"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="20dp" />
 </LinearLayout>
