@@ -141,7 +141,7 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
                     .placeholder(R.drawable.placeholder_no_pic)
                     .into(holder.imv);
             holder.tvTitle.setText(item.title);
-            holder.tvSubTitle.setText(item.contents);
+//            holder.tvSubTitle.setText(item.contents);
             holder.tvHot.setText(item.hot);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
 
