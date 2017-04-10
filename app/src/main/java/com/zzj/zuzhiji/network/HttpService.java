@@ -7,6 +7,7 @@ import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
+import com.zzj.zuzhiji.network.entity.ServiceItem;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.network.entity.StudioItem;
@@ -327,4 +328,7 @@ public interface HttpService {
     @GET("queryMyReplyComments")
     Observable<HttpResult<List<List<ReplyItem>>>> queryMyReplyComments(@Query("userUUID") String uuid, @Query("sign") String sign);
 
+    ///getService?techUuid=1&sign=123
+    @GET("getService")
+    Observable<HttpResult<List<ServiceItem>>> getService(@Query("techUuid") String techUuid, @Query("sign") String sign);
 }

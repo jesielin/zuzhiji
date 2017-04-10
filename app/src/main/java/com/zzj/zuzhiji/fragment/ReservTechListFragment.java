@@ -19,11 +19,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
 
@@ -90,6 +90,21 @@ public class ReservTechListFragment extends Fragment implements SwipeRefreshLayo
 
                 }
                 return false;
+            }
+        });
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (CommonUtils.isShowSoftInput(getActivity())) {
+                    CommonUtils.hideSoftInput(getActivity(), etSearch);
+                }
             }
         });
 
@@ -211,13 +226,14 @@ public class ReservTechListFragment extends Fragment implements SwipeRefreshLayo
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivityForResult(HomePageActivity.newIntent(getActivity(),
-                            item.headSculpture,
-                            item.nickName,
-                            item.summary,
-                            item.userType,
-                            item.uuid,
-                            item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE);
+                    CommonUtils.hideSoftInput(getActivity(), etSearch);
+                    Fragment f = new ReservCaseListFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("UUID", item.uuid);
+                    f.setArguments(bundle);
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.container, f).addToBackStack("second").commit();
                 }
             });
             Glide.with(getActivity())
