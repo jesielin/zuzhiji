@@ -113,6 +113,8 @@ public class MeFragment extends Fragment {
 
         shipin.setVisibility(View.GONE);
         huifu.setVisibility(View.VISIBLE);
+        guanzhu.setVisibility(View.GONE);
+        fensi.setVisibility(View.GONE);
         userType = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_TYPE);
         switch (userType) {
             case "0":
@@ -121,8 +123,8 @@ public class MeFragment extends Fragment {
                 jibie.setVisibility(View.GONE);
 //                shipin.setVisibility(View.GONE);
                 //huifu.setVisibility(View.GONE);
-                guanzhu.setVisibility(View.VISIBLE);
-                fensi.setVisibility(View.GONE);
+//                guanzhu.setVisibility(View.VISIBLE);
+//                fensi.setVisibility(View.GONE);
                 break;
             case "1":
                 dongtai.setVisibility(View.GONE);
@@ -130,8 +132,8 @@ public class MeFragment extends Fragment {
                 jibie.setVisibility(View.VISIBLE);
 //                shipin.setVisibility(View.VISIBLE);
                 //huifu.setVisibility(View.VISIBLE);
-                guanzhu.setVisibility(View.GONE);
-                fensi.setVisibility(View.VISIBLE);
+//                guanzhu.setVisibility(View.GONE);
+//                fensi.setVisibility(View.VISIBLE);
                 break;
         }
     }

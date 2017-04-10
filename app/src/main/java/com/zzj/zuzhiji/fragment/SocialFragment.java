@@ -186,8 +186,14 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
                             datas.clear();
                             datas.addAll(socialItems);
                             mAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
+
                         }
+                        swipeRefreshLayout.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        }, 1500);
                     }
                 });
 

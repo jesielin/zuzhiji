@@ -168,6 +168,8 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
         Glide.with(this)
                 .load(friendAvator)
+                .error(R.drawable.placeholder_no_pic)
+                .placeholder(R.drawable.placeholder_no_pic)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override

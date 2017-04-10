@@ -108,6 +108,8 @@ public class UserInfoSettingActivity extends AppCompatActivity {
 
         Glide.with(this)
                 .load(mAvator)
+                .error(R.drawable.placeholder_avator)
+                .placeholder(R.drawable.placeholder_no_pic)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
 
                 .into(ivAvator);
