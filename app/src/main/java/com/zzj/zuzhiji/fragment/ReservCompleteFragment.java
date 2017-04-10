@@ -2,16 +2,16 @@ package com.zzj.zuzhiji.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
+import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
 import com.zzj.zuzhiji.R;
-
-import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,7 +21,7 @@ import butterknife.OnClick;
  * Created by shawn on 17/4/10.
  */
 
-public class ReservCompleteFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class ReservCompleteFragment extends Fragment {
 
     private String title;
     private String price;
@@ -32,6 +32,38 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
     TextView tvTitle;
     @BindView(R.id.price)
     TextView tvPrice;
+
+    SublimePickerFragment.Callback mFragmentCallback = new SublimePickerFragment.Callback() {
+        @Override
+        public void onCancelled() {
+
+        }
+
+        @Override
+        public void onDateTimeRecurrenceSet(SelectedDate selectedDate,
+                                            int hourOfDay, int minute,
+                                            SublimeRecurrencePicker.RecurrenceOption recurrenceOption,
+                                            String recurrenceRule) {
+
+//            mSelectedDate = selectedDate;
+//            mHour = hourOfDay;
+//            mMinute = minute;
+//            mRecurrenceOption = recurrenceOption != null ?
+//                    recurrenceOption.name() : "n/a";
+//            mRecurrenceRule = recurrenceRule != null ?
+//                    recurrenceRule : "n/a";
+//
+//            updateInfoView();
+//
+//            svMainContainer.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    svMainContainer.scrollTo(svMainContainer.getScrollX(),
+//                            cbAllowDateRangeSelection.getBottom());
+//                }
+//            });
+        }
+    };
 
     @Nullable
     @Override
@@ -46,15 +78,12 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
 
     @OnClick(R.id.choose_date)
     public void choose_date(View view) {
-        Calendar now = Calendar.getInstance();
-        DatePickerDialog dpd = DatePickerDialog.newInstance(
-                ReservCompleteFragment.this,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH)
-        );
+        // DialogFragment to host SublimePicker
+        SublimePickerFragment pickerFrag = new SublimePickerFragment();
+        pickerFrag.setCallback(mFragmentCallback);
 
-        dpd.show(getActivity().getFragmentManager(), "Datepickerdialog");
+        pickerFrag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+        pickerFrag.show(getChildFragmentManager(), "SUBLIME_PICKER");
     }
 
     private void resolveArgs() {
@@ -74,8 +103,5 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
         getActivity().onBackPressed();
     }
 
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
 
-    }
 }
