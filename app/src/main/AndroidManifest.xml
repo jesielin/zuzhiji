@@ -83,6 +83,9 @@
             android:screenOrientation="portrait"></activity>
         <activity android:name=".ArticleActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".CommentsReplyActivity"
+            android:screenOrientation="portrait"></activity>
 
 
         <!-- 设置环信应用的AppKey -->

@@ -7,6 +7,7 @@ import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
+import com.zzj.zuzhiji.network.entity.ReplyItem;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.network.entity.StudioItem;
@@ -196,6 +197,10 @@ public class Network {
 
     public Observable<UserInfoResult> getUserInfo(String uuid) {
         return compose(normalHttpService.getUserInfo(uuid, sign));
+    }
+
+    public Observable<List<List<ReplyItem>>> queryMyReplyComments(String uuid) {
+        return compose(normalHttpService.queryMyReplyComments(uuid, sign));
     }
 
     private <T> Observable<T> compose(Observable<HttpResult<T>> o) throws ApiException {

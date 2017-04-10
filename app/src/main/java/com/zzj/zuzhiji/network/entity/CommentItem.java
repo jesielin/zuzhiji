@@ -5,6 +5,21 @@ package com.zzj.zuzhiji.network.entity;
  */
 
 /**
+ *
+ * {
+ "id": "58eaf03f0cf29e0400aaaf89",
+ "userUUID": [
+ "init",
+ "fBI7C9Hb49",
+ "utxHouIf23"
+ ],
+ "momentsID": "58eaf0270cf29e0400aaaf87",
+ "commenterUUID": "fBI7C9Hb49",
+ "commenterNickname": "动画电影",
+ "targetCommentUUID": "",
+ "targetCommentNickname": "",
+ "message": "大好河山"
+ }
  * {
  * "targetCommenterNickname":null
  * "commenterNickname":null

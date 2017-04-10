@@ -6,6 +6,7 @@ import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
+import com.zzj.zuzhiji.network.entity.ReplyItem;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.network.entity.StudioItem;
@@ -312,5 +313,18 @@ public interface HttpService {
      */
     @GET("delFriend")
     Observable<HttpResult<Object>> delFriend(@Query("ownerUUID") String ownerUUID, @Query("friendUUID") String friendUUID, @Query("sign") String sign);
+
+
+    ///queryMyReplyComments?userUUID=itrqXZ6Q36&sign=123
+
+    /**
+     * 回复我的
+     *
+     * @param uuid
+     * @param sign
+     * @return
+     */
+    @GET("queryMyReplyComments")
+    Observable<HttpResult<List<List<ReplyItem>>>> queryMyReplyComments(@Query("userUUID") String uuid, @Query("sign") String sign);
 
 }

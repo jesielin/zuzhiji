@@ -15,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.zzj.zuzhiji.CommentsReplyActivity;
 import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SettingActivity;
@@ -111,6 +112,7 @@ public class MeFragment extends Fragment {
 
 
         shipin.setVisibility(View.GONE);
+        huifu.setVisibility(View.VISIBLE);
         userType = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_TYPE);
         switch (userType) {
             case "0":
@@ -118,7 +120,7 @@ public class MeFragment extends Fragment {
                 anli.setVisibility(View.GONE);
                 jibie.setVisibility(View.GONE);
 //                shipin.setVisibility(View.GONE);
-                huifu.setVisibility(View.GONE);
+                //huifu.setVisibility(View.GONE);
                 guanzhu.setVisibility(View.VISIBLE);
                 fensi.setVisibility(View.GONE);
                 break;
@@ -127,7 +129,7 @@ public class MeFragment extends Fragment {
                 anli.setVisibility(View.VISIBLE);
                 jibie.setVisibility(View.VISIBLE);
 //                shipin.setVisibility(View.VISIBLE);
-                huifu.setVisibility(View.VISIBLE);
+                //huifu.setVisibility(View.VISIBLE);
                 guanzhu.setVisibility(View.GONE);
                 fensi.setVisibility(View.VISIBLE);
                 break;
@@ -154,5 +156,10 @@ public class MeFragment extends Fragment {
     @OnClick(R.id.header)
     public void setInfo(View view){
         startActivity(new Intent(getActivity(), UserInfoSettingActivity.class));
+    }
+
+    @OnClick(R.id.huifu)
+    public void message(View view) {
+        startActivity(new Intent(getActivity(), CommentsReplyActivity.class));
     }
 }
