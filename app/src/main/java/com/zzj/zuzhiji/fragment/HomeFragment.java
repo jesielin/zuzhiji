@@ -26,6 +26,7 @@ import com.youth.banner.loader.ImageLoader;
 import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.MainActivity;
 import com.zzj.zuzhiji.R;
+import com.zzj.zuzhiji.ReservationActivity;
 import com.zzj.zuzhiji.SearchActivity;
 import com.zzj.zuzhiji.ServiceActivity;
 import com.zzj.zuzhiji.app.Constant;
@@ -120,6 +121,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
             }
         });
+    }
+
+    @OnClick(R.id.reservation)
+    public void reserv(View view) {
+        startActivity(new Intent(getActivity(), ReservationActivity.class));
     }
 
     @OnClick(R.id.customer_service)
@@ -295,7 +301,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         public void onBindViewHolder(RecommendStudioVH holder, final int position) {
                     StudioItem studioItem = studios.get(position);
-                    RecommendStudioVH recommendStudioVH = (RecommendStudioVH) holder;
+            RecommendStudioVH recommendStudioVH = holder;
                     recommendStudioVH.tvTitle.setText(studioItem.title);
         }
 
@@ -319,7 +325,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         public void onBindViewHolder(RecommendTechVH holder, final int position) {
 
                     final Tech item = teches.get(position);
-                    RecommendTechVH recommendTechVH = (RecommendTechVH) holder;
+            RecommendTechVH recommendTechVH = holder;
                     recommendTechVH.tvTitle.setText(TextUtils.isEmpty(item.nickName) ? item.id : item.nickName);
                     recommendTechVH.tvSubTitle.setText(item.summary);
 
