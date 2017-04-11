@@ -68,11 +68,12 @@ public class SublimePickerFragment extends DialogFragment {
                         hourOfDay, minute, recurrenceOption, recurrenceRule);
             }
 
+            Calendar instance = Calendar.getInstance();
+
+
             // Should actually be called by activity inside `Callback.onCancelled()`
 //            dismiss();
         }
-// You can also override 'formatDate(Date)' & 'formatTime(Date)'
-        // to supply custom formatters.
     };
 
     public SublimePickerFragment() {

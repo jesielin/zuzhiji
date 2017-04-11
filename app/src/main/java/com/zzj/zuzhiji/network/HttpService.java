@@ -329,6 +329,32 @@ public interface HttpService {
     Observable<HttpResult<List<List<ReplyItem>>>> queryMyReplyComments(@Query("userUUID") String uuid, @Query("sign") String sign);
 
     ///getService?techUuid=1&sign=123
+
+    /**
+     * 获取服务项目列表
+     *
+     * @param techUuid
+     * @param sign
+     * @return
+     */
     @GET("getService")
     Observable<HttpResult<List<ServiceItem>>> getService(@Query("techUuid") String techUuid, @Query("sign") String sign);
+
+    ///subscribe?userUuid=1&techUuid=2&startDate=2017-01-01 15:20:00&service=1&sign=123
+
+    /**
+     * 预约
+     *
+     * @param userUuid
+     * @param techUuid
+     * @param startDate
+     * @param service
+     * @param sign
+     * @return
+     */
+    @GET("subscribe")
+    Observable<HttpResult<Object>> reserv(@Query("userUuid") String userUuid, @Query("techUuid") String techUuid,
+                                          @Query("startDate") String startDate,
+                                          @Query("service") String service,
+                                          @Query("sign") String sign);
 }

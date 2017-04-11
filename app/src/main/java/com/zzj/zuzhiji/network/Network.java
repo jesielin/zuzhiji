@@ -208,6 +208,10 @@ public class Network {
         return compose(normalHttpService.getService(uuid, sign));
     }
 
+    public Observable<Object> reserv(String uuid, String techId, String startDate, String service) {
+        return compose(normalHttpService.reserv(uuid, techId, startDate, service, sign));
+    }
+
     private <T> Observable<T> compose(Observable<HttpResult<T>> o) throws ApiException {
         return o.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
