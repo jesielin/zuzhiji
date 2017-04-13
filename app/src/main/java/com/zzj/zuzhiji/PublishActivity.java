@@ -52,8 +52,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
     //    private static final int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;
 //    private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
 //    private static final int REQUEST_CODE_PHOTO_PREVIEW = 2;
-    @BindView(R.id.title)
-    EditText etTitle;
+
     @BindView(R.id.subtitle)
     EditText etSubTitle;
     /**
@@ -139,10 +138,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
     @OnClick(R.id.complete)
     public void complete(View view) {
-        if (TextUtils.isEmpty(etTitle.getText().toString().trim())) {
-            Toast.makeText(this, "请输入标题", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
         if (TextUtils.isEmpty(etSubTitle.getText().toString().trim())) {
             Toast.makeText(this, "请输入内容", Toast.LENGTH_SHORT).show();
             return;
@@ -218,7 +214,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), nickNameText);
         // 添加message
-        String messageText = etTitle.getText().toString() + "\n" + etSubTitle.getText().toString();
+        String messageText =  etSubTitle.getText().toString();
         RequestBody message =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), messageText);

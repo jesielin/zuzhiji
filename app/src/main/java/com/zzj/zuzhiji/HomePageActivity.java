@@ -20,11 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SocialItem;
@@ -44,7 +39,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
-import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
@@ -86,7 +80,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     @BindView(R.id.nickname)
     TextView tvName;
     @BindView(R.id.avator)
-    CircleImageView ivAvator;
+    ImageView ivAvator;
 
 
     private int mDistanceY;
@@ -143,14 +137,14 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         if (SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID).equals(friendUuid)) {
             editButton.setVisibility(View.VISIBLE);
             bottomNav.setVisibility(View.GONE);
-            swipeRefreshLayout.setPadding(0,0,0,0);
+            swipeRefreshLayout.setPadding(0, 0, 0, 0);
         } else {
             editButton.setVisibility(View.GONE);
             bottomNav.setVisibility(View.VISIBLE);
             final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
-                    new int[] { android.R.attr.actionBarSize });
+                    new int[]{android.R.attr.actionBarSize});
             int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
-            swipeRefreshLayout.setPadding(0,0,0,mActionBarSize);
+            swipeRefreshLayout.setPadding(0, 0, 0, mActionBarSize);
         }
 
         tvTitle.setText(friendNickName);
@@ -166,26 +160,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         }
 
 
-        Glide.with(this)
-                .load(friendAvator)
-                .error(R.drawable.placeholder_no_pic)
-                .placeholder(R.drawable.placeholder_no_pic)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        DebugLog.e("load avator error");
-
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        DebugLog.e("load avator success");
-                        return false;
-                    }
-                })
-                .into(ivAvator);
+        CommonUtils.loadAvator(ivAvator, friendAvator, this);
 
     }
 

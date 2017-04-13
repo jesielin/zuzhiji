@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
@@ -117,7 +116,7 @@ public class RegisterFirstFragment extends Fragment {
                         SharedPreferencesUtils.getInstance().setLogin(
                                 registerResult.uuid,
                                 registerResult.nickName,
-                                "http://101.201.155.115:3113/heads/default/default.png",
+                                Constant.AVATOR_DEFAULT,
                                 registerResult.userType,
                                 registerResult.loginName,
                                 Constant.GENDER_MALE
@@ -126,34 +125,37 @@ public class RegisterFirstFragment extends Fragment {
 
                         DebugLog.e("uuid:" + registerResult.uuid);
 
-                        EMClient.getInstance().login(registerResult.uuid, "123456", new EMCallBack() {//回调
-                            @Override
-                            public void onSuccess() {
-                                EMClient.getInstance().groupManager().loadAllGroups();
-                                EMClient.getInstance().chatManager().loadAllConversations();
+                        boolean loggedInBefore = EMClient.getInstance().isLoggedInBefore();
+                        DebugLog.e("is logged in:"+loggedInBefore);
+//                        EMClient.getInstance().login(registerResult.uuid, "123456", new EMCallBack() {//回调
+//                            @Override
+//                            public void onSuccess() {
+//                                EMClient.getInstance().groupManager().loadAllGroups();
+//                                EMClient.getInstance().chatManager().loadAllConversations();
+//
+//                                DebugLog.d("登录聊天服务器成功！");
+//                                SharedPreferencesUtils.getInstance().setEmLogin(true);
+//                                dismissDialog();
+//                                getActivity().finish();
+//
+//                            }
+//
+//                            @Override
+//                            public void onProgress(int progress, String status) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onError(int code, String message) {
+//                                DebugLog.d("code:"+code+",MESSAGE:"+message);
+//                                SharedPreferencesUtils.getInstance().setEmLogin(false);
+//                                dismissDialog();
+//
+//                            }
+//                        });
 
-                                DebugLog.d("登录聊天服务器成功！");
-                                SharedPreferencesUtils.getInstance().setEmLogin(true);
                                 dismissDialog();
-
-                            }
-
-                            @Override
-                            public void onProgress(int progress, String status) {
-
-                            }
-
-                            @Override
-                            public void onError(int code, String message) {
-                                DebugLog.d("code:"+code+",MESSAGE:"+message);
-                                SharedPreferencesUtils.getInstance().setEmLogin(false);
-                                dismissDialog();
-                            }
-                        });
-
-                        DebugLog.e("next");
-//                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, new RegisterSecondFragment(), "second").commit();
-                        getActivity().finish();
+                                getActivity().onBackPressed();
 
 
                     }
@@ -162,10 +164,6 @@ public class RegisterFirstFragment extends Fragment {
 
     }
 
-    private void loginEm() {
-
-
-    }
 
     private void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {

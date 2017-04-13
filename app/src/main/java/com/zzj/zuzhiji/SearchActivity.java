@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
@@ -182,6 +183,8 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
                             item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE);
                 }
             });
+
+            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(item.uuid),SearchActivity.this);
 
         }
 

@@ -11,6 +11,7 @@ import android.support.v4.util.ArrayMap;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +39,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
-import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -64,7 +64,7 @@ public class UserInfoSettingActivity extends AppCompatActivity {
     @BindView(R.id.studio)
     TextView tvStudio;
     @BindView(R.id.avator)
-    CircleImageView ivAvator;
+    ImageView ivAvator;
     @BindView(R.id.studio_view)
     View studioView;
 
@@ -106,13 +106,8 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         mGender = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_GENDER);
         mStudio = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_STUDIO);
 
-        Glide.with(this)
-                .load(mAvator)
-                .error(R.drawable.placeholder_avator)
-                .placeholder(R.drawable.placeholder_no_pic)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+        CommonUtils.loadAvator(ivAvator,mAvator,this);
 
-                .into(ivAvator);
 
         tvNickName.setText(mNickName);
 
@@ -339,7 +334,6 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         }
 
 
-
         //添加UUID
         String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
         RequestBody uuid =
@@ -391,7 +385,7 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         values.put(Constant.SHARED_KEY.AVATOR, CommonUtils.getAvatorAddress(setInfoResult.uuid));
                         values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
                         values.put(Constant.SHARED_KEY.USER_GENDER, setInfoResult.sex);
-                        values.put(Constant.SHARED_KEY.USER_STUDIO,mStudio);
+                        values.put(Constant.SHARED_KEY.USER_STUDIO, mStudio);
                         SharedPreferencesUtils.getInstance().setValues(values);
                         dismissDialog();
 

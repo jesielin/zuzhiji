@@ -87,7 +87,7 @@ dependencies {
     //fragment manager
     compile 'com.github.Aspsine:FragmentNavigator:1.0.2'
     //circle image view
-    compile 'de.hdodenhof:circleimageview:2.1.0'
+//    compile 'de.hdodenhof:circleimageview:2.1.0'
     //banner
     compile 'com.youth.banner:banner:1.4.9'
     //compress image

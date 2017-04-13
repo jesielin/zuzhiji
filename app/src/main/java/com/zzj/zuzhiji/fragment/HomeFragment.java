@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
 import com.zzj.zuzhiji.HomePageActivity;
@@ -33,6 +32,7 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 //                Toast.makeText(getActivity(), tab.getPosition()+"", Toast.LENGTH_SHORT).show();
-                switch (tab.getPosition()){
+                switch (tab.getPosition()) {
                     case 0:
                         tabIndex = 0;
                         recyclerView.setAdapter(mTechAdapter);
@@ -102,7 +102,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     case 1:
                         tabIndex = 1;
                         recyclerView.setAdapter(mStudioAdapter);
-                        if (studios.size() ==0)
+                        if (studios.size() == 0)
                             doRefresh();
 
                         break;
@@ -130,7 +130,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @OnClick(R.id.customer_service)
     public void call(View view) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:01085911987"));
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:01085911987"));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
@@ -155,7 +156,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         activity.switchFragment(2);
     }
 
-    private void doRefresh(){
+    private void doRefresh() {
         swipeRefreshLayout.setRefreshing(true);
         onRefresh();
     }
@@ -201,7 +202,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
 
-        switch (tabIndex){
+        switch (tabIndex) {
             case 0:
                 Network.getInstance().getRecommendTech(Constant.PAGE_SIZE)
                         .subscribe(new Subscriber<List<Tech>>() {
@@ -291,7 +292,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private class RecommendStudioAdapter extends RecyclerView.Adapter<RecommendStudioVH> {
 
 
-
         @Override
         public RecommendStudioVH onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -300,9 +300,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         @Override
         public void onBindViewHolder(RecommendStudioVH holder, final int position) {
-                    StudioItem studioItem = studios.get(position);
+            StudioItem studioItem = studios.get(position);
             RecommendStudioVH recommendStudioVH = holder;
-                    recommendStudioVH.tvTitle.setText(studioItem.title);
+            recommendStudioVH.tvTitle.setText(studioItem.title);
         }
 
         @Override
@@ -314,7 +314,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private class RecommendTechAdapter extends RecyclerView.Adapter<RecommendTechVH> {
 
 
-
         @Override
         public RecommendTechVH onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -324,40 +323,38 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         public void onBindViewHolder(RecommendTechVH holder, final int position) {
 
-                    final Tech item = teches.get(position);
+            final Tech item = teches.get(position);
             RecommendTechVH recommendTechVH = holder;
-                    recommendTechVH.tvTitle.setText(TextUtils.isEmpty(item.nickName) ? item.id : item.nickName);
-                    recommendTechVH.tvSubTitle.setText(item.summary);
+            recommendTechVH.tvTitle.setText(TextUtils.isEmpty(item.nickName) ? item.id : item.nickName);
+            recommendTechVH.tvSubTitle.setText(item.summary);
 
-                    Glide.with(getActivity()).load(item.headSculpture).diskCacheStrategy(DiskCacheStrategy.NONE).error(R.drawable.avator).into(recommendTechVH.ivAvator);
 
-                    recommendTechVH.clickArea.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivityForResult(HomePageActivity.newIntent(getActivity(),
-                                    item.headSculpture,
-                                    item.nickName,
-                                    item.summary,
-                                    item.userType,
-                                    item.uuid,
-                                    item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_HOME_TO_HOME_PAGE);
-                        }
-                    });
+            CommonUtils.loadAvator(recommendTechVH.ivAvator, CommonUtils.getAvatorAddress(item.uuid), getActivity());
+            recommendTechVH.clickArea.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivityForResult(HomePageActivity.newIntent(getActivity(),
+                            item.headSculpture,
+                            item.nickName,
+                            item.summary,
+                            item.userType,
+                            item.uuid,
+                            item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_HOME_TO_HOME_PAGE);
+                }
+            });
 
 //                case TYPE_STUDIO:
 //                    StudioItem studioItem = studios.get(position);
 //                    RecommendStudioVH recommendStudioVH = (RecommendStudioVH) holder;
 //                    recommendStudioVH.tvTitle.setText(studioItem.title);
 //                    break;
-            }
+        }
 
         @Override
         public int getItemCount() {
             return teches.size();
         }
     }
-
-
 
 
     private class GlideImageLoader extends ImageLoader {

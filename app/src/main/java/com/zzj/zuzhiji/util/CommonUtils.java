@@ -3,6 +3,11 @@ package com.zzj.zuzhiji.util;
 import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.zzj.zuzhiji.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -41,4 +46,23 @@ public class CommonUtils {
     public static String getAvatorAddress(String uuid){
         return String.format("http://101.201.155.115:3113/heads/%s-head.jpg",uuid);
     }
+
+    public static void loadAvator(ImageView imageView,String  url,Context context){
+
+            Glide.with(context)
+                    .load(url)
+                    .asBitmap()
+                    .fitCenter()
+//                    .placeholder(R.color.text_hint)
+                    .error(R.color.text_hint)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+//                    .priority(Priority.IMMEDIATE)
+                    .transform(new GlideCircleTransform(context))
+
+                    .into(imageView);
+
+    }
+
+
 }

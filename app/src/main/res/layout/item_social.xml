@@ -9,12 +9,12 @@
     android:id="@+id/container"
     android:layout_height="match_parent">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:layout_width="50dp"
         android:layout_height="55dp"
 
         android:id="@+id/avator"
-        android:src="@drawable/avator" />
+         />
 
     <LinearLayout
 

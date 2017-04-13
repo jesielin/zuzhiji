@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +28,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Subscriber;
 
 /**
@@ -86,7 +86,7 @@ public class CommentsReplyActivity extends AppCompatActivity implements SwipeRef
     public class CommentsVH extends RecyclerView.ViewHolder {
 
         @BindView(R.id.avator)
-        CircleImageView ivAvator;
+        ImageView ivAvator;
         @BindView(R.id.commenter_name)
         TextView tvCommenterName;
         @BindView(R.id.text_huifu)

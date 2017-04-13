@@ -114,7 +114,7 @@ public class NewsFragment extends Fragment {
                     title = "视频";
                     break;
                 case 1:
-                    title = "咨询";
+                    title = "资讯";
                     break;
 
             }

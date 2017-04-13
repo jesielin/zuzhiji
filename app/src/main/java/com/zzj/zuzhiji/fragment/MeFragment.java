@@ -8,26 +8,22 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.zzj.zuzhiji.CommentsReplyActivity;
 import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SettingActivity;
 import com.zzj.zuzhiji.UserInfoSettingActivity;
 import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by shawn on 2017-03-29.
@@ -52,7 +48,7 @@ public class MeFragment extends Fragment {
     View fensi;
 
     @BindView(R.id.avator)
-    CircleImageView ivAvator;
+    ImageView ivAvator;
     @BindView(R.id.title)
     TextView tvTitle;
 
@@ -76,7 +72,7 @@ public class MeFragment extends Fragment {
         loadAvatorAndName();
     }
 
-    private void loadAvatorAndName(){
+    private void loadAvatorAndName() {
         String avator = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR);
         String title = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME);
         DebugLog.e("avator:" + avator);
@@ -85,26 +81,8 @@ public class MeFragment extends Fragment {
         }
         tvTitle.setText(title);
 
-        if (!TextUtils.isEmpty(avator)) {
-            Glide.with(getActivity())
-                    .load(avator)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                            DebugLog.e("load avator error");
 
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            DebugLog.e("load avator success");
-                            return false;
-                        }
-                    })
-                    .into(ivAvator);
-        }
+        CommonUtils.loadAvator(ivAvator,avator,getActivity());
     }
 
     private void setupLayout() {
@@ -156,7 +134,7 @@ public class MeFragment extends Fragment {
 
 
     @OnClick(R.id.header)
-    public void setInfo(View view){
+    public void setInfo(View view) {
         startActivity(new Intent(getActivity(), UserInfoSettingActivity.class));
     }
 

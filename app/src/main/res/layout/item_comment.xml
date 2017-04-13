@@ -18,11 +18,11 @@
         android:paddingRight="16dp"
         android:paddingTop="10dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/avator"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:src="@drawable/avator" />
+             />
 
         <RelativeLayout
             android:layout_width="match_parent"

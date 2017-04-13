@@ -16,13 +16,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
@@ -44,7 +43,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPreviewActivity;
 import cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout;
-import de.hdodenhof.circleimageview.CircleImageView;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
@@ -63,7 +61,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
     ScrollView scrollView;
 
     @BindView(R.id.avator)
-    CircleImageView ivAvator;
+    ImageView ivAvator;
     @BindView(R.id.title)
     TextView tvTitle;
     @BindView(R.id.subtitle)
@@ -150,10 +148,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
         if (item != null) {
 
             //TODO:
-            Glide.with(this)
-                    .load(R.drawable.avator)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(ivAvator);
+            CommonUtils.loadAvator(ivAvator,CommonUtils.getAvatorAddress(item.momentOwner),this);
 
             tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
             tvMessage.setText(item.message);
@@ -451,6 +446,8 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                 holder.tvFriendName.setText(comment.targetCommenterNickname == null ? comment.targetCommenterUUID : comment.targetCommenterNickname);
             }
 
+            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(comment.commenterUUID),CaseDetailActivity.this);
+
 
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -475,7 +472,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
 
         public class ViewHolder {
             @BindView(R.id.avator)
-            CircleImageView ivAvator;
+            ImageView ivAvator;
             @BindView(R.id.commenter_name)
             TextView tvCommenterName;
             @BindView(R.id.text_huifu)

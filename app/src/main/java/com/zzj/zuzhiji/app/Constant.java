@@ -30,6 +30,8 @@ public interface Constant {
 
     String GENDER_MALE = "1";
     String GENDER_FEMALE = "0";
+
+    String AVATOR_DEFAULT = "http://101.201.155.115:3113/heads/default/default.png";
     interface SHARED_KEY {
         String SHARED_FILE_NAME = "ZZJ";
         String UUID = "UUID";
