@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.yayandroid.theactivitymanager.TheActivityManager;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.LoginResult;
@@ -46,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+        TheActivityManager.getInstance().finishInstance(MainActivity.class);
+        TheActivityManager.getInstance().finishInstance(SettingActivity.class);
         ButterKnife.bind(this);
     }
 

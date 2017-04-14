@@ -356,7 +356,8 @@ public interface HttpService {
      * @return
      */
     @GET("subscribe")
-    Observable<HttpResult<Object>> reserv(@Query("userUuid") String userUuid, @Query("techUuid") String techUuid,
+    Observable<HttpResult<Object>> reserv(@Query("userUuid") String userUuid,
+                                          @Query("techUuid") String techUuid,
                                           @Query("startDate") String startDate,
                                           @Query("service") String service,
                                           @Query("sign") String sign);

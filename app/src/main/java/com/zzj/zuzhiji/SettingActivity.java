@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yayandroid.theactivitymanager.TheActivityManager;
 import com.zzj.zuzhiji.util.GlideCacheUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
@@ -38,7 +37,9 @@ public class SettingActivity extends AppCompatActivity {
     public void logout(View view) {
 
         SharedPreferencesUtils.getInstance().setLogout();
-        TheActivityManager.getInstance().finishAll();
+//        TheActivityManager.getInstance().finishAll();
+        startActivity(new Intent(this,LoginActivity.class));
+
 
     }
 

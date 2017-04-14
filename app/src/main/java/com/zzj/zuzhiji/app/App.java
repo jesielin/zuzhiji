@@ -55,6 +55,8 @@ public class App extends Application {
                 //TODO:
             }
         });
+
+//        TheActivityManager.getInstance().setAsLanding(new LoginActivity());
     }
 
     @Override

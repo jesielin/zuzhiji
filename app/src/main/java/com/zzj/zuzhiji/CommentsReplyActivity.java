@@ -14,8 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
@@ -125,10 +123,8 @@ public class CommentsReplyActivity extends AppCompatActivity implements SwipeRef
 
             holder.tvCommenterName.setText(item.commenterNickname);
             holder.tvSubTitle.setText(item.message);
-            Glide.with(CommentsReplyActivity.this)
-                    .load(CommonUtils.getAvatorAddress(item.commenterUUID))
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(holder.ivAvator);
+
+            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(item.commenterUUID),CommentsReplyActivity.this);
         }
 
         @Override
