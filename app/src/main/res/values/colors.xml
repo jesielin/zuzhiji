@@ -6,6 +6,7 @@
 
 
     <color name="layout_bg">#EFEFEF</color>
+    <color name="avator_place_holder">#8e8e93</color>
 
     <color name="text_hint">@color/md_grey_500</color>
     <color name="divider">#E0E0E0</color>

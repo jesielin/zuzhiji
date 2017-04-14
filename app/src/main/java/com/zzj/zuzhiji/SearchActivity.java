@@ -170,7 +170,12 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
         public void onBindViewHolder(final SearchVH holder, final int position) {
             final Tech item = datas.get(position);
             holder.tvTitle.setText(item.nickName == null ? item.uuid : item.nickName);
-            holder.tvSubTitle.setText(item.summary);
+            if (TextUtils.isEmpty(item.summary))
+                holder.tvSubTitle.setVisibility(View.GONE);
+            else {
+                holder.tvSubTitle.setText(item.summary);
+                holder.tvSubTitle.setVisibility(View.VISIBLE);
+            }
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

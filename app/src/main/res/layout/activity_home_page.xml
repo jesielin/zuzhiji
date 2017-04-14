@@ -6,8 +6,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"
-        android:paddingBottom="?attr/actionBarSize"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingBottom="?attr/actionBarSize">
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/scroll_container"
@@ -19,6 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/layout_bg"
+
                 android:orientation="vertical">
 
 
@@ -44,7 +45,7 @@
                             android:layout_height="80dp"
                             android:layout_centerInParent="true"
 
-                             />
+                            />
 
                         <ImageView
                             android:id="@+id/edit"
@@ -81,7 +82,9 @@
                     android:id="@+id/recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:nestedScrollingEnabled="false" />
+                    android:nestedScrollingEnabled="false"
+                    android:visibility="visible" />
+
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
@@ -113,80 +116,99 @@
             android:textSize="20dp" />
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:id="@+id/bottom_nav"
-        android:orientation="vertical">
+        android:layout_marginTop="240dp"
+        >
 
-        <View
+        <TextView
+            android:id="@+id/no_data"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-
-            android:background="@color/md_grey_300" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="?attr/actionBarSize"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="暂无数据..."
+            android:textColor="@color/text_hint"
+            android:textSize="20dp" />
 
         <LinearLayout
-
+            android:id="@+id/bottom_nav"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/md_white_1000"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/star"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/touch_bg"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/star_icon"
-                    android:src="@drawable/star_nor" />
-
-                <TextView
-                    android:id="@+id/star_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:text="关注"
-                    android:textSize="16dp" />
-            </LinearLayout>
 
             <View
-                android:layout_width="1dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_vertical"
-                android:background="@color/text_hint" />
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/md_grey_300" />
 
             <LinearLayout
-                android:id="@+id/reserve"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/touch_bg"
 
-                android:clickable="true"
-                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/md_white_1000"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/reservation_nor" />
+                <LinearLayout
+                    android:id="@+id/star"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/touch_bg"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:text="预约"
-                    android:textSize="16dp" />
+                    <ImageView
+                        android:id="@+id/star_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/star_nor" />
+
+                    <TextView
+                        android:id="@+id/star_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="关注"
+                        android:textSize="16dp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/text_hint" />
+
+                <LinearLayout
+                    android:id="@+id/reserve"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/touch_bg"
+
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/reservation_nor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="预约"
+                        android:textSize="16dp" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>

@@ -81,6 +81,8 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     TextView tvName;
     @BindView(R.id.avator)
     ImageView ivAvator;
+    @BindView(R.id.no_data)
+    TextView tvNoData;
 
 
     private int mDistanceY;
@@ -125,12 +127,13 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         Intent intent = getIntent();
         if (intent != null) {
 
-            friendAvator = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_AVATOR) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_AVATOR);
+
             friendNickName = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_NICKNAME) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_NICKNAME);
             friendSummary = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY);
             friendType = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE);
             friendUuid = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID);
             isFriend = intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND);
+            friendAvator = CommonUtils.getAvatorAddress(friendUuid);
 
         }
 
@@ -330,6 +333,8 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     @Override
     public void onRefresh() {
 
+        CommonUtils.loadAvator(ivAvator, friendAvator, this);
+
         Network.getInstance().getUserSocialItems(friendUuid, page, Constant.PAGE_SIZE)
                 .observeOn(Schedulers.io())
                 .map(new Func1<SocialTotal, List<SocialItem>>() {
@@ -358,6 +363,11 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                             datas.clear();
                             datas.addAll(socialItems);
                             mAdapter.notifyDataSetChanged();
+                            if (datas.size() == 0 ) {
+                                tvNoData.setVisibility(View.VISIBLE);
+                            }else {
+                                tvNoData.setVisibility(View.GONE);
+                            }
                         }
                         swipeRefreshLayout.setRefreshing(false);
                     }
@@ -374,6 +384,11 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
 
     };
+
+    @OnClick(R.id.edit)
+    public void editInfo(View view){
+        startActivity(new Intent(this,UserInfoSettingActivity.class));
+    }
 
     @Override
     public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
