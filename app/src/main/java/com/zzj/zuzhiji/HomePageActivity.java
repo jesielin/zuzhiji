@@ -147,7 +147,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
             swipeRefreshLayout.setPadding(0, 0, 0, mActionBarSize);
         }
 
-        tvTitle.setText(friendNickName);
+//        tvTitle.setText(friendNickName);
         tvSummary.setText(friendSummary);
         tvName.setText(friendNickName);
 
