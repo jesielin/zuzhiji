@@ -21,5 +21,8 @@ public class LoginResult {
     public String createDate;
     public String status;
     public String headSculpture;
+    public String summary;
+    public String studio;
+    public String studioTitle;
 
 }

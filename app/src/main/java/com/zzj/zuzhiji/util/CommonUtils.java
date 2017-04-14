@@ -52,6 +52,7 @@ public class CommonUtils {
             Glide.with(context)
                     .load(url)
                     .asBitmap()
+                    .dontAnimate()
                     .fitCenter()
 //                    .placeholder(R.color.text_hint)
                     .error(R.color.text_hint)

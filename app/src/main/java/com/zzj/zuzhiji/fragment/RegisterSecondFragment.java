@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,32 +22,24 @@ import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
-import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCircleTransform;
-import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bingoogolapple.photopicker.activity.BGAPhotoPickerActivity;
 import id.zelory.compressor.Compressor;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
-import rx.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -143,98 +134,98 @@ public class RegisterSecondFragment extends Fragment {
 
     }
 
-    @OnClick(R.id.complete)
-    public void complete(View view) {
-
-
-        if (paths.size() == 0) {
-            Toast.makeText(getActivity(), "请选择头像", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-
-
-
-        File avatorFile = new File(paths.get(0));
-
-        dialog = DialogUtils.showProgressDialog(getActivity(), "设置信息", "正在设置，请稍等...");
-        compressor.compressToFileAsObservable(avatorFile)
-                .subscribeOn(Schedulers.computation())
-
-                .subscribe(new Subscriber<File>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        dismissDialog();
-                    }
-
-                    @Override
-                    public void onNext(File file) {
-
-                        MultipartBody.Part avatorPart = null;
-                        // 创建 RequestBody，用于封装构建RequestBody
-                        RequestBody requestFile =
-                                RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
-                        // MultipartBody.Part  和后端约定好Key，这里的partName是用image
-                        avatorPart =
-                                MultipartBody.Part.createFormData("headSculpture", file.getName(), requestFile);
-
-                        //添加UUID
-                        String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
-                        RequestBody uuid =
-                                RequestBody.create(
-                                        MediaType.parse("multipart/form-data"), uuidText);
-                        // 添加nickname
-                        String nickNameText = "";
-                        RequestBody nickName =
-                                RequestBody.create(
-                                        MediaType.parse("multipart/form-data"), nickNameText);
-                        // 添加sex
-                        String sexText = gender;
-                        RequestBody sex =
-                                RequestBody.create(
-                                        MediaType.parse("multipart/form-data"), sexText);
-
-                        Network.getInstance().setUserInfo(uuid, nickName, sex, sex,avatorPart)
-                                    .subscribe(new Subscriber<SetInfoResult>() {
-                                        @Override
-                                        public void onCompleted() {
-                                        }
-
-                                        @Override
-                                        public void onError(Throwable e) {
-
-                                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            dismissDialog();
-
-
-                                        }
-
-                                        @Override
-                                        public void onNext(SetInfoResult setInfoResult) {
-                                            Map<String, String> values = new ArrayMap<String, String>();
-                                            values.put(Constant.SHARED_KEY.AVATOR, setInfoResult.headSculpture);
-                                            values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
-                                            SharedPreferencesUtils.getInstance().setValues(values);
-                                            dismissDialog();
-
-                                            getActivity().finish();
-
-                                        }
-                                    });
-
-
-                    }
-                });
-
-
-    }
+//    @OnClick(R.id.complete)
+//    public void complete(View view) {
+//
+//
+//        if (paths.size() == 0) {
+//            Toast.makeText(getActivity(), "请选择头像", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//
+//
+//
+//        File avatorFile = new File(paths.get(0));
+//
+//        dialog = DialogUtils.showProgressDialog(getActivity(), "设置信息", "正在设置，请稍等...");
+//        compressor.compressToFileAsObservable(avatorFile)
+//                .subscribeOn(Schedulers.computation())
+//
+//                .subscribe(new Subscriber<File>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        dismissDialog();
+//                    }
+//
+//                    @Override
+//                    public void onNext(File file) {
+//
+//                        MultipartBody.Part avatorPart = null;
+//                        // 创建 RequestBody，用于封装构建RequestBody
+//                        RequestBody requestFile =
+//                                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+//
+//                        // MultipartBody.Part  和后端约定好Key，这里的partName是用image
+//                        avatorPart =
+//                                MultipartBody.Part.createFormData("headSculpture", file.getName(), requestFile);
+//
+//                        //添加UUID
+//                        String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
+//                        RequestBody uuid =
+//                                RequestBody.create(
+//                                        MediaType.parse("multipart/form-data"), uuidText);
+//                        // 添加nickname
+//                        String nickNameText = "";
+//                        RequestBody nickName =
+//                                RequestBody.create(
+//                                        MediaType.parse("multipart/form-data"), nickNameText);
+//                        // 添加sex
+//                        String sexText = gender;
+//                        RequestBody sex =
+//                                RequestBody.create(
+//                                        MediaType.parse("multipart/form-data"), sexText);
+//
+//                        Network.getInstance().setUserInfo(uuid, nickName, sex, sex,avatorPart)
+//                                    .subscribe(new Subscriber<SetInfoResult>() {
+//                                        @Override
+//                                        public void onCompleted() {
+//                                        }
+//
+//                                        @Override
+//                                        public void onError(Throwable e) {
+//
+//                                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                                            dismissDialog();
+//
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onNext(SetInfoResult setInfoResult) {
+//                                            Map<String, String> values = new ArrayMap<String, String>();
+//                                            values.put(Constant.SHARED_KEY.AVATOR, setInfoResult.headSculpture);
+//                                            values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
+//                                            SharedPreferencesUtils.getInstance().setValues(values);
+//                                            dismissDialog();
+//
+//                                            getActivity().finish();
+//
+//                                        }
+//                                    });
+//
+//
+//                    }
+//                });
+//
+//
+//    }
 
 
     private void dismissDialog() {

@@ -169,14 +169,14 @@ public class Network {
         return compose(normalHttpService.getRecommendTechs(size, sign));
     }
 
-    public Observable<SetInfoResult> setUserInfo(RequestBody uuid, RequestBody nickName, RequestBody sex, RequestBody studio, MultipartBody.Part avator) {
+    public Observable<SetInfoResult> setUserInfo(RequestBody uuid, RequestBody nickName, RequestBody sex, RequestBody studio, RequestBody summary, MultipartBody.Part avator) {
 
         RequestBody description =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), sign);
 //        if (studio == null) {
 //            DebugLog.e("without studio");
-            return compose(normalHttpService.setUserinfo(uuid, nickName, sex, avator, description));
+        return compose(normalHttpService.setUserinfo(uuid, nickName, sex, summary, studio, avator, description));
 //        }
 //        else {
 //            DebugLog.e("with studio");

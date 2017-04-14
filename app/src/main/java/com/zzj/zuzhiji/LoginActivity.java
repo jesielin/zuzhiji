@@ -94,13 +94,26 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onNext(LoginResult loginResult) {
+                            String studioId = loginResult.studio;
+                            String studioTitle = Constant.EMPTY;
+                            if (TextUtils.isEmpty(studioId)) {
+                                studioId = Constant.EMPTY;
+                                studioTitle = Constant.EMPTY;
+                            } else {
+                                //// TODO: 17/4/14 暂定工作室title
+                                studioTitle = "心灵足道馆";
+                            }
                             SharedPreferencesUtils.getInstance().setLogin(
                                     loginResult.uuid,
                                     loginResult.nickName,
                                     TextUtils.isEmpty(loginResult.headSculpture)?Constant.AVATOR_DEFAULT:loginResult.headSculpture,
                                     loginResult.userType,
                                     loginResult.loginName,
-                                    TextUtils.isEmpty(loginResult.sex)?Constant.GENDER_MALE:loginResult.sex
+                                    TextUtils.isEmpty(loginResult.sex) ? Constant.GENDER_MALE : loginResult.sex,
+                                    TextUtils.isEmpty(loginResult.summary) ? Constant.EMPTY : loginResult.summary,
+                                    studioId,
+                                    studioTitle
+
                             );
 
 

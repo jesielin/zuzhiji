@@ -46,6 +46,8 @@ public class MeFragment extends Fragment {
     View guanzhu;
     @BindView(R.id.fensi)
     View fensi;
+    @BindView(R.id.summary)
+    TextView tvSummary;
 
     @BindView(R.id.avator)
     ImageView ivAvator;
@@ -75,12 +77,20 @@ public class MeFragment extends Fragment {
     private void loadAvatorAndName() {
         String avator = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR);
         String title = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME);
+        String summary = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.SUMMARY);
         DebugLog.e("avator:" + avator);
         if (TextUtils.isEmpty(title)) {
             title = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.LOGIN_NAME);
         }
         tvTitle.setText(title);
 
+        if (TextUtils.isEmpty(summary)) {
+            tvSummary.setVisibility(View.GONE);
+        } else {
+            tvSummary.setVisibility(View.VISIBLE);
+            tvSummary.setText(summary);
+
+        }
 
         CommonUtils.loadAvator(ivAvator,avator,getActivity());
     }

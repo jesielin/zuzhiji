@@ -5,14 +5,27 @@ package com.zzj.zuzhiji.network.entity;
  */
 
 /**
- * {"nickName":"哈哈",
- * "sex":"1",
- * "uuid":"f1cceeb9-ef91-46c8-b5b7-88737ab6afd8",
- * "headSculpture":"http://101.201.155.115:3113/heads/20170314/f1cceeb9-ef91-46c8-b5b7-88737ab6afd8-head.jpg"}
+ {"summary":"傻事",
+ "studio":1,
+ "nickName":"琦琦",
+ "loginName":"77777777777",
+ "sex":1,
+ "id":13,
+ "userType":1,
+ "studioTitle":"心灵足道馆",
+ "uuid":"EtcCntut00",
+ "createDate":1492156020000,
+ "status":1}
  */
 public class SetInfoResult {
     public String nickName;
     public String sex;
     public String uuid;
     public String headSculpture;
+    public String summary;
+    public String studio;
+    public String studioTitle;
+    public String status;
+    public String id;
+    public String userType;
 }

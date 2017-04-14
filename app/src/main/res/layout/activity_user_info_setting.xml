@@ -130,6 +130,49 @@
 
     <RelativeLayout
         android:clickable="true"
+        android:id="@+id/summary_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/touch_bg">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+
+            android:text="简介"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="21dp"
+            android:layout_marginRight="21dp"
+            android:src="@drawable/arrow_right" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:id="@+id/summary"
+            android:singleLine="true"
+            android:maxLength="10"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="65dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/divider"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:clickable="true"
         android:id="@+id/studio_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"

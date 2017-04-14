@@ -30,7 +30,7 @@ public class SharedPreferencesUtils {
         return !TextUtils.isEmpty(mSharedPreference.getString(Constant.SHARED_KEY.UUID, ""));
     }
 
-    public void setLogin(String uuid,String nickName,String avator,String userType,String loginName,String sex){
+    public void setLogin(String uuid, String nickName, String avator, String userType, String loginName, String sex, String summary, String studioId, String studioTitle) {
         mSharedPreference.edit()
                 .putString(Constant.SHARED_KEY.UUID,uuid)
                 .putString(Constant.SHARED_KEY.NICK_NAME,nickName)
@@ -38,6 +38,9 @@ public class SharedPreferencesUtils {
                 .putString(Constant.SHARED_KEY.USER_TYPE,userType)
                 .putString(Constant.SHARED_KEY.LOGIN_NAME,loginName)
                 .putString(Constant.SHARED_KEY.USER_GENDER,sex)
+                .putString(Constant.SHARED_KEY.SUMMARY, summary)
+                .putString(Constant.SHARED_KEY.STUDIO_ID, studioId)
+                .putString(Constant.SHARED_KEY.STUDIO_TITLE, studioTitle)
                 .apply();
     }
 
@@ -49,7 +52,9 @@ public class SharedPreferencesUtils {
                 .putString(Constant.SHARED_KEY.USER_TYPE,"")
                 .putString(Constant.SHARED_KEY.LOGIN_NAME,"")
                 .putString(Constant.SHARED_KEY.USER_GENDER,"")
-                .putString(Constant.SHARED_KEY.USER_STUDIO,"")
+                .putString(Constant.SHARED_KEY.STUDIO_ID, "")
+                .putString(Constant.SHARED_KEY.STUDIO_TITLE, "")
+                .putString(Constant.SHARED_KEY.SUMMARY, "")
                 .apply();
     }
 

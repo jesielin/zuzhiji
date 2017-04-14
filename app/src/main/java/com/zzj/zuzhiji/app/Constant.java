@@ -31,8 +31,11 @@ public interface Constant {
     String GENDER_MALE = "1";
     String GENDER_FEMALE = "0";
 
+    String EMPTY = "";
+
     String AVATOR_DEFAULT = "http://101.201.155.115:3113/heads/default/default.png";
     interface SHARED_KEY {
+        String SUMMARY = "SUMMARY";
         String SHARED_FILE_NAME = "ZZJ";
         String UUID = "UUID";
         String AVATOR = "AVATOR";
@@ -40,7 +43,8 @@ public interface Constant {
         String NICK_NAME = "NICK_NAME";
         String USER_TYPE = "USER_TYPE";
         String USER_GENDER = "USER_GENDER";
-        String USER_STUDIO = "USER_STUDIO";
+        String STUDIO_ID = "STUDIO_ID";
+        String STUDIO_TITLE = "STUDIO_TITLE";
 
         String NEWS_TAB_INDEX = "NEWS_TAB_INDEX";
 

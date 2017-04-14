@@ -119,7 +119,10 @@ public class RegisterFirstFragment extends Fragment {
                                 Constant.AVATOR_DEFAULT,
                                 registerResult.userType,
                                 registerResult.loginName,
-                                Constant.GENDER_MALE
+                                Constant.GENDER_MALE,
+                                Constant.EMPTY,
+                                Constant.EMPTY,
+                                Constant.EMPTY
                         );
 
 

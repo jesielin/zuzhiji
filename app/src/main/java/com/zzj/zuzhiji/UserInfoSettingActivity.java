@@ -67,23 +67,26 @@ public class UserInfoSettingActivity extends AppCompatActivity {
     ImageView ivAvator;
     @BindView(R.id.studio_view)
     View studioView;
+    @BindView(R.id.summary)
+    TextView tvSummary;
 
     private int genderIndex = 0;
 
     private MaterialDialog dialog;
-
-    private String studioId;
 
 
     private boolean isChangeAvator = false;
     private boolean isChangeNickName = false;
     private boolean isChangeGender = false;
     private boolean isChangeStudio = false;
+    private boolean isChangeSummary = false;
 
     private String mAvator;
     private String mNickName;
     private String mGender;
-    private String mStudio;
+    private String studioTitle;
+    private String mSummary;
+    private String studioId;
 
     private ArrayList<String> paths = new ArrayList<>();
 
@@ -104,10 +107,13 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         mAvator = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR);
         mNickName = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME);
         mGender = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_GENDER);
-        mStudio = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_STUDIO);
+        studioTitle = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.STUDIO_TITLE);
+        mSummary = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.SUMMARY);
+        studioId = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.STUDIO_ID);
 
-        CommonUtils.loadAvator(ivAvator,mAvator,this);
+        CommonUtils.loadAvator(ivAvator, mAvator, this);
 
+        tvSummary.setText(mSummary);
 
         tvNickName.setText(mNickName);
 
@@ -134,7 +140,8 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                 break;
         }
 
-        tvStudio.setText(mStudio);
+
+        tvStudio.setText(studioTitle);
     }
 
     @OnClick(R.id.back)
@@ -142,8 +149,29 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         onBackPressed();
     }
 
+    @OnClick(R.id.summary_view)
+    public void setSummary(View view) {
+        new MaterialDialog.Builder(this)
+                .title("更新简介")
+
+                .inputType(InputType.TYPE_CLASS_TEXT |
+                        InputType.TYPE_TEXT_VARIATION_PERSON_NAME |
+                        InputType.TYPE_TEXT_FLAG_CAP_WORDS)
+                .inputRange(1, 80)
+                .theme(Theme.LIGHT)
+                .positiveText("确定")
+                .input("简介", tvSummary.getText().toString(), false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        tvSummary.setText(input.toString());
+                        isChangeSummary = true;
+                    }
+                }).show();
+
+    }
+
     @OnClick(R.id.nickname_view)
-    public void setNickName() {
+    public void setNickName(View view) {
         new MaterialDialog.Builder(this)
                 .title("输入新的昵称")
 
@@ -239,8 +267,8 @@ public class UserInfoSettingActivity extends AppCompatActivity {
 //                                        Toast.makeText(UserInfoSettingActivity.this, which + "", Toast.LENGTH_SHORT).show();
 //                                        dismissDialog();
                                         studioId = studioItems.get(which).id;
-                                        mStudio = text.toString();
-                                        tvStudio.setText(mStudio);
+                                        studioTitle = text.toString();
+                                        tvStudio.setText(studioTitle);
                                         isChangeStudio = true;
                                         return true;
                                     }
@@ -281,7 +309,7 @@ public class UserInfoSettingActivity extends AppCompatActivity {
     public void complete(View view) {
 
 
-        if (!isChangeAvator && !isChangeNickName && !isChangeGender && !isChangeStudio) {
+        if (!isChangeAvator && !isChangeNickName && !isChangeGender && !isChangeStudio && !isChangeSummary) {
             Toast.makeText(this, "没有更改..", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -355,16 +383,17 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         MediaType.parse("multipart/form-data"), genderText);
 
 
-        RequestBody studio = null;
-        if (isChangeStudio) {
+        RequestBody studio =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), studioId);
 
+        //添加summary
+        String summaryText = tvSummary.getText().toString();
+        RequestBody summary =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), summaryText);
 
-            studio =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), studioId);
-        }
-
-        Network.getInstance().setUserInfo(uuid, nickName, gender, studio, avatorPart)
+        Network.getInstance().setUserInfo(uuid, nickName, gender, studio, summary, avatorPart)
                 .subscribe(new Subscriber<SetInfoResult>() {
                     @Override
                     public void onCompleted() {
@@ -385,7 +414,9 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         values.put(Constant.SHARED_KEY.AVATOR, CommonUtils.getAvatorAddress(setInfoResult.uuid));
                         values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
                         values.put(Constant.SHARED_KEY.USER_GENDER, setInfoResult.sex);
-                        values.put(Constant.SHARED_KEY.USER_STUDIO, mStudio);
+                        values.put(Constant.SHARED_KEY.STUDIO_ID, setInfoResult.studio);
+                        values.put(Constant.SHARED_KEY.STUDIO_TITLE, setInfoResult.studioTitle);
+                        values.put(Constant.SHARED_KEY.SUMMARY, setInfoResult.summary);
                         SharedPreferencesUtils.getInstance().setValues(values);
                         dismissDialog();
 
