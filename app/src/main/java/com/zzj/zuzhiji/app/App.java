@@ -4,10 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMOptions;
-import com.hyphenate.easeui.controller.EaseUI;
-import com.squareup.leakcanary.LeakCanary;
 import com.yayandroid.theactivitymanager.TheActivityManager;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
@@ -27,20 +23,13 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
 
-        //TODO:
-        EMOptions options = new EMOptions();
-        options.setAutoLogin(true);
-//        EaseUI.getInstance().getNotifier().init(this);
-
-        EaseUI.getInstance().init(this, null);
-        EMClient.getInstance().setDebugMode(true);
 
         TheActivityManager.getInstance().configure(this);
 
@@ -56,7 +45,6 @@ public class App extends Application {
             }
         });
 
-//        TheActivityManager.getInstance().setAsLanding(new LoginActivity());
     }
 
     @Override

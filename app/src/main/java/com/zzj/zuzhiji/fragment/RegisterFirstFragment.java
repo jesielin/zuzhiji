@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.hyphenate.chat.EMClient;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
@@ -128,8 +127,6 @@ public class RegisterFirstFragment extends Fragment {
 
                         DebugLog.e("uuid:" + registerResult.uuid);
 
-                        boolean loggedInBefore = EMClient.getInstance().isLoggedInBefore();
-                        DebugLog.e("is logged in:"+loggedInBefore);
 //                        EMClient.getInstance().login(registerResult.uuid, "123456", new EMCallBack() {//回调
 //                            @Override
 //                            public void onSuccess() {
