@@ -30,16 +30,16 @@ public class UIHelper {
     /**
      * dip转px
      */
-    public static int dipToPx(float dip) {
-        return (int) (dip * App.getContext().getResources()
+    public static int dipToPx(float dip,Context context) {
+        return (int) (dip * context.getResources()
                 .getDisplayMetrics().density + 0.5f);
     }
 
     /**
      * px转dip
      */
-    public static int pxToDip(float pxValue) {
-        final float scale = App.getContext().getResources()
+    public static int pxToDip(float pxValue,Context context) {
+        final float scale = context.getResources()
                 .getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
@@ -47,8 +47,8 @@ public class UIHelper {
     /**
      * 将sp值转换为px值
      */
-    public static int sp2px(float spValue) {
-        final float fontScale = App.getContext().getResources()
+    public static int sp2px(float spValue,Context context) {
+        final float fontScale = context.getResources()
                 .getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
     }
@@ -57,7 +57,6 @@ public class UIHelper {
      * 获取屏幕分辨率：宽
      */
     public static int getScreenWidthPix(@Nullable Context context) {
-        if (context == null) context = App.getContext();
         int width = context.getResources().getDisplayMetrics().widthPixels;
         return width;
     }
@@ -66,7 +65,6 @@ public class UIHelper {
      * 获取屏幕分辨率：高
      */
     public static int getScreenHeightPix(@Nullable Context context) {
-        if (context == null) context = App.getContext();
         int height = context.getResources().getDisplayMetrics().heightPixels;
         return height;
     }
@@ -157,8 +155,8 @@ public class UIHelper {
     /**
      * Toast封装
      */
-    public static void ToastMessage(String msg) {
-        Toast.makeText(App.getContext(), msg, Toast.LENGTH_LONG).show();
+    public static void ToastMessage(String msg,Context context) {
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -179,9 +177,9 @@ public class UIHelper {
      * 资源工具
      */
 
-    public static int getResourceColor(int colorResId) {
+    public static int getResourceColor(int colorResId,Context context) {
         try {
-            return App.getContext()
+            return context
                     .getResources()
                     .getColor(colorResId);
         } catch (Exception e) {

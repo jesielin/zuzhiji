@@ -1,10 +1,12 @@
 package com.zzj.zuzhiji.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
@@ -124,38 +129,13 @@ public class RegisterFirstFragment extends Fragment {
                                 Constant.EMPTY
                         );
 
+                        signIn(registerResult.uuid);
 
                         DebugLog.e("uuid:" + registerResult.uuid);
 
-//                        EMClient.getInstance().login(registerResult.uuid, "123456", new EMCallBack() {//回调
-//                            @Override
-//                            public void onSuccess() {
-//                                EMClient.getInstance().groupManager().loadAllGroups();
-//                                EMClient.getInstance().chatManager().loadAllConversations();
-//
-//                                DebugLog.d("登录聊天服务器成功！");
-//                                SharedPreferencesUtils.getInstance().setEmLogin(true);
-//                                dismissDialog();
-//                                getActivity().finish();
-//
-//                            }
-//
-//                            @Override
-//                            public void onProgress(int progress, String status) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(int code, String message) {
-//                                DebugLog.d("code:"+code+",MESSAGE:"+message);
-//                                SharedPreferencesUtils.getInstance().setEmLogin(false);
-//                                dismissDialog();
-//
-//                            }
-//                        });
 
-                                dismissDialog();
-                                getActivity().onBackPressed();
+
+
 
 
                     }
@@ -163,7 +143,104 @@ public class RegisterFirstFragment extends Fragment {
 
 
     }
+    /**
+     * 登录方法
+     */
+    private void signIn(String uuid) {
 
+        String password = "123456";
+
+        EMClient.getInstance().login(uuid, password, new EMCallBack() {
+            /**
+             * 登陆成功的回调
+             */
+            @Override
+            public void onSuccess() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismissDialog();
+
+                        // 加载所有会话到内存
+                        EMClient.getInstance().chatManager().loadAllConversations();
+                        // 加载所有群组到内存，如果使用了群组的话
+                        // EMClient.getInstance().groupManager().loadAllGroups();
+
+                        // 登录成功跳转界面
+                        DebugLog.e("登录成功");
+
+                        getActivity().onBackPressed();
+                    }
+                });
+            }
+
+            /**
+             * 登陆错误的回调
+             * @param i
+             * @param s
+             */
+            @Override
+            public void onError(final int i, final String s) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismissDialog();
+                        Log.d("lzan13", "登录失败 Error code:" + i + ", message:" + s);
+                        /**
+                         * 关于错误码可以参考官方api详细说明
+                         * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
+                         */
+                        switch (i) {
+                            // 网络异常 2
+                            case EMError.NETWORK_ERROR:
+                                Toast.makeText(getActivity(), "网络错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无效的用户名 101
+                            case EMError.INVALID_USER_NAME:
+                                Toast.makeText(getActivity(), "无效的用户名 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无效的密码 102
+                            case EMError.INVALID_PASSWORD:
+                                Toast.makeText(getActivity(), "无效的密码 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 用户认证失败，用户名或密码错误 202
+                            case EMError.USER_AUTHENTICATION_FAILED:
+                                Toast.makeText(getActivity(), "用户认证失败，用户名或密码错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 用户不存在 204
+                            case EMError.USER_NOT_FOUND:
+                                Toast.makeText(getActivity(), "用户不存在 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无法访问到服务器 300
+                            case EMError.SERVER_NOT_REACHABLE:
+                                Toast.makeText(getActivity(), "无法访问到服务器 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 等待服务器响应超时 301
+                            case EMError.SERVER_TIMEOUT:
+                                Toast.makeText(getActivity(), "等待服务器响应超时 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 服务器繁忙 302
+                            case EMError.SERVER_BUSY:
+                                Toast.makeText(getActivity(), "服务器繁忙 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 未知 Server 异常 303 一般断网会出现这个错误
+                            case EMError.SERVER_UNKNOWN_ERROR:
+                                Toast.makeText(getActivity(), "未知的服务器异常 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                Toast.makeText(getActivity(), "ml_sign_in_failed code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
+            }
+        });
+    }
 
     private void dismissDialog() {
         if (dialog != null && dialog.isShowing()) {

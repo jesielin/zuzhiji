@@ -90,12 +90,12 @@ public class UserInfoSettingActivity extends AppCompatActivity {
 
     private ArrayList<String> paths = new ArrayList<>();
 
-    private Compressor compressor = new Compressor.Builder(App.getContext())
+    private Compressor compressor = new Compressor.Builder(this)
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
             .setQuality(Constant.IMAGE_UPLOAD_QUALITY)
             .setCompressFormat(Bitmap.CompressFormat.JPEG)
-            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getContext()).getAbsolutePath())
+            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(this).getAbsolutePath())
             .build();
 
     @Override

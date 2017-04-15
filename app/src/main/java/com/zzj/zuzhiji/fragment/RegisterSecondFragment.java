@@ -58,12 +58,12 @@ public class RegisterSecondFragment extends Fragment {
 
     private MaterialDialog dialog;
 
-    private Compressor compressor = new Compressor.Builder(App.getContext())
+    private Compressor compressor = new Compressor.Builder(getActivity())
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
             .setQuality(Constant.IMAGE_UPLOAD_QUALITY)
             .setCompressFormat(Bitmap.CompressFormat.JPEG)
-            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getContext()).getAbsolutePath())
+            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(getActivity()).getAbsolutePath())
             .build();
 
 

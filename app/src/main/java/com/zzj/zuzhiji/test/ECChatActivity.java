@@ -1,9 +1,8 @@
-package com.zzj.zuzhiji;
+package com.zzj.zuzhiji.test;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
@@ -20,17 +19,11 @@ import com.hyphenate.chat.EMCmdMessageBody;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
-import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.R;
 
 import java.util.List;
 
-
-/**
- * Created by shawn on 2017-04-02.
- */
-
-public class ChatActivity extends AppCompatActivity implements EMMessageListener{
-
+public class ECChatActivity extends AppCompatActivity implements EMMessageListener {
 
     // 聊天信息输入框
     private EditText mInputEdit;
@@ -55,8 +48,7 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
 
         // 获取当前会话的username(如果是群聊就是群id)
         mChatId = getIntent().getStringExtra("ec_chat_id");
-
-        DebugLog.e("chat uuid:"+mChatId);
+        mMessageListener = this;
 
         initView();
         initConversation();
@@ -66,34 +58,6 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
      * 初始化界面
      */
     private void initView() {
-
-        mMessageListener = new EMMessageListener() {
-            @Override
-            public void onMessageReceived(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
-
-            @Override
-            public void onCmdMessageReceived(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
-
-            @Override
-            public void onMessageRead(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
-
-            @Override
-            public void onMessageDelivered(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
-
-            @Override
-            public void onMessageChanged(EMMessage emMessage, Object o) {
-
-            }
-        };
-
         mInputEdit = (EditText) findViewById(R.id.ec_edit_message_input);
         mSendBtn = (Button) findViewById(R.id.ec_btn_send);
         mContentText = (TextView) findViewById(R.id.ec_text_content);
@@ -190,7 +154,6 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
         super.onResume();
         // 添加消息监听
         EMClient.getInstance().chatManager().addMessageListener(mMessageListener);
-        DebugLog.e("设置消息监听");
     }
 
     @Override
@@ -198,21 +161,7 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
         super.onStop();
         // 移除消息监听
         EMClient.getInstance().chatManager().removeMessageListener(mMessageListener);
-        DebugLog.e("移除消息监听");
     }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        EMClient.getInstance().chatManager().addMessageListener(mMessageListener);
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        EMClient.getInstance().chatManager().removeMessageListener(mMessageListener);
-//    }
-
     /**
      * --------------------------------- Message Listener -------------------------------------
      * 环信消息监听主要方法
@@ -224,12 +173,11 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
      */
     @Override
     public void onMessageReceived(List<EMMessage> list) {
-        DebugLog.e("收到消息");
         // 循环遍历当前收到的消息
         for (EMMessage message : list) {
-            DebugLog.e("收到消息："+message.getBody());
+
             if (message.getFrom().equals(mChatId)) {
-                // 设置消息为已读
+//                 设置消息为已读
                 mConversation.markMessageAsRead(message.getMsgId());
 
                 // 因为消息监听回调这里是非ui线程，所以要用handler去更新ui
@@ -238,7 +186,7 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
                 msg.obj = message;
                 mHandler.sendMessage(msg);
             } else {
-                // 如果消息不是当前会话的消息发送通知栏通知
+                 //如果消息不是当前会话的消息发送通知栏通知
             }
         }
     }
@@ -250,12 +198,11 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
      */
     @Override
     public void onCmdMessageReceived(List<EMMessage> list) {
-        DebugLog.e("透传消息");
         for (int i = 0; i < list.size(); i++) {
             // 透传消息
             EMMessage cmdMessage = list.get(i);
             EMCmdMessageBody body = (EMCmdMessageBody) cmdMessage.getBody();
-            DebugLog.e("透传消息："+body.action());
+            Log.i("lzan13", body.action());
         }
     }
 

@@ -291,7 +291,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         });
         recyclerView.setAdapter(mAdapter);
 
-        scrollHeight = UIHelper.dipToPx(240.0f) - titlebar.getBottom();
+        scrollHeight = UIHelper.dipToPx(240.0f,HomePageActivity.this) - titlebar.getBottom();
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {

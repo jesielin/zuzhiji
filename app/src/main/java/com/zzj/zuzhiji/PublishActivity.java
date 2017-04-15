@@ -61,12 +61,12 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
     @BindView(R.id.image_group)
     BGASortableNinePhotoLayout mPhotosSnpl;
     private MaterialDialog dialog;
-    private Compressor compressor = new Compressor.Builder(App.getContext())
+    private Compressor compressor = new Compressor.Builder(this)
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
             .setQuality(Constant.IMAGE_UPLOAD_QUALITY)
             .setCompressFormat(Bitmap.CompressFormat.JPEG)
-            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getContext()).getAbsolutePath())
+            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(this).getAbsolutePath())
             .build();
     private ArrayList<String> paths = new ArrayList<>();
 //    private List<File> files = new ArrayList<>();

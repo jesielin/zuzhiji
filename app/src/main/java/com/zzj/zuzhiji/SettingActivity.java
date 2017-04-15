@@ -1,13 +1,18 @@
 package com.zzj.zuzhiji;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.GlideCacheUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
@@ -33,12 +38,34 @@ public class SettingActivity extends AppCompatActivity {
         tvCacheSize.setText(GlideCacheUtils.getInstance().getCacheSize(getApplicationContext()));
     }
 
+    private ProgressDialog mDialog;
     @OnClick(R.id.logout)
     public void logout(View view) {
+        mDialog = new ProgressDialog(this);
+        mDialog.setMessage("退出登录中，请稍后...");
+        mDialog.show();
+        // 调用sdk的退出登录方法，第一个参数表示是否解绑推送的token，没有使用推送或者被踢都要传false
+        EMClient.getInstance().logout(false, new EMCallBack() {
+            @Override
+            public void onSuccess() {
+                DebugLog.e( "logout success");
+                // 调用退出成功，结束app
+                SharedPreferencesUtils.getInstance().setLogout();
+                startActivity(new Intent(SettingActivity.this,LoginActivity.class));
+            }
 
-        SharedPreferencesUtils.getInstance().setLogout();
-//        TheActivityManager.getInstance().finishAll();
-        startActivity(new Intent(this,LoginActivity.class));
+            @Override
+            public void onError(int i, String s) {
+                DebugLog.e("logout error " + i + " - " + s);
+                Toast.makeText(SettingActivity.this, s, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
+            }
+        });
+
 
 
     }
