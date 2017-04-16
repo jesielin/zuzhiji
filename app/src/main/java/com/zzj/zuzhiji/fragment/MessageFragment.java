@@ -16,19 +16,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMTextMessageBody;
 import com.zzj.zuzhiji.ChatActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.test.ECMainActivity;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.GlideCircleTransform;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -49,10 +57,6 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @BindView(R.id.refresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    @OnClick(R.id.tochat)
-    public void tochat(View view){
-        startActivity(new Intent(getActivity(), ECMainActivity.class));
-    }
 
     private List<MessageResult> datas = new ArrayList<>();
     private MessageAdapter mAdapter = new MessageAdapter();
@@ -84,6 +88,9 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         return contentView;
     }
+
+
+
 
     // 弹出框
     private ProgressDialog mDialog;
@@ -186,15 +193,19 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
     }
-    
+
 
     @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (!hidden && !swipeRefreshLayout.isRefreshing()){
-            swipeRefreshLayout.setRefreshing(true);
-            onRefresh();
-        }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_MESSAGE_TO_CHAT && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_CHAT_BACK_TO_MESSAGE)
+            swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+                    onRefresh();
+                }
+            });
     }
 
     private void setupLayout() {
@@ -253,7 +264,19 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         @BindView(R.id.title)
         TextView tvTitle;
+        @BindView(R.id.avator)
+        ImageView ivAvator;
+        @BindView(R.id.subtitle)
+        TextView tvSubTitle;
+        @BindView(R.id.date)
+        TextView tvDate;
+        @BindView(R.id.unreadnum)
+        TextView tvUnreadNum;
 
+        @BindView(R.id.unread_area)
+        View vUnreadArea;
+        @BindView(R.id.clickArea)
+        View vClickArea;
         public MessageVH(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -269,18 +292,60 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         @Override
         public void onBindViewHolder(MessageVH holder, final int position) {
-            holder.tvTitle.setText(datas.get(position).nickName);
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            final MessageResult item = datas.get(position);
+            holder.tvTitle.setText(item.nickName);
+            holder.vClickArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     if (EMClient.getInstance().isLoggedInBefore()) {
                         Intent intent = new Intent(getActivity(), ChatActivity.class);
-                        intent.putExtra("UUID", datas.get(position).uuid);
-                        startActivity(intent);
+                        intent.putExtra("UUID", item.uuid);
+                        intent.putExtra("TITLE",item.nickName);
+                        startActivityForResult(intent,Constant.ACTIVITY_CODE.REQUEST_CODE_MESSAGE_TO_CHAT);
                     }
                 }
             });
+
+            Glide.with(getActivity())
+                    .load(CommonUtils.getAvatorAddress(item.uuid))
+                    .asBitmap()
+                    .centerCrop()
+//                    .placeholder(R.color.text_hint)
+                    .error(R.color.avator_place_holder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+//                    .priority(Priority.IMMEDIATE)
+
+
+                    .into(holder.ivAvator);
+
+
+            EMConversation conversation = EMClient.getInstance().chatManager().getConversation(item.uuid, null, true);
+            int unreadMsgCount = conversation.getUnreadMsgCount();
+            if (unreadMsgCount == 0){
+                holder.vUnreadArea.setVisibility(View.GONE);
+            }else {
+                holder.vUnreadArea.setVisibility(View.VISIBLE);
+                holder.tvUnreadNum.setText(String.valueOf(unreadMsgCount));
+            }
+            EMMessage lastMessage = conversation.getLastMessage();
+
+            if (lastMessage == null || lastMessage.getBody() == null || TextUtils.isEmpty(lastMessage.getBody().toString())){
+                holder.tvSubTitle.setText("");
+            }
+            else  {
+                EMTextMessageBody body = (EMTextMessageBody) lastMessage.getBody();
+                holder.tvSubTitle.setText(body.getMessage());
+            }
+
+
+            if (lastMessage == null)
+                holder.tvDate.setText("");
+            else {
+                long msgTime = lastMessage.getMsgTime();
+                holder.tvDate.setText(CommonUtils.getDate(msgTime));
+            }
         }
 
         @Override

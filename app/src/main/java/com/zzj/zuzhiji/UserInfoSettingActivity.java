@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -90,12 +91,12 @@ public class UserInfoSettingActivity extends AppCompatActivity {
 
     private ArrayList<String> paths = new ArrayList<>();
 
-    private Compressor compressor = new Compressor.Builder(this)
+    private Compressor compressor = new Compressor.Builder(App.getAppContext())
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
             .setQuality(Constant.IMAGE_UPLOAD_QUALITY)
             .setCompressFormat(Bitmap.CompressFormat.JPEG)
-            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(this).getAbsolutePath())
+            .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getAppContext()).getAbsolutePath())
             .build();
 
     @Override
@@ -362,6 +363,7 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         }
 
 
+
         //添加UUID
         String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
         RequestBody uuid =
@@ -369,29 +371,36 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         MediaType.parse("multipart/form-data"), uuidText);
 
 
-        // 添加nickname
-        String nickNameText = tvNickName.getText().toString();
+            // 添加nickname
+            String nickNameText = tvNickName.getText().toString();
         RequestBody nickName =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), nickNameText);
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), nickNameText);
 
 
-        // 添加sex
-        final String genderText = genderIndex == 0 ? Constant.GENDER_MALE : Constant.GENDER_FEMALE;
-        RequestBody gender =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), genderText);
+            // 添加sex
+            String genderText = genderIndex == 0 ? Constant.GENDER_MALE : Constant.GENDER_FEMALE;
+            RequestBody gender =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), genderText);
 
 
-        RequestBody studio =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), studioId);
+        DebugLog.e("studio id:"+studioId);
+        RequestBody studio = null;
+        if (isChangeStudio) {
+            studio =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), studioId);
+        }
 
-        //添加summary
-        String summaryText = tvSummary.getText().toString();
-        RequestBody summary =
-                RequestBody.create(
-                        MediaType.parse("multipart/form-data"), summaryText);
+
+
+            //添加summary
+            String summaryText = tvSummary.getText().toString();
+            RequestBody summary =
+                    RequestBody.create(
+                            MediaType.parse("multipart/form-data"), summaryText);
+
 
         Network.getInstance().setUserInfo(uuid, nickName, gender, studio, summary, avatorPart)
                 .subscribe(new Subscriber<SetInfoResult>() {
@@ -414,8 +423,8 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         values.put(Constant.SHARED_KEY.AVATOR, CommonUtils.getAvatorAddress(setInfoResult.uuid));
                         values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
                         values.put(Constant.SHARED_KEY.USER_GENDER, setInfoResult.sex);
-                        values.put(Constant.SHARED_KEY.STUDIO_ID, setInfoResult.studio);
-                        values.put(Constant.SHARED_KEY.STUDIO_TITLE, setInfoResult.studioTitle);
+                        values.put(Constant.SHARED_KEY.STUDIO_ID, setInfoResult.studio==null?"":setInfoResult.studio);
+                        values.put(Constant.SHARED_KEY.STUDIO_TITLE, setInfoResult.studioTitle==null?"":setInfoResult.studioTitle);
                         values.put(Constant.SHARED_KEY.SUMMARY, setInfoResult.summary);
                         SharedPreferencesUtils.getInstance().setValues(values);
                         dismissDialog();

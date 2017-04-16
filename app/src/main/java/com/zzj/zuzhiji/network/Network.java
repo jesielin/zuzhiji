@@ -13,6 +13,7 @@ import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.network.entity.UserInfoResult;
 import com.zzj.zuzhiji.util.DebugLog;
 
@@ -114,6 +115,10 @@ public class Network {
     //获取单例
     public static Network getInstance() {
         return SingletonHolder.INSTANCE;
+    }
+
+    public Observable<UpdateInfo> update(){
+        return compose(normalHttpService.update(sign));
     }
 
     public Observable<List<NewsResult>> getNews(String type) {

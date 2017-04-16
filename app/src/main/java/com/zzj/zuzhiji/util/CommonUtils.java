@@ -1,6 +1,8 @@
 package com.zzj.zuzhiji.util;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -24,6 +26,8 @@ public class CommonUtils {
 
         return sdf.format(timeMills);
     }
+
+
 
 
     public static void showSoftInput(Context context, View view) {

@@ -12,6 +12,7 @@ import com.zzj.zuzhiji.network.entity.SetInfoResult;
 import com.zzj.zuzhiji.network.entity.SocialTotal;
 import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.network.entity.UserInfoResult;
 
 import java.util.List;
@@ -32,6 +33,13 @@ import rx.Observable;
 public interface HttpService {
 
 
+    /**
+     * 更新app
+     * @param sign
+     * @return
+     */
+    @GET("/getAndroidInfo")
+    Observable<HttpResult<UpdateInfo>> update(@Query("sign") String sign);
 
     /**
      * 登录

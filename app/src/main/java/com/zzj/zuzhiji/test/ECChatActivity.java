@@ -60,7 +60,7 @@ public class ECChatActivity extends AppCompatActivity implements EMMessageListen
     private void initView() {
         mInputEdit = (EditText) findViewById(R.id.ec_edit_message_input);
         mSendBtn = (Button) findViewById(R.id.ec_btn_send);
-        mContentText = (TextView) findViewById(R.id.ec_text_content);
+//        mContentText = (TextView) findViewById(R.id.ec_text_content);
         // 设置textview可滚动，需配合xml布局设置
         mContentText.setMovementMethod(new ScrollingMovementMethod());
 

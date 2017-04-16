@@ -212,6 +212,8 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
             }
         });
 
+
+
         etComment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

@@ -103,16 +103,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Fragment f = null;
         switch (requestCode) {
             case Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT:
             case Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_TO_DETAIL:
-                Fragment f = mNavigator.getFragment(1);
+                f = mNavigator.getFragment(1);
                 DebugLog.e("f:" + f);
-                if (f != null)
-                    f.onActivityResult(requestCode, resultCode, data);
-                break;
 
+                break;
+            case Constant.ACTIVITY_CODE.REQUEST_CODE_MESSAGE_TO_CHAT:
+                f = mNavigator.getFragment(3);
+                break;
         }
+        if (f != null)
+            f.onActivityResult(requestCode, resultCode, data);
     }
 
     private class MainFragmentAdapter implements FragmentNavigatorAdapter {

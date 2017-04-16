@@ -3,22 +3,30 @@ package com.zzj.zuzhiji;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
+import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCacheUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 
 /**
  * Created by shawn on 17/3/29.
@@ -29,6 +37,8 @@ public class SettingActivity extends AppCompatActivity {
     @BindView(R.id.cache_size)
     TextView tvCacheSize;
 
+    private MaterialDialog infoDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,12 +48,12 @@ public class SettingActivity extends AppCompatActivity {
         tvCacheSize.setText(GlideCacheUtils.getInstance().getCacheSize(getApplicationContext()));
     }
 
-    private ProgressDialog mDialog;
+    private ProgressDialog progressDialog;
     @OnClick(R.id.logout)
     public void logout(View view) {
-        mDialog = new ProgressDialog(this);
-        mDialog.setMessage("退出登录中，请稍后...");
-        mDialog.show();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("退出登录中，请稍后...");
+        progressDialog.show();
         // 调用sdk的退出登录方法，第一个参数表示是否解绑推送的token，没有使用推送或者被踢都要传false
         EMClient.getInstance().logout(false, new EMCallBack() {
             @Override
@@ -68,6 +78,63 @@ public class SettingActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @OnClick(R.id.check_version)
+    public void update(View view){
+        Network.getInstance().update()
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        progressDialog = new ProgressDialog(SettingActivity.this);
+                        progressDialog.setMessage("正在获取版本，请稍后...");
+                        progressDialog.show();
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UpdateInfo>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onNext(UpdateInfo updateInfo) {
+                progressDialog.dismiss();
+
+
+                Integer.valueOf(updateInfo.version_code);
+
+                new MaterialDialog.Builder(SettingActivity.this)
+                        .title("新版本")
+                        .content("有新版本。。")
+                        .positiveText("确定")
+                        .negativeText("取消")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                                Toast.makeText(SettingActivity.this, "确定", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Toast.makeText(SettingActivity.this, "取消", Toast.LENGTH_SHORT).show();
+
+                            }
+                        })
+                        .show();
+
+            }
+        });
     }
 
     @OnClick(R.id.question)

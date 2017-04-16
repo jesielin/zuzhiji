@@ -128,7 +128,8 @@
 
         <activity
             android:name=".ChatActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnspecified|adjustResize"></activity>
 
         <activity
             android:name=".AboutActivity"
@@ -147,6 +148,8 @@
             android:name=".ReservationActivity"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".test.ECMainActivity"/>
+
+
 
         <meta-data
             android:name="EASEMOB_APPKEY"

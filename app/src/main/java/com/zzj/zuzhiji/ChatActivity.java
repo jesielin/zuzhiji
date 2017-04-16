@@ -3,16 +3,21 @@ package com.zzj.zuzhiji;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
@@ -20,16 +25,25 @@ import com.hyphenate.chat.EMCmdMessageBody;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.KeyboardControlMnanager;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
  * Created by shawn on 2017-04-02.
  */
 
-public class ChatActivity extends AppCompatActivity implements EMMessageListener{
+public class ChatActivity extends AppCompatActivity implements EMMessageListener {
 
 
     // 聊天信息输入框
@@ -38,7 +52,7 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
     private Button mSendBtn;
 
     // 显示内容的 TextView
-    private TextView mContentText;
+//    private TextView mContentText;
 
     // 消息监听器
     private EMMessageListener mMessageListener;
@@ -48,15 +62,37 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
     private EMConversation mConversation;
 
 
+    @BindView(R.id.title)
+    TextView tvTitle;
+    @BindView(R.id.list)
+    ListView listView;
+//    @BindView(R.id.scroll_container)
+//    ScrollView scrollView;
+
+    @BindView(R.id.ec_layout_input)
+    View bottomChat;
+
+    private List<EMMessage> messages = new LinkedList<>();
+    private ChatMessageAdapter mAdapter = new ChatMessageAdapter();
+
+    private String title;
+    private String mAvatorUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        ButterKnife.bind(this);
 
         // 获取当前会话的username(如果是群聊就是群id)
-        mChatId = getIntent().getStringExtra("ec_chat_id");
+        mChatId = getIntent().getStringExtra("UUID");
+        title = getIntent().getStringExtra("TITLE");
+        tvTitle.setText(title);
 
-        DebugLog.e("chat uuid:"+mChatId);
+        mAvatorUrl = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR);
+
+        mMessageListener = this;
+        DebugLog.e("chat uuid:" + mChatId);
 
         initView();
         initConversation();
@@ -67,38 +103,13 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
      */
     private void initView() {
 
-        mMessageListener = new EMMessageListener() {
-            @Override
-            public void onMessageReceived(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(mAdapter);
 
-            @Override
-            public void onCmdMessageReceived(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
-
-            @Override
-            public void onMessageRead(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
-
-            @Override
-            public void onMessageDelivered(List<EMMessage> list) {
-                DebugLog.e(list.toString());
-            }
-
-            @Override
-            public void onMessageChanged(EMMessage emMessage, Object o) {
-
-            }
-        };
+        listView.setAdapter(mAdapter);
 
         mInputEdit = (EditText) findViewById(R.id.ec_edit_message_input);
         mSendBtn = (Button) findViewById(R.id.ec_btn_send);
-        mContentText = (TextView) findViewById(R.id.ec_text_content);
-        // 设置textview可滚动，需配合xml布局设置
-        mContentText.setMovementMethod(new ScrollingMovementMethod());
 
         // 设置发送按钮的点击事件
         mSendBtn.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +121,12 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
                     // 创建一条新消息，第一个参数为消息内容，第二个为接受者username
                     EMMessage message = EMMessage.createTxtSendMessage(content, mChatId);
                     // 将新的消息内容和时间加入到下边
-                    mContentText.setText(mContentText.getText() + "\n发送：" + content + " - time: " + message.getMsgTime());
+//                    mContentText.setText(mContentText.getText() + "\n发送：" + content + " - time: " + message.getMsgTime());
+                    messages.add(message);
+
+                    mAdapter.notifyDataSetChanged();
+
+
                     // 调用发送消息的方法
                     EMClient.getInstance().chatManager().sendMessage(message);
                     // 为消息设置回调
@@ -135,6 +151,57 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
                 }
             }
         });
+
+//        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//                recyclerView.scrollToPosition(recyclerView.getChildCount());
+//            }
+//        });
+
+        KeyboardControlMnanager.observerKeyboardVisibleChange(this, new KeyboardControlMnanager.OnKeyboardStateChangeListener() {
+            @Override
+            public void onKeyboardChange(int displayHeight, int statusbarHeight, boolean isVisible) {
+
+//                listView.setSelection(listView.getChildCount());
+                int[] contentLocation = new int[2];
+                int[] chatLocation = new int[2];
+                int itemHeight;
+
+
+                listView.getLocationInWindow(contentLocation);
+                bottomChat.getLocationInWindow(chatLocation);
+                itemHeight = listView.getMeasuredHeight();
+
+
+                listView.scrollBy(0, contentLocation[1] + itemHeight - chatLocation[1]);
+            }
+        });
+
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (CommonUtils.isShowSoftInput(ChatActivity.this))
+                        CommonUtils.hideSoftInput(ChatActivity.this, mInputEdit);
+
+                }
+                return false;
+            }
+        });
+    }
+
+    @OnClick(R.id.back)
+    public void back(View view) {
+        onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        setResult(Constant.ACTIVITY_CODE.RESULT_CODE_CHAT_BACK_TO_MESSAGE);
+        finish();
     }
 
     /**
@@ -149,22 +216,45 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
          * 第三个表示如果会话不存在是否创建
          */
         mConversation = EMClient.getInstance().chatManager().getConversation(mChatId, null, true);
+
+
+//        messages.addAll(mConversation.getAllMessages());
+//        mConversation.getMessageAttachmentPath();
+//        mConversation.getMessage()
+//        DebugLog.e("size:"+mConversation.getAllMessages().size());
+//        DebugLog.e("count:"+mConversation.getAllMsgCount());
+//        mAdapter.notifyDataSetChanged();
+
+
+        int now_count = mConversation.getAllMessages().size();
+        int unread_count = mConversation.getUnreadMsgCount();
+
+        if (now_count < unread_count)
+            mConversation.loadMoreMsgFromDB(mConversation.getAllMessages().get(0).getMsgId(), unread_count - now_count);
+
+        messages.addAll(mConversation.getAllMessages());
+        mAdapter.notifyDataSetChanged();
+
+
         // 设置当前会话未读数为 0
         mConversation.markAllMessagesAsRead();
-        int count = mConversation.getAllMessages().size();
-        if (count < mConversation.getAllMsgCount() && count < 20) {
-            // 获取已经在列表中的最上边的一条消息id
-            String msgId = mConversation.getAllMessages().get(0).getMsgId();
-            // 分页加载更多消息，需要传递已经加载的消息的最上边一条消息的id，以及需要加载的消息的条数
-            mConversation.loadMoreMsgFromDB(msgId, 20 - count);
-        }
-        // 打开聊天界面获取最后一条消息内容并显示
-        if (mConversation.getAllMessages().size() > 0) {
-            EMMessage messge = mConversation.getLastMessage();
-            EMTextMessageBody body = (EMTextMessageBody) messge.getBody();
-            // 将消息内容和时间显示出来
-            mContentText.setText("聊天记录：" + body.getMessage() + " - time: " + mConversation.getLastMessage().getMsgTime());
-        }
+//        mConversation.loadMoreMsgFromDB()
+//        int count = mConversation.getAllMessages().size();
+//        if (count < mConversation.getAllMsgCount() && count < 20) {
+//            // 获取已经在列表中的最上边的一条消息id
+//            String msgId = mConversation.getAllMessages().get(0).getMsgId();
+//            // 分页加载更多消息，需要传递已经加载的消息的最上边一条消息的id，以及需要加载的消息的条数
+//            mConversation.loadMoreMsgFromDB(msgId, 20 - count);
+//        }
+//        // 打开聊天界面获取最后一条消息内容并显示
+//        if (mConversation.getAllMessages().size() > 0) {
+//            EMMessage messge = mConversation.getLastMessage();
+//
+//            EMTextMessageBody body = (EMTextMessageBody) messge.getBody();
+//            // 将消息内容和时间显示出来
+//
+////            mContentText.setText("聊天记录：" + body.getMessage() + " - time: " + mConversation.getLastMessage().getMsgTime());
+//        }
     }
 
     /**
@@ -179,7 +269,14 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
                     // 这里只是简单的demo，也只是测试文字消息的收发，所以直接将body转为EMTextMessageBody去获取内容
                     EMTextMessageBody body = (EMTextMessageBody) message.getBody();
                     // 将新的消息内容和时间加入到下边
-                    mContentText.setText(mContentText.getText() + "\n接收：" + body.getMessage() + " - time: " + message.getMsgTime());
+
+//                    DebugLog.e("list:"+mContentText.getText() + "\n接收：" + body.getMessage() + " - time: " + message.getMsgTime());
+//                    mContentText.setText(mContentText.getText() + "\n接收：" + body.getMessage() + " - time: " + message.getMsgTime());
+
+                    messages.add(message);
+                    mAdapter.notifyDataSetChanged();
+
+
                     break;
             }
         }
@@ -201,17 +298,105 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
         DebugLog.e("移除消息监听");
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        EMClient.getInstance().chatManager().addMessageListener(mMessageListener);
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        EMClient.getInstance().chatManager().removeMessageListener(mMessageListener);
-//    }
+    public class ChatMessageVH {
+
+        @BindView(R.id.avator_from)
+        ImageView ivAvatorFrom;
+        @BindView(R.id.message_from)
+        TextView tvMessageFrom;
+        @BindView(R.id.from_area)
+        View vAreaFrom;
+
+        @BindView(R.id.avator_to)
+        ImageView ivAvatorTo;
+        @BindView(R.id.message_to)
+        TextView tvMessageTo;
+        @BindView(R.id.to_area)
+        View vAreaTo;
+
+        public ChatMessageVH(View itemView) {
+
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public static final int TYPE_FROM = 1;
+    public static final int TYPE_TO = 2;
+
+    private class ChatMessageAdapter extends BaseAdapter {
+
+
+        @Override
+        public int getCount() {
+            return messages.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return messages.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final ChatMessageVH holder;
+            if (convertView != null) {
+                holder = (ChatMessageVH) convertView.getTag();
+            } else {
+                convertView = View.inflate(parent.getContext(), R.layout.item_chat_message, null);
+                holder = new ChatMessageVH(convertView);
+                convertView.setTag(holder);
+            }
+
+            EMMessage message = (EMMessage) getItem(position);
+            EMTextMessageBody body = (EMTextMessageBody) message.getBody();
+            String messageText = body.getMessage();
+            switch (getItemViewType(position)) {
+                case TYPE_FROM:
+                    holder.vAreaFrom.setVisibility(View.VISIBLE);
+                    holder.vAreaTo.setVisibility(View.GONE);
+                    holder.tvMessageFrom.setText(messageText);
+                    Glide.with(ChatActivity.this)
+                            .load(CommonUtils.getAvatorAddress(mChatId))
+                            .asBitmap()
+                            .centerCrop()
+                            .error(R.color.avator_place_holder)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.ivAvatorFrom);
+                    break;
+                case TYPE_TO:
+                    holder.vAreaFrom.setVisibility(View.GONE);
+                    holder.vAreaTo.setVisibility(View.VISIBLE);
+                    holder.tvMessageTo.setText(messageText);
+                    Glide.with(ChatActivity.this)
+                            .load(mAvatorUrl)
+                            .asBitmap()
+                            .centerCrop()
+                            .error(R.color.avator_place_holder)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.ivAvatorTo);
+                    break;
+            }
+
+            return convertView;
+        }
+
+
+        @Override
+        public int getItemViewType(int position) {
+            EMMessage emMessage = messages.get(position);
+            if (emMessage.getFrom().equals(mChatId.toLowerCase()))
+                return TYPE_FROM;
+            else
+                return TYPE_TO;
+
+        }
+    }
+
 
     /**
      * --------------------------------- Message Listener -------------------------------------
@@ -227,10 +412,15 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
         DebugLog.e("收到消息");
         // 循环遍历当前收到的消息
         for (EMMessage message : list) {
-            DebugLog.e("收到消息："+message.getBody());
-            if (message.getFrom().equals(mChatId)) {
+            DebugLog.e("收到消息：" + message.getBody());
+            DebugLog.e("message from:" + message.getFrom());
+            DebugLog.e("message to:" + mChatId);
+
+            if (message.getFrom().equals(mChatId.toLowerCase())) {
                 // 设置消息为已读
                 mConversation.markMessageAsRead(message.getMsgId());
+
+                DebugLog.e("from:" + message.getFrom());
 
                 // 因为消息监听回调这里是非ui线程，所以要用handler去更新ui
                 Message msg = mHandler.obtainMessage();
@@ -255,7 +445,7 @@ public class ChatActivity extends AppCompatActivity implements EMMessageListener
             // 透传消息
             EMMessage cmdMessage = list.get(i);
             EMCmdMessageBody body = (EMCmdMessageBody) cmdMessage.getBody();
-            DebugLog.e("透传消息："+body.action());
+            DebugLog.e("透传消息：" + body.action());
         }
     }
 

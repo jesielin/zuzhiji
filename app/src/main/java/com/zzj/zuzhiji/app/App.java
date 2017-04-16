@@ -20,10 +20,12 @@ import java.util.List;
 
 public class App extends Application {
     // 上下文菜单
-    private Context mContext;
+    private static Context mContext;
 
     // 记录是否已经初始化
     private boolean isInit = false;
+
+
 
 
 
@@ -37,6 +39,7 @@ public class App extends Application {
 //        }
 //        LeakCanary.install(this);
         mContext = this;
+
 
         initEasemob();
 
@@ -56,6 +59,10 @@ public class App extends Application {
         });
 
 
+    }
+
+    public static Context getAppContext(){
+        return mContext;
     }
     /**
      *
@@ -120,6 +127,7 @@ public class App extends Application {
         // options.setGCMNumber(MLConstants.ML_GCM_NUMBER);
         // 设置集成小米推送的appid和appkey
         // options.setMipushConfig(MLConstants.ML_MI_APP_ID, MLConstants.ML_MI_APP_KEY);
+
 
         return options;
     }

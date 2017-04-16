@@ -33,6 +33,8 @@ public interface Constant {
 
     String EMPTY = "";
 
+    int CHAT_MESSAGES_PAGE_SIZE = 20;
+
     String AVATOR_DEFAULT = "http://101.201.155.115:3113/heads/default/default.png";
     interface SHARED_KEY {
         String SUMMARY = "SUMMARY";
@@ -68,6 +70,9 @@ public interface Constant {
 
         int REQUEST_CODE_HOME_TO_HOME_PAGE = 0x07;
 
+        int REQUEST_CODE_MESSAGE_TO_CHAT = 0x08;
+        int RESULT_CODE_CHAT_BACK_TO_MESSAGE = 0x09;
+
     }
 
     interface HOME_PAGE_KEYS {
@@ -92,5 +97,6 @@ public interface Constant {
         String ARTICLE_CONTENTS = "ARTICLE_CONTENTS";
         String ARTICLE_TITLE = "ARTICLE_TITLE";
     }
+
 
 }

@@ -7,16 +7,93 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/touch_bg"
-        android:layout_height="match_parent">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:textSize="16dp"
-        android:id="@+id/title"
-        android:text="我我问我我"
-        android:textColor="@color/md_black_1000"
-        android:gravity="center_vertical"
-        android:layout_marginLeft="16dp" />
+        android:clickable="true"
+        android:id="@+id/clickArea"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/avator"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:padding="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+        <RelativeLayout
+            android:id="@+id/unread_area"
+            android:layout_alignTop="@id/avator"
+            android:layout_alignRight="@id/avator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/em_tab_unread_bg"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11"
+                android:textSize="10dp"
+                android:id="@+id/unreadnum"
+                android:layout_centerInParent="true"
+                android:textColor="@color/md_white_1000"
+                />
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/avator"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="10"
+                android:text="ahah"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLength="10"
+                android:singleLine="true"
+                android:layout_marginTop="5dp"
+                android:text="ahah"
+                android:textColor="@color/text_hint"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1天前"
+
+            android:textSize="14dp"
+            android:textColor="@color/text_hint"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/content"/>
+
+        <!--<Button-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_width="72dp"-->
+        <!--android:layout_height="36dp"-->
+        <!--android:id="@+id/add"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:text="关注"-->
+
+        <!--android:background="@drawable/btn_common_bg"-->
+        <!--/>-->
     </RelativeLayout>
 </LinearLayout>
