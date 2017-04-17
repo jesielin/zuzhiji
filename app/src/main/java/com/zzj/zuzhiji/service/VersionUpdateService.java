@@ -5,17 +5,24 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.GravityEnum;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.zzj.zuzhiji.R;
+import com.zzj.zuzhiji.SettingActivity;
+import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.download.DownloadProgressListener;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.util.DebugLog;
 
@@ -26,6 +33,8 @@ import okhttp3.Headers;
 import rx.Subscriber;
 
 public class VersionUpdateService extends Service {
+
+
     private static final String TAG = VersionUpdateService.class.getSimpleName();
     private LocalBinder binder = new LocalBinder();
 
@@ -62,9 +71,9 @@ public class VersionUpdateService extends Service {
     }
 
     public interface DownLoadListener {
-        void begain();
+        void begin();
 
-        void inProgress(float progress, long total);
+        void inProgress(long current, long total);
 
         void downLoadLatestSuccess(File file);
 
@@ -149,8 +158,7 @@ public class VersionUpdateService extends Service {
 
     public void doCheckUpdateTask() {
         final int currentBuild = getVersionCode();
-        String client = "android";
-        String q = "needUpgrade";
+
         Network.getInstance().update()
                 .subscribe(new Subscriber<UpdateInfo>() {
                     @Override
@@ -160,40 +168,29 @@ public class VersionUpdateService extends Service {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        DebugLog.e("update error:"+e.getMessage());
+                        Toast.makeText(VersionUpdateService.this, "获取版本信息失败", Toast.LENGTH_SHORT).show();
+                        if (checkVersionCallBack != null) {
+                            checkVersionCallBack.onError();
+                        }
                     }
 
                     @Override
                     public void onNext(UpdateInfo updateInfo) {
 
+                        versionUpdateModel = updateInfo;
+                        if (Integer.valueOf(versionUpdateModel.version_code) < currentBuild) {
+                            versionUpdateModel.setNeedUpgrade(false);
+                        }
+                        //TEST DATA
+                        versionUpdateModel.setNeedUpgrade(true);
+
+//                        App.getAppContext().setVersionUpdateModelCache(versionUpdateModel);
+                        if (checkVersionCallBack != null)
+                            checkVersionCallBack.onSuccess();
                     }
                 });
-        ApiManager.getInstance().versionApi.upgradeRecords(q, currentBuild, client, new RequestCallBack() {
-            @Override
-            public void onSuccess(Headers headers, String response) {
-                try {
-                    versionUpdateModel = JSON.parseObject(response, VersionUpdateModel.class);
-                    if (versionUpdateModel.getBuild() < currentBuild) {
-                        versionUpdateModel.setNeedUpgrade(false);
-                    }
-                    //TEST DATA
-                    versionUpdateModel.setNeedUpgrade(true);
 
-                    MainApplication.getInstance().setVersionUpdateModelCache(versionUpdateModel);
-                    if (checkVersionCallBack != null)
-                        checkVersionCallBack.onSuccess();
-                } catch (Exception e) {
-                    Toast.makeText(VersionUpdateService.this, "获取版本信息失败", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(int code, String response) {
-                if (checkVersionCallBack != null) {
-                    checkVersionCallBack.onError();
-                }
-            }
-        });
     }
 
     public void doDownLoadTask() {
@@ -205,49 +202,66 @@ public class VersionUpdateService extends Service {
         notificationUpdaterThread = new NotificationUpdaterThread();
         notificationUpdaterThread.start();
 
-        final File fileDir = getApplicationContext().getExternalCacheDir();
-        final String url = versionUpdateModel.getUpgradeUrl();
-        final String fileName_ = url.substring(url.lastIndexOf("/") + 1);
-        final String fileName = StringUtil.string2MD5(fileName_) + ".apk";
+        final File fileDir = getApplicationContext().getFilesDir();
+        final String url = versionUpdateModel.apk_url;
+        final String fileName = "zzj.apk";
+        final File destFile = new File(fileDir, fileName);
 
         downLoading = true;
 
         if (downLoadListener != null) {
-            downLoadListener.begain();
+            downLoadListener.begin();
         }
 
-        NetManager.getInstance().download(url, fileDir.getAbsolutePath(), fileName, new DownloadCallBack() {
+
+        Network.getInstance().downloadApk(url, destFile, new DownloadProgressListener() {
             @Override
-            public void inProgress(float progress_, long total) {
-                progress = (int) (progress_ * 100);
+            public void update(long bytesRead, long contentLength, boolean done) {
+                DebugLog.d("download:"+bytesRead+"/"+contentLength);
+
+                progress  =(int)( bytesRead*100/contentLength);
                 if (downLoadListener != null) {
-                    downLoadListener.inProgress(progress_, total);
+                    downLoadListener.inProgress(bytesRead, contentLength);
                 }
                 if (progress >= 100) {
                     mNotificationManager.cancelAll();
                 }
-            }
 
+
+            }
+        }, new Subscriber() {
             @Override
-            public void onSuccess(Headers headers, String response) {
-                final File destFile = new File(fileDir.getAbsolutePath(), fileName);
+            public void onCompleted() {
+
                 if (downLoadListener != null) {
                     downLoadListener.downLoadLatestSuccess(destFile);
                 }
                 downLoading = false;
+                DebugLog.e("apk address:"+destFile.getAbsolutePath());
                 installApk(destFile, VersionUpdateService.this);
+
             }
 
             @Override
-            public void onError(int code, String response) {
+            public void onError(Throwable e) {
                 downLoading = false;
                 if (mNotificationManager != null)
                     mNotificationManager.cancelAll();
                 if (downLoadListener != null) {
                     downLoadListener.downLoadLatestFailed();
                 }
+
+            }
+
+            @Override
+            public void onNext(Object o) {
+                DebugLog.d("downloading....");
+
+
             }
         });
+
+//        setCheckVersionCallBack
     }
 
     public UpdateInfo getVersionUpdateModel() {

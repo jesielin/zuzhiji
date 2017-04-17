@@ -16,6 +16,7 @@ public interface Constant {
     int IMAGE_UPLOAD_QUALITY = 75;
     String BASE_URL_NOR = "http://101.201.155.115:6068";
     String BASE_URL_SMS = "http://101.201.155.115:8086";
+    String BASE_URL_DOWNLOAD = "http://101.201.155.115:3113";
 
     int REQUEST_CODE_PERMISSION_PHOTO_PREVIEW = 1;
     int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;

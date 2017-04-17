@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 
 import com.yayandroid.theactivitymanager.TheActivityManager;
+import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.service.VersionUpdateService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,6 +24,7 @@ import java.io.File;
  * Created by guizhigang on 16/6/23.
  */
 public class VersionUpdateHelper implements ServiceConnection {
+
     private Context context;
     private VersionUpdateService service;
     private AlertDialog waitForUpdateDialog;
@@ -149,11 +151,11 @@ public class VersionUpdateHelper implements ServiceConnection {
         service.setCheckVersionCallBack(new VersionUpdateService.CheckVersionCallBack() {
             @Override
             public void onSuccess() {
-                VersionUpdateModel versionUpdateModel = service.getVersionUpdateModel();
+                UpdateInfo versionUpdateModel = service.getVersionUpdateModel();
 
-                VersionUpdateEvent versionUpdateEvent = new VersionUpdateEvent();
-                versionUpdateEvent.setShowTips(versionUpdateModel.isNeedUpgrade());
-                EventBus.getDefault().postSticky(versionUpdateEvent);
+//                VersionUpdateEvent versionUpdateEvent = new VersionUpdateEvent();
+//                versionUpdateEvent.setShowTips(versionUpdateModel.isNeedUpgrade());
+//                EventBus.getDefault().postSticky(versionUpdateEvent);
 
                 if (!versionUpdateModel.isNeedUpgrade()) {
                     if (toastInfo) {
@@ -208,7 +210,7 @@ public class VersionUpdateHelper implements ServiceConnection {
             @Override
             public void onError() {
                 if (toastInfo) {
-                    ToastUtil.toast(context, "检查失败,请检查网络设置");
+                    Toast.makeText(context, "检查失败,请检查网络设置", Toast.LENGTH_SHORT).show();
                 }
                 unBindService();
                 if(checkCallBack != null){
@@ -219,8 +221,8 @@ public class VersionUpdateHelper implements ServiceConnection {
 
         service.setDownLoadListener(new VersionUpdateService.DownLoadListener() {
             @Override
-            public void begain() {
-                VersionUpdateModel versionUpdateModel = service.getVersionUpdateModel();
+            public void begin() {
+                UpdateInfo versionUpdateModel = service.getVersionUpdateModel();
                 if (versionUpdateModel.isMustUpgrade()) {
                     progressDialog = new ProgressDialog(context);
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -232,10 +234,10 @@ public class VersionUpdateHelper implements ServiceConnection {
             }
 
             @Override
-            public void inProgress(float progress, long total) {
+            public void inProgress(long current, long total) {
                 if (progressDialog != null) {
                     progressDialog.setMax(100);
-                    progressDialog.setProgress((int) (progress * 100));
+                    progressDialog.setProgress((int)( current*100/total));
                 }
             }
 

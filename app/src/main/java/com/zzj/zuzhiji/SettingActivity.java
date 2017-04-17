@@ -1,6 +1,7 @@
 package com.zzj.zuzhiji;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,15 +12,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.download.DownloadProgressListener;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCacheUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
+import com.zzj.zuzhiji.util.VersionUpdateHelper;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +44,7 @@ public class SettingActivity extends AppCompatActivity {
     TextView tvCacheSize;
 
     private MaterialDialog infoDialog;
+    private MaterialDialog downloadProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,62 +86,83 @@ public class SettingActivity extends AppCompatActivity {
 
 
     }
-
+    VersionUpdateHelper versionUpdateHelper;
     @OnClick(R.id.check_version)
     public void update(View view){
-        Network.getInstance().update()
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        progressDialog = new ProgressDialog(SettingActivity.this);
-                        progressDialog.setMessage("正在获取版本，请稍后...");
-                        progressDialog.show();
-                    }
-                })
-                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<UpdateInfo>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void onNext(UpdateInfo updateInfo) {
-                progressDialog.dismiss();
-
-
-                Integer.valueOf(updateInfo.version_code);
-
-                new MaterialDialog.Builder(SettingActivity.this)
-                        .title("新版本")
-                        .content("有新版本。。")
-                        .positiveText("确定")
-                        .negativeText("取消")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                                Toast.makeText(SettingActivity.this, "确定", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                Toast.makeText(SettingActivity.this, "取消", Toast.LENGTH_SHORT).show();
-
-                            }
-                        })
-                        .show();
-
-            }
-        });
+        VersionUpdateHelper.resetCancelFlag();//重置cancel标记
+        if (versionUpdateHelper == null) {
+            versionUpdateHelper = new VersionUpdateHelper(SettingActivity.this);
+            versionUpdateHelper.setShowDialogOnStart(true);
+            versionUpdateHelper.setCheckCallBack(new VersionUpdateHelper.CheckCallBack() {
+                @Override
+                public void callBack(int code) {
+                    DebugLog.e("call back code:"+code);
+                    //EventBus发送消息通知红点消失
+//                                            VersionUpdateEvent versionUpdateEvent = new VersionUpdateEvent();
+//                                            versionUpdateEvent.setShowTips(false);
+//                                            EventBus.getDefault().postSticky(versionUpdateEvent);
+                }
+            });
+        }
+        versionUpdateHelper.startUpdateVersion();
+//        Network.getInstance().update()
+//                .doOnSubscribe(new Action0() {
+//                    @Override
+//                    public void call() {
+//                        progressDialog = new ProgressDialog(SettingActivity.this);
+//                        progressDialog.setMessage("正在获取版本，请稍后...");
+//                        progressDialog.show();
+//                    }
+//                })
+//                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<UpdateInfo>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//                progressDialog.dismiss();
+//            }
+//
+//            @Override
+//            public void onNext(final UpdateInfo updateInfo) {
+//                progressDialog.dismiss();
+//
+//
+//                Integer.valueOf(updateInfo.version_code);
+//
+//
+//
+//                new MaterialDialog.Builder(SettingActivity.this)
+//                        .title("新版本")
+//                        .content("有新版本。。")
+//                        .positiveText("确定")
+//                        .negativeText("取消")
+//                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//
+//
+//                                Toast.makeText(SettingActivity.this, "确定", Toast.LENGTH_SHORT).show();
+//                            }
+//                        })
+//                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+//                            @Override
+//                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                Toast.makeText(SettingActivity.this, "取消", Toast.LENGTH_SHORT).show();
+//
+//                            }
+//                        })
+//                        .show();
+//
+//
+//
+//            }
+//        });
     }
 
     @OnClick(R.id.question)

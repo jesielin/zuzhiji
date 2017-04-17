@@ -20,4 +20,23 @@ public class UpdateInfo {
     public String version_code;
     public String create_time;
     public String id;
+    private boolean needUpgrade;
+    public String description;
+
+    public boolean isNeedUpgrade() {
+        return needUpgrade;
+    }
+
+
+    public void setNeedUpgrade(boolean needUpgrade) {
+        this.needUpgrade = needUpgrade;
+    }
+
+    public boolean isMustUpgrade() {
+        return "1".equals(is_force);
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

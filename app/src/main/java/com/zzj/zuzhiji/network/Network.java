@@ -2,6 +2,8 @@ package com.zzj.zuzhiji.network;
 
 import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.Constant;
+import com.zzj.zuzhiji.network.download.DownloadProgressInterceptor;
+import com.zzj.zuzhiji.network.download.DownloadProgressListener;
 import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
@@ -16,7 +18,11 @@ import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.network.entity.UserInfoResult;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -24,12 +30,18 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -41,57 +53,33 @@ import rx.schedulers.Schedulers;
 public class Network {
 
 
-    /**
-     * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
-     *
-     * @param <T> Subscriber真正需要的数据类型，也就是Data部分的数据类型
-     */
-//    private class HttpResultFunc<T> implements Func1<HttpResult<T>, Observable<T>> {
-//        @Override
-//        public Observable<T> call(final HttpResult<T> tHttpResult) {
-//            return Observable.create(new Observable.OnSubscribe<T>() {
-//                @Override
-//                public void call(Subscriber<? super T> subscriber) {
-//                    DebugLog.e("result:"+new Gson().toJson(tHttpResult));
-//                    if (tHttpResult != null) {
-//                        if ("error".equals(tHttpResult.result)) {
-//                            subscriber.onError(new NetworkException(tHttpResult.msg));
-//                            DebugLog.e("error1");
-//                        }
-//
-////                        else if (tHttpResult.data == null) {
-////                            subscriber.onError(new NetworkException("子数据为空"));
-////                        }
-//                        else {
-//                            DebugLog.e("next1");
-//                            subscriber.onNext(tHttpResult.data);
-//                        }
-//                    } else {
-//                        DebugLog.e("error2");
-//                        subscriber.onError(new NetworkException("总数据为空"));
-//                    }
-//                    DebugLog.e("complete");
-//                    subscriber.onCompleted();
-//                }
-//            });
-//        }
-//    }
+
 
 
     private static String sign = "123";
     private Retrofit normalRetrofit;
     private Retrofit smsRetrofit;
+
     private HttpService normalHttpService;
     private HttpService smsHttpService;
 
+
     //构造方法私有
     private Network() {
+
+
+
+
+
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         //手动创建一个OkHttpClient并设置超时时间
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
         httpClientBuilder.addInterceptor(logging);
         httpClientBuilder.connectTimeout(Constant.DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+
+
+
 
         normalRetrofit = new Retrofit.Builder()
                 .client(httpClientBuilder.build())
@@ -110,6 +98,45 @@ public class Network {
                 .build();
 
         smsHttpService = smsRetrofit.create(HttpService.class);
+    }
+
+    public void downloadApk(String url, final File file, DownloadProgressListener listener,Subscriber subscriber){
+        DownloadProgressInterceptor interceptor = new DownloadProgressInterceptor(listener);
+        OkHttpClient downloadHttpClientBulder = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .connectTimeout(Constant.DEFAULT_TIMEOUT,TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+        Retrofit downloadRetrofit = new Retrofit.Builder()
+                .client(downloadHttpClientBulder)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .baseUrl(Constant.BASE_URL_DOWNLOAD)
+                .build();
+        downloadRetrofit.create(HttpService.class)
+                .download(url)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .map(new Func1<ResponseBody, InputStream>() {
+                    @Override
+                    public InputStream call(ResponseBody responseBody) {
+                        return responseBody.byteStream();
+                    }
+                })
+                .observeOn(Schedulers.computation())
+                .doOnNext(new Action1<InputStream>() {
+                    @Override
+                    public void call(InputStream inputStream) {
+                        try {
+                            FileUtils.writeFile(inputStream, file);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            throw new ApiException(e.getMessage());
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
     }
 
     //获取单例
