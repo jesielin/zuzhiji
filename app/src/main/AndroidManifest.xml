@@ -99,7 +99,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".test.ECChatActivity"/>
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"></activity>
@@ -148,7 +148,7 @@
         <activity
             android:name=".ReservationActivity"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".test.ECMainActivity"/>
+
 
         <service android:name=".service.VersionUpdateService"/>
 

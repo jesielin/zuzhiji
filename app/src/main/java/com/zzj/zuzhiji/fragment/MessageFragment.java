@@ -33,7 +33,6 @@ import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.MessageResult;
-import com.zzj.zuzhiji.test.ECMainActivity;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.GlideCircleTransform;

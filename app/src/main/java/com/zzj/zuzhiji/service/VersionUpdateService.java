@@ -2,34 +2,24 @@ package com.zzj.zuzhiji.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.GravityEnum;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.zzj.zuzhiji.R;
-import com.zzj.zuzhiji.SettingActivity;
-import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.download.DownloadProgressListener;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.util.DebugLog;
 
-
 import java.io.File;
 
-import okhttp3.Headers;
 import rx.Subscriber;
 
 public class VersionUpdateService extends Service {
@@ -55,7 +45,7 @@ public class VersionUpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        DebugLog.e( "onCreate called");
+        DebugLog.e("onCreate called");
     }
 
     @Override
@@ -168,7 +158,7 @@ public class VersionUpdateService extends Service {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugLog.e("update error:"+e.getMessage());
+                        DebugLog.e("update error:" + e.getMessage());
                         Toast.makeText(VersionUpdateService.this, "获取版本信息失败", Toast.LENGTH_SHORT).show();
                         if (checkVersionCallBack != null) {
                             checkVersionCallBack.onError();
@@ -217,9 +207,9 @@ public class VersionUpdateService extends Service {
         Network.getInstance().downloadApk(url, destFile, new DownloadProgressListener() {
             @Override
             public void update(long bytesRead, long contentLength, boolean done) {
-                DebugLog.d("download:"+bytesRead+"/"+contentLength);
+                DebugLog.d("download:" + bytesRead + "/" + contentLength);
 
-                progress  =(int)( bytesRead*100/contentLength);
+                progress = (int) (bytesRead * 100 / contentLength);
                 if (downLoadListener != null) {
                     downLoadListener.inProgress(bytesRead, contentLength);
                 }
@@ -237,7 +227,7 @@ public class VersionUpdateService extends Service {
                     downLoadListener.downLoadLatestSuccess(destFile);
                 }
                 downLoading = false;
-                DebugLog.e("apk address:"+destFile.getAbsolutePath());
+                DebugLog.e("apk address:" + destFile.getAbsolutePath());
                 installApk(destFile, VersionUpdateService.this);
 
             }
