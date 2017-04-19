@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -26,6 +27,7 @@ import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +44,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
+import rx.schedulers.Timestamped;
 
 /**
  * Created by shawn on 2017-03-30.
@@ -136,6 +139,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
         finish();
     }
 
+    long start_upload = 0;
     @OnClick(R.id.complete)
     public void complete(View view) {
 
@@ -151,16 +155,24 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
             @Override
             public void call(Subscriber<? super List<File>> subscriber) {
                 List<File> files = new ArrayList<File>();
+                long temp = System.currentTimeMillis();
+                long size = 0;
                 for (String path : paths) {
+                    File f = new File(path);
+                    size+=f.length();
                     files.add(compressor.compressToFile(new File(path)));
                 }
+                DebugLog.e("file total size:"+CommonUtils.getReadableFileSize(size));
+                long temp_after = System.currentTimeMillis();
+                DebugLog.e("compress time:"+String.valueOf(temp_after-temp));
                 DebugLog.e("files:" + new Gson().toJson(files));
                 subscriber.onNext(files);
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.computation())
 
-                .subscribe(new Subscriber<List<File>>() {
+                .timestamp()
+                .subscribe(new Subscriber<Timestamped<List<File>>>() {
                     @Override
                     public void onCompleted() {
 
@@ -174,11 +186,14 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                     }
 
                     @Override
-                    public void onNext(List<File> files) {
-                        DebugLog.e("files:" + new Gson().toJson(files));
-                        upload(files);
+                    public void onNext(Timestamped<List<File>> listTimestamped) {
+
+                        start_upload = listTimestamped.getTimestampMillis();
+                        DebugLog.e("files:" + new Gson().toJson(listTimestamped.getValue()));
+                        upload(listTimestamped.getValue());
                     }
                 });
+
 
     }
 
@@ -220,7 +235,8 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                         MediaType.parse("multipart/form-data"), messageText);
 
         Network.getInstance().postSocial(uuid, message, nickName, parts)
-                .subscribe(new Subscriber<Object>() {
+                .timestamp()
+                .subscribe(new Subscriber<Timestamped<Object>>() {
                     @Override
                     public void onCompleted() {
 
@@ -234,11 +250,13 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                     }
 
                     @Override
-                    public void onNext(Object o) {
+                    public void onNext(Timestamped<Object> objectTimestamped) {
 
+                        DebugLog.e("upload time:"+(objectTimestamped.getTimestampMillis()-start_upload));
                         setResult(Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS);
                         dismissDialog();
                         finish();
+
                     }
                 });
     }
