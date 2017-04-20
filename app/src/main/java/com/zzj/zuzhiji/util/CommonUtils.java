@@ -1,16 +1,13 @@
 package com.zzj.zuzhiji.util;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.R;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -27,25 +24,17 @@ public class CommonUtils {
         return sdf.format(timeMills);
     }
 
-
-
-
-    public static void showSoftInput(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-        //imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
+    public static String getReadableFileSize(long size) {
+        if (size <= 0) {
+            return "0";
+        }
+        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
-    public static void hideSoftInput(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0); //强制隐藏键盘
-    }
 
-    public static boolean isShowSoftInput(Context context) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        //获取状态信息
-        return imm.isActive();//true 打开
-    }
+
 
     public static String getAvatorAddress(String uuid){
         return String.format("http://101.201.155.115:3113/heads/%s-head.jpg",uuid);
@@ -57,14 +46,18 @@ public class CommonUtils {
                     .load(url)
                     .asBitmap()
                     .fitCenter()
+                    .placeholder(R.drawable.placeholder_circle_image)
+                    .error(R.drawable.placeholder_circle_image)
+
 //                    .placeholder(R.color.text_hint)
-                    .error(R.drawable.avator_placeholder)
+//                    .error(R.drawable.avator_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
 //                    .priority(Priority.IMMEDIATE)
                     .transform(new GlideCircleTransform(context))
 
                     .into(imageView);
+
 
     }
 

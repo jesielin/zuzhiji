@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +36,7 @@ import rx.Subscriber;
  * Created by shawn on 2017-03-29.
  */
 
-public class SearchActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
 
     @BindView(R.id.search)
@@ -72,7 +71,7 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
 
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     // 先隐藏键盘
-                    UIHelper.hideInputMethod(etSearch);
+                    UIHelper.hideSoftInput(SearchActivity.this, etSearch);
                     //进行搜索操作的方法，在该方法中可以加入mEditSearchUser的非空判断
                     doRefresh();
 
@@ -144,6 +143,15 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
         onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        DebugLog.e("result:" + requestCode + "," + resultCode);
+        if (requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH) {
+            doRefresh();
+        }
+    }
+
     public class SearchVH extends RecyclerView.ViewHolder {
 
         @BindView(R.id.avator)
@@ -196,15 +204,6 @@ public class SearchActivity extends AppCompatActivity implements SwipeRefreshLay
         @Override
         public int getItemCount() {
             return datas.size();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        DebugLog.e("result:" + requestCode + "," + resultCode);
-        if (requestCode == Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE && resultCode == Constant.ACTIVITY_CODE.RESULT_CODE_HOME_PAGE_CHANGE_STATUS_BACK_TO_SEARCH) {
-            doRefresh();
         }
     }
 }

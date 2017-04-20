@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,13 +18,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.zzj.zuzhiji.CaseDetailActivity;
 import com.zzj.zuzhiji.PublishActivity;
 import com.zzj.zuzhiji.R;
@@ -38,7 +30,6 @@ import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +50,7 @@ import rx.schedulers.Schedulers;
  * Created by shawn on 2017-03-29.
  */
 
-public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, BGANinePhotoLayout.Delegate {
+public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, BGANinePhotoLayout.Delegate {
 
 
     @BindView(R.id.recyclerview)
@@ -73,16 +64,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private int totalPage = 1;
 
     private List<SocialItem> datas = new ArrayList<>();
-    private String[] IMG_URL_LIST = {
-            "http://img3.imgtn.bdimg.com/it/u=1794894692,1423685501&fm=214&gp=0.jpg",
-            "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-480302.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/36f0523ee1888a57.jpg", "http://ac-QYgvX1CC.clouddn.com/07915a0154ac4a64.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/9ec4bc44bfaf07ed.jpg", "http://ac-QYgvX1CC.clouddn.com/fa85037f97e8191f.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/de13315600ba1cff.jpg", "http://ac-QYgvX1CC.clouddn.com/15c5c50e941ba6b0.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/10762c593798466a.jpg", "http://ac-QYgvX1CC.clouddn.com/eaf1c9d55c5f9afd.jpg"
 
-
-    };
 
     @Nullable
     @Override
@@ -94,7 +76,7 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     @OnClick(R.id.publish)
-    public void publish(View view) {
+    public void publish() {
         startActivityForResult(new Intent(getActivity(), PublishActivity.class),
                 Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_FRAGMENT);
     }
@@ -295,20 +277,6 @@ public class SocialFragment extends Fragment implements SwipeRefreshLayout.OnRef
             return datas.size();
         }
 
-        public class StringConverter implements JsonSerializer<String>, JsonDeserializer<String> {
-            public JsonElement serialize(String src, Type typeOfSrc, JsonSerializationContext context) {
-                if (src == null) {
-                    return new JsonPrimitive("");
-                } else {
-                    return new JsonPrimitive(src.toString());
-                }
-            }
 
-            public String deserialize(JsonElement json, Type typeOfT,
-                                      JsonDeserializationContext context)
-                    throws JsonParseException {
-                return json.getAsJsonPrimitive().getAsString();
-            }
-        }
     }
 }

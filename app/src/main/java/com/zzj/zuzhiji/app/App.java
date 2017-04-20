@@ -7,7 +7,6 @@ import android.support.multidex.MultiDex;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
-import com.liulishuo.filedownloader.FileDownloader;
 import com.yayandroid.theactivitymanager.TheActivityManager;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -26,9 +25,9 @@ public class App extends Application {
     // 记录是否已经初始化
     private boolean isInit = false;
 
-
-
-
+    public static Context getAppContext() {
+        return mContext;
+    }
 
     @Override
     public void onCreate() {
@@ -59,13 +58,9 @@ public class App extends Application {
             }
         });
 
-        FileDownloader.init(this);
 
     }
 
-    public static Context getAppContext(){
-        return mContext;
-    }
     /**
      *
      */

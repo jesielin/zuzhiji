@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,7 +47,7 @@ import rx.Subscriber;
  * Created by shawn on 2017-03-29.
  */
 
-public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.banner)
     Banner banner;
@@ -90,7 +89,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-//                Toast.makeText(getActivity(), tab.getPosition()+"", Toast.LENGTH_SHORT).show();
                 switch (tab.getPosition()) {
                     case 0:
                         tabIndex = 0;
@@ -107,8 +105,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                         break;
                 }
-
-
             }
 
             @Override

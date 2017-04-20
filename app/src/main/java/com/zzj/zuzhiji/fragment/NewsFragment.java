@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
  * Created by shawn on 2017-03-29.
  */
 
-public class NewsFragment extends Fragment {
+public class NewsFragment extends BaseFragment {
 
     @BindView(R.id.tablayout)
     TabLayout tabLayout;

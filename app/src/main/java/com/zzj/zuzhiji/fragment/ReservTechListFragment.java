@@ -37,7 +37,7 @@ import rx.Subscriber;
  * Created by shawn on 17/4/10.
  */
 
-public class ReservTechListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ReservTechListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.search)
     EditText etSearch;
@@ -81,7 +81,7 @@ public class ReservTechListFragment extends Fragment implements SwipeRefreshLayo
 
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
                     // 先隐藏键盘
-                    UIHelper.hideInputMethod(etSearch);
+                    UIHelper.hideSoftInput(getActivity(), etSearch);
                     isSearch = true;
                     //进行搜索操作的方法，在该方法中可以加入mEditSearchUser的非空判断
                     doRefresh();
@@ -100,8 +100,8 @@ public class ReservTechListFragment extends Fragment implements SwipeRefreshLayo
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (CommonUtils.isShowSoftInput(getActivity())) {
-                    CommonUtils.hideSoftInput(getActivity(), etSearch);
+                if (UIHelper.isShowSoftInput(getActivity())) {
+                    UIHelper.hideSoftInput(getActivity(), etSearch);
                 }
             }
         });
@@ -224,7 +224,7 @@ public class ReservTechListFragment extends Fragment implements SwipeRefreshLayo
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CommonUtils.hideSoftInput(getActivity(), etSearch);
+                    UIHelper.hideSoftInput(getActivity(), etSearch);
                     Fragment f = new ReservCaseListFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString("UUID", item.uuid);

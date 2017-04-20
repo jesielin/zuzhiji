@@ -10,7 +10,6 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.SocialItem;
@@ -51,7 +49,7 @@ import rx.schedulers.Schedulers;
  * Created by shawn on 2017-03-29.
  */
 
-public class HomePageActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, BGANinePhotoLayout.Delegate {
+public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, BGANinePhotoLayout.Delegate {
     @BindView(R.id.recyclerview)
     RecyclerView recyclerView;
     @BindView(R.id.refresh)
@@ -98,13 +96,22 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
     private String friendSummary;
     private String friendNickName;
 
-    private MaterialDialog dialog;
 
     private boolean isReserv;
     private int page = 1;
     private int totalPage = 1;
 
     private List<SocialItem> datas = new ArrayList<>();
+    private String[] IMG_URL_LIST = {
+            "http://img3.imgtn.bdimg.com/it/u=1794894692,1423685501&fm=214&gp=0.jpg",
+            "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-480302.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/36f0523ee1888a57.jpg", "http://ac-QYgvX1CC.clouddn.com/07915a0154ac4a64.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/9ec4bc44bfaf07ed.jpg", "http://ac-QYgvX1CC.clouddn.com/fa85037f97e8191f.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/de13315600ba1cff.jpg", "http://ac-QYgvX1CC.clouddn.com/15c5c50e941ba6b0.jpg",
+            "http://ac-QYgvX1CC.clouddn.com/10762c593798466a.jpg", "http://ac-QYgvX1CC.clouddn.com/eaf1c9d55c5f9afd.jpg"
+
+
+    };
 
     public static Intent newIntent(Context context,
                                    String avator,
@@ -178,7 +185,6 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
-
     @OnClick(R.id.star)
     public void star() {
 
@@ -187,7 +193,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                     .doOnSubscribe(new Action0() {
                         @Override
                         public void call() {
-                            dialog = DialogUtils.showProgressDialog(HomePageActivity.this, "关注", "正在关注，请稍等..."); // 需要在主线程执行
+                            mDialog = DialogUtils.showProgressDialog(HomePageActivity.this, "正在关注，请稍等..."); // 需要在主线程执行
                         }
                     })
                     .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
@@ -201,14 +207,14 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(HomePageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dismissDialog();
+                            DialogUtils.dismissDialog(mDialog);
                         }
 
                         @Override
                         public void onNext(Object o) {
                             isReserv = true;
                             starLightsUp();
-                            dismissDialog();
+                            DialogUtils.dismissDialog(mDialog);
                         }
                     });
         } else {
@@ -217,7 +223,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                     .doOnSubscribe(new Action0() {
                         @Override
                         public void call() {
-                            dialog = DialogUtils.showProgressDialog(HomePageActivity.this, "关注", "正在关注，请稍等..."); // 需要在主线程执行
+                            mDialog = DialogUtils.showProgressDialog(HomePageActivity.this, "正在关注，请稍等..."); // 需要在主线程执行
                         }
                     })
                     .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
@@ -231,19 +237,18 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(HomePageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dismissDialog();
+                            DialogUtils.dismissDialog(mDialog);
                         }
 
                         @Override
                         public void onNext(Object o) {
                             isReserv = false;
                             starLightsDown();
-                            dismissDialog();
+                            DialogUtils.dismissDialog(mDialog);
                         }
                     });
         }
     }
-
 
     private void setResultStatusChange() {
         if ((Constant.USER_IS_FRIEND.equals(isFriend) && !isReserv) || (Constant.USER_NOT_FRIEND.equals(isFriend) && isReserv))
@@ -255,13 +260,6 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         setResultStatusChange();
         super.onBackPressed();
 
-    }
-
-    private void dismissDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-            dialog = null;
-        }
     }
 
     public void starLightsUp() {
@@ -291,7 +289,7 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         });
         recyclerView.setAdapter(mAdapter);
 
-        scrollHeight = UIHelper.dipToPx(240.0f,HomePageActivity.this) - titlebar.getBottom();
+        scrollHeight = UIHelper.dipToPx(240.0f, HomePageActivity.this) - titlebar.getBottom();
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -329,7 +327,6 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         finish();
     }
 
-
     @Override
     public void onRefresh() {
 
@@ -363,9 +360,9 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                             datas.clear();
                             datas.addAll(socialItems);
                             mAdapter.notifyDataSetChanged();
-                            if (datas.size() == 0 ) {
+                            if (datas.size() == 0) {
                                 tvNoData.setVisibility(View.VISIBLE);
-                            }else {
+                            } else {
                                 tvNoData.setVisibility(View.GONE);
                             }
                         }
@@ -374,25 +371,42 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
                 });
     }
 
-    private String[] IMG_URL_LIST = {
-            "http://img3.imgtn.bdimg.com/it/u=1794894692,1423685501&fm=214&gp=0.jpg",
-            "https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-480302.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/36f0523ee1888a57.jpg", "http://ac-QYgvX1CC.clouddn.com/07915a0154ac4a64.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/9ec4bc44bfaf07ed.jpg", "http://ac-QYgvX1CC.clouddn.com/fa85037f97e8191f.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/de13315600ba1cff.jpg", "http://ac-QYgvX1CC.clouddn.com/15c5c50e941ba6b0.jpg",
-            "http://ac-QYgvX1CC.clouddn.com/10762c593798466a.jpg", "http://ac-QYgvX1CC.clouddn.com/eaf1c9d55c5f9afd.jpg"
-
-
-    };
-
     @OnClick(R.id.edit)
-    public void editInfo(View view){
-        startActivity(new Intent(this,UserInfoSettingActivity.class));
+    public void editInfo(View view) {
+        startActivity(new Intent(this, UserInfoSettingActivity.class));
     }
 
     @Override
     public void onClickNinePhotoItem(BGANinePhotoLayout ninePhotoLayout, View view, int position, String model, List<String> models) {
         photoPreviewWrapper(ninePhotoLayout);
+    }
+
+    /**
+     * 图片预览，兼容6.0动态权限
+     */
+    @AfterPermissionGranted(Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW)
+    private void photoPreviewWrapper(BGANinePhotoLayout bgaNinePhotoLayout) {
+        if (bgaNinePhotoLayout == null) {
+            return;
+        }
+
+        // 保存图片的目录，改成你自己要保存图片的目录。如果不传递该参数的话就不会显示右上角的保存按钮
+        File downloadDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerDownload");
+
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            if (bgaNinePhotoLayout.getItemCount() == 1) {
+                // 预览单张图片
+
+                startActivity(BGAPhotoPreviewActivity.newIntent(this, downloadDir, bgaNinePhotoLayout.getCurrentClickItem()));
+            } else if (bgaNinePhotoLayout.getItemCount() > 1) {
+                // 预览多张图片
+
+                startActivity(BGAPhotoPreviewActivity.newIntent(this, downloadDir, bgaNinePhotoLayout.getData(), bgaNinePhotoLayout.getCurrentClickItemPosition()));
+            }
+        } else {
+            EasyPermissions.requestPermissions(this, "图片预览需要以下权限:\n\n1.访问设备上的照片", Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW, perms);
+        }
     }
 
     public class CaseVH extends RecyclerView.ViewHolder {
@@ -437,35 +451,6 @@ public class HomePageActivity extends AppCompatActivity implements SwipeRefreshL
         @Override
         public int getItemCount() {
             return datas.size();
-        }
-    }
-
-
-    /**
-     * 图片预览，兼容6.0动态权限
-     */
-    @AfterPermissionGranted(Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW)
-    private void photoPreviewWrapper(BGANinePhotoLayout bgaNinePhotoLayout) {
-        if (bgaNinePhotoLayout == null) {
-            return;
-        }
-
-        // 保存图片的目录，改成你自己要保存图片的目录。如果不传递该参数的话就不会显示右上角的保存按钮
-        File downloadDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerDownload");
-
-        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        if (EasyPermissions.hasPermissions(this, perms)) {
-            if (bgaNinePhotoLayout.getItemCount() == 1) {
-                // 预览单张图片
-
-                startActivity(BGAPhotoPreviewActivity.newIntent(this, downloadDir, bgaNinePhotoLayout.getCurrentClickItem()));
-            } else if (bgaNinePhotoLayout.getItemCount() > 1) {
-                // 预览多张图片
-
-                startActivity(BGAPhotoPreviewActivity.newIntent(this, downloadDir, bgaNinePhotoLayout.getData(), bgaNinePhotoLayout.getCurrentClickItemPosition()));
-            }
-        } else {
-            EasyPermissions.requestPermissions(this, "图片预览需要以下权限:\n\n1.访问设备上的照片", Constant.REQUEST_CODE_PERMISSION_PHOTO_PREVIEW, perms);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.zzj.zuzhiji;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +31,7 @@ import rx.Subscriber;
  * Created by shawn on 17/4/10.
  */
 
-public class CommentsReplyActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class CommentsReplyActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.refresh)
     SwipeRefreshLayout refreshLayout;
@@ -79,6 +78,46 @@ public class CommentsReplyActivity extends AppCompatActivity implements SwipeRef
     @Override
     public void onRefresh() {
         getData();
+    }
+
+    private void getData() {
+        Network.getInstance().queryMyReplyComments(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID))
+                .subscribe(
+                        new Subscriber<List<List<ReplyItem>>>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(CommentsReplyActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                refreshLayout.setRefreshing(false);
+                            }
+
+                            @Override
+                            public void onNext(List<List<ReplyItem>> lists) {
+
+                                if (lists != null && lists.size() > 0) {
+                                    for (List<ReplyItem> l : lists) {
+                                        if (l != null && l.size() > 0) {
+                                            datas.clear();
+                                            datas.addAll(l);
+                                            mAdapter.notifyDataSetChanged();
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                refreshLayout.setRefreshing(false);
+                            }
+                        }
+                );
+    }
+
+    @OnClick(R.id.back)
+    public void back(View view) {
+        onBackPressed();
     }
 
     public class CommentsVH extends RecyclerView.ViewHolder {
@@ -131,45 +170,5 @@ public class CommentsReplyActivity extends AppCompatActivity implements SwipeRef
         public int getItemCount() {
             return datas.size();
         }
-    }
-
-    private void getData() {
-        Network.getInstance().queryMyReplyComments(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID))
-                .subscribe(
-                        new Subscriber<List<List<ReplyItem>>>() {
-                            @Override
-                            public void onCompleted() {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Toast.makeText(CommentsReplyActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                refreshLayout.setRefreshing(false);
-                            }
-
-                            @Override
-                            public void onNext(List<List<ReplyItem>> lists) {
-
-                                if (lists != null && lists.size() > 0) {
-                                    for (List<ReplyItem> l : lists) {
-                                        if (l != null && l.size() > 0) {
-                                            datas.clear();
-                                            datas.addAll(l);
-                                            mAdapter.notifyDataSetChanged();
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                refreshLayout.setRefreshing(false);
-                            }
-                        }
-                );
-    }
-
-    @OnClick(R.id.back)
-    public void back(View view) {
-        onBackPressed();
     }
 }

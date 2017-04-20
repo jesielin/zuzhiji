@@ -1,10 +1,8 @@
 package com.zzj.zuzhiji.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,8 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +31,7 @@ import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.GlideCircleTransform;
+import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -43,14 +39,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscriber;
 
 /**
  * Created by shawn on 2017-03-29.
  */
 
-public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class MessageFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.list)
     RecyclerView recyclerView;
     @BindView(R.id.refresh)
@@ -73,7 +68,6 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         DebugLog.e("my uuid:"+SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID));
 
-
         // 判断sdk是否登录成功过，并没有退出和被踢，否则跳转到登陆界面
         if (!EMClient.getInstance().isLoggedInBefore()) {
             DebugLog.e("未登录");
@@ -91,15 +85,15 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
 
 
-    // 弹出框
-    private ProgressDialog mDialog;
+
     /**
      * 登录方法
      */
     private void signIn() {
-        mDialog = new ProgressDialog(getActivity());
-        mDialog.setMessage("正在登陆，请稍后...");
-        mDialog.show();
+
+
+        mProgressDialog = DialogUtils.showProgressDialog(getActivity(), "正在登陆，请稍后...");
+
         String username = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
         String password = "123456";
         
@@ -112,7 +106,7 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mDialog.dismiss();
+                        DialogUtils.dismissDialog(mProgressDialog);
 
                         // 加载所有会话到内存
                         EMClient.getInstance().chatManager().loadAllConversations();
@@ -135,7 +129,7 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mDialog.dismiss();
+                        DialogUtils.dismissDialog(mProgressDialog);
                         Log.d("lzan13", "登录失败 Error code:" + i + ", message:" + s);
                         /**
                          * 关于错误码可以参考官方api详细说明

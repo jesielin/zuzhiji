@@ -52,7 +52,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder_advert2" />
+                    android:src="@drawable/placeholder_social_banner" />
 
 
                 <android.support.v7.widget.RecyclerView

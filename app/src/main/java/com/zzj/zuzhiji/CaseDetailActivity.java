@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,7 +19,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
@@ -32,6 +29,7 @@ import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.KeyboardControlMnanager;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
+import com.zzj.zuzhiji.util.UIHelper;
 import com.zzj.zuzhiji.view.NestedListView;
 
 import java.io.File;
@@ -53,7 +51,7 @@ import rx.functions.Action0;
  * Created by shawn on 17/3/31.
  */
 
-public class CaseDetailActivity extends AppCompatActivity implements BGANinePhotoLayout.Delegate {
+public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayout.Delegate {
 
     @BindView(R.id.list)
     NestedListView listView;
@@ -95,7 +93,6 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
     private String targetFriendId = "";
     private String targetFriendNickName = "";
 
-    private MaterialDialog dialog;
 
     private CommentAdapter mAdapter = new CommentAdapter();
     private List<CommentItem> comments = new ArrayList<>();
@@ -177,7 +174,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                 targetFriendNickName = "";
                 etComment.setHint("添加评论:");
                 targetCommentView = vContent;
-                CommonUtils.showSoftInput(CaseDetailActivity.this, etComment);
+                UIHelper.showSoftInput(CaseDetailActivity.this, etComment);
             }
         });
 
@@ -203,8 +200,8 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    if (CommonUtils.isShowSoftInput(CaseDetailActivity.this))
-                        CommonUtils.hideSoftInput(CaseDetailActivity.this, etComment);
+                    if (UIHelper.isShowSoftInput(CaseDetailActivity.this))
+                        UIHelper.hideSoftInput(CaseDetailActivity.this, etComment);
 
                 }
                 return false;
@@ -237,15 +234,15 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
         tvSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (CommonUtils.isShowSoftInput(CaseDetailActivity.this))
-                    CommonUtils.hideSoftInput(CaseDetailActivity.this, etComment);
+                if (UIHelper.isShowSoftInput(CaseDetailActivity.this))
+                    UIHelper.hideSoftInput(CaseDetailActivity.this, etComment);
 
                 Network.getInstance().sendComment(item.momentsID, item.momentOwner, SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
                         targetFriendId, etComment.getText().toString(), SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME), targetFriendNickName)
                         .doOnSubscribe(new Action0() {
                             @Override
                             public void call() {
-                                dialog = DialogUtils.showProgressDialog(CaseDetailActivity.this, "评论", "正在评论，请稍等..."); // 需要在主线程执行
+                                mDialog = DialogUtils.showProgressDialog(CaseDetailActivity.this, "评论中，请稍等..."); // 需要在主线程执行
                             }
                         })
                         .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
@@ -259,7 +256,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                             @Override
                             public void onError(Throwable e) {
                                 Toast.makeText(CaseDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                dismissDialog();
+                                DialogUtils.dismissDialog(mDialog);
                             }
 
                             @Override
@@ -275,7 +272,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                                 ));
                                 mAdapter.notifyDataSetChanged();
                                 etComment.setText("");
-                                dismissDialog();
+                                DialogUtils.dismissDialog(mDialog);
                             }
                         });
 
@@ -293,13 +290,6 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
     private void setResultStatusChange() {
         if (isChangeComment)
             setResult(Constant.ACTIVITY_CODE.RESULT_CODE_DETAIL_CHANGE_STATUS_BACK_TO_SOCIAL);
-    }
-
-    private void dismissDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-            dialog = null;
-        }
     }
 
     private void enableSendButton() {
@@ -338,24 +328,6 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
         });
     }
 
-
-    /**
-     * display soft keyboard
-     */
-    protected void openSoftKeyboard(EditText et) {
-        InputMethodManager inputManager = (InputMethodManager) et.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.showSoftInput(et, 0);
-    }
-
-    /**
-     * close soft keyboard
-     */
-    protected void closeSoftKeyboard(EditText et) {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null && getCurrentFocus() != null) {
-            inputMethodManager.hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
 
     private void setEditableState(boolean b) {
         if (b) {
@@ -461,7 +433,7 @@ public class CaseDetailActivity extends AppCompatActivity implements BGANinePhot
                     targetCommentView = holder.clickAreaView;
                     etComment.setHint("回复" + comment.commenterUUID + ":");
 
-                    CommonUtils.showSoftInput(CaseDetailActivity.this, etComment);
+                    UIHelper.showSoftInput(CaseDetailActivity.this, etComment);
 
                     Toast.makeText(CaseDetailActivity.this, position + "", Toast.LENGTH_SHORT).show();
                 }

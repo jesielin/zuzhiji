@@ -4,20 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
-import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.app.App;
@@ -55,7 +50,7 @@ import rx.schedulers.Schedulers;
  * Created by shawn on 17/4/7.
  */
 
-public class UserInfoSettingActivity extends AppCompatActivity {
+public class UserInfoSettingActivity extends BaseActivity {
 
 
     @BindView(R.id.nickname)
@@ -72,8 +67,6 @@ public class UserInfoSettingActivity extends AppCompatActivity {
     TextView tvSummary;
 
     private int genderIndex = 0;
-
-    private MaterialDialog dialog;
 
 
     private boolean isChangeAvator = false;
@@ -152,86 +145,67 @@ public class UserInfoSettingActivity extends AppCompatActivity {
 
     @OnClick(R.id.summary_view)
     public void setSummary(View view) {
-        new MaterialDialog.Builder(this)
-                .title("更新简介")
 
-                .inputType(InputType.TYPE_CLASS_TEXT |
-                        InputType.TYPE_TEXT_VARIATION_PERSON_NAME |
-                        InputType.TYPE_TEXT_FLAG_CAP_WORDS)
-                .inputRange(1, 80)
-                .theme(Theme.LIGHT)
-                .positiveText("确定")
-                .input("简介", tvSummary.getText().toString(), false, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        tvSummary.setText(input.toString());
-                        isChangeSummary = true;
-                    }
-                }).show();
+
+        DialogUtils.showEditDialog(UserInfoSettingActivity.this, "更新简介", tvSummary.getText().toString(), new DialogUtils.OnEditTextConfirmListener() {
+
+            @Override
+            public void onEditTextConfirm(String text, boolean isChanged) {
+                isChangeSummary = isChanged;
+                if (isChanged)
+                    tvSummary.setText(text);
+            }
+        });
 
     }
 
     @OnClick(R.id.nickname_view)
     public void setNickName(View view) {
-        new MaterialDialog.Builder(this)
-                .title("输入新的昵称")
 
-                .inputType(InputType.TYPE_CLASS_TEXT |
-                        InputType.TYPE_TEXT_VARIATION_PERSON_NAME |
-                        InputType.TYPE_TEXT_FLAG_CAP_WORDS)
-                .inputRange(1, 16)
-                .theme(Theme.LIGHT)
-                .positiveText("确定")
-                .input("昵称", tvNickName.getText().toString(), false, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        tvNickName.setText(input.toString());
-                        isChangeNickName = true;
-                    }
-                }).show();
 
+        DialogUtils.showEditDialog(UserInfoSettingActivity.this, "输入新的昵称", tvNickName.getText().toString(), new DialogUtils.OnEditTextConfirmListener() {
+
+            @Override
+            public void onEditTextConfirm(String text, boolean isChanged) {
+                isChangeNickName = isChanged;
+                if (isChanged)
+                    tvNickName.setText(text);
+            }
+        });
     }
 
     @OnClick(R.id.gender_view)
     public void setGender(View view) {
-        new MaterialDialog.Builder(this)
-                .title("选择性别")
-                .items("男", "女")
-                .theme(Theme.LIGHT)
-                .itemsCallbackSingleChoice(genderIndex, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                        genderIndex = which;
-                        switch (genderIndex) {
-                            case 0:
-                                tvGender.setText("男");
-                                break;
-                            case 1:
-                                tvGender.setText("女");
-                                break;
-                        }
-                        isChangeGender = true;
-                        return true;
-                    }
-                })
-                .positiveText("确定")
-                .show();
+
+        mDialog = DialogUtils.showSingleChoiceDialog(UserInfoSettingActivity.this, "选择性别", new String[]{"男", "女"}, new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                genderIndex = position;
+                switch (genderIndex) {
+                    case 0:
+                        tvGender.setText("男");
+                        break;
+                    case 1:
+                        tvGender.setText("女");
+                        break;
+                }
+                isChangeGender = true;
+                DialogUtils.dismissDialog(mDialog);
+            }
+        });
+
+
     }
 
     @OnClick(R.id.studio_view)
     public void chooseStudio(View view) {
+
+
         Network.getInstance().getAllStudio()
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        dialog = new MaterialDialog.Builder(UserInfoSettingActivity.this)
-                                .title("工作室")
-                                .content("获取列表中..")
-                                .progress(true, 0)
-                                .cancelable(false)
-                                .theme(Theme.LIGHT)
-                                .progressIndeterminateStyle(false)
-                                .show();
+                        mDialog = DialogUtils.showProgressDialog(UserInfoSettingActivity.this, "正在获取工作室列表...");
 
                     }
                 })
@@ -246,46 +220,34 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         Toast.makeText(UserInfoSettingActivity.this, "获取工作室错误:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
                     }
 
                     @Override
                     public void onNext(final List<StudioItem> studioItems) {
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
                         final List<String> items = new ArrayList<String>();
-                        for (StudioItem i : studioItems) {
-                            items.add(i.title);
+                        final String[] contents = new String[studioItems.size()];
+                        for (int i = 0; i < studioItems.size(); i++) {
+                            contents[i] = studioItems.get(i).title;
                         }
 
-                        new MaterialDialog.Builder(UserInfoSettingActivity.this)
-                                .title("选择工作室")
-                                .items(items)
-                                .cancelable(true)
-                                .theme(Theme.LIGHT)
-                                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                                    @Override
-                                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-//                                        Toast.makeText(UserInfoSettingActivity.this, which + "", Toast.LENGTH_SHORT).show();
-//                                        dismissDialog();
-                                        studioId = studioItems.get(which).id;
-                                        studioTitle = text.toString();
-                                        tvStudio.setText(studioTitle);
-                                        isChangeStudio = true;
-                                        return true;
-                                    }
-                                })
-                                .positiveText("确定").show();
+                        mDialog = DialogUtils.showSingleChoiceDialog(UserInfoSettingActivity.this, "选择工作室", contents, new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                studioId = studioItems.get(position).id;
+                                studioTitle = contents[position];
+                                tvStudio.setText(studioTitle);
+                                isChangeStudio = true;
+                                DialogUtils.dismissDialog(mDialog);
+                            }
+                        });
+
                     }
                 });
 
     }
 
-    private void dismissDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-            dialog = null;
-        }
-    }
 
     @OnClick(R.id.avator)
     public void chooseAvator(View view) {
@@ -316,7 +278,7 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         }
 
 
-        dialog = DialogUtils.showProgressDialog(this, "设置信息", "正在设置，请稍等...");
+        mDialog = DialogUtils.showProgressDialog(UserInfoSettingActivity.this, "正在设置，请稍等...");
         if (isChangeAvator) {
             File avatorFile = new File(paths.get(0));
 
@@ -333,7 +295,7 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         @Override
                         public void onError(Throwable e) {
                             Toast.makeText(UserInfoSettingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dismissDialog();
+                            DialogUtils.dismissDialog(mDialog);
                         }
 
                         @Override
@@ -363,7 +325,6 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         }
 
 
-
         //添加UUID
         String uuidText = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID);
         RequestBody uuid =
@@ -371,21 +332,21 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         MediaType.parse("multipart/form-data"), uuidText);
 
 
-            // 添加nickname
-            String nickNameText = tvNickName.getText().toString();
+        // 添加nickname
+        String nickNameText = tvNickName.getText().toString();
         RequestBody nickName =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), nickNameText);
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), nickNameText);
 
 
-            // 添加sex
-            String genderText = genderIndex == 0 ? Constant.GENDER_MALE : Constant.GENDER_FEMALE;
-            RequestBody gender =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), genderText);
+        // 添加sex
+        String genderText = genderIndex == 0 ? Constant.GENDER_MALE : Constant.GENDER_FEMALE;
+        RequestBody gender =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), genderText);
 
 
-        DebugLog.e("studio id:"+studioId);
+        DebugLog.e("studio id:" + studioId);
         RequestBody studio = null;
         if (isChangeStudio) {
             studio =
@@ -394,12 +355,11 @@ public class UserInfoSettingActivity extends AppCompatActivity {
         }
 
 
-
-            //添加summary
-            String summaryText = tvSummary.getText().toString();
-            RequestBody summary =
-                    RequestBody.create(
-                            MediaType.parse("multipart/form-data"), summaryText);
+        //添加summary
+        String summaryText = tvSummary.getText().toString();
+        RequestBody summary =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), summaryText);
 
 
         Network.getInstance().setUserInfo(uuid, nickName, gender, studio, summary, avatorPart)
@@ -412,7 +372,7 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
 
                         Toast.makeText(UserInfoSettingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
 
 
                     }
@@ -423,11 +383,11 @@ public class UserInfoSettingActivity extends AppCompatActivity {
                         values.put(Constant.SHARED_KEY.AVATOR, CommonUtils.getAvatorAddress(setInfoResult.uuid));
                         values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
                         values.put(Constant.SHARED_KEY.USER_GENDER, setInfoResult.sex);
-                        values.put(Constant.SHARED_KEY.STUDIO_ID, setInfoResult.studio==null?"":setInfoResult.studio);
-                        values.put(Constant.SHARED_KEY.STUDIO_TITLE, setInfoResult.studioTitle==null?"":setInfoResult.studioTitle);
+                        values.put(Constant.SHARED_KEY.STUDIO_ID, setInfoResult.studio == null ? "" : setInfoResult.studio);
+                        values.put(Constant.SHARED_KEY.STUDIO_TITLE, setInfoResult.studioTitle == null ? "" : setInfoResult.studioTitle);
                         values.put(Constant.SHARED_KEY.SUMMARY, setInfoResult.summary);
                         SharedPreferencesUtils.getInstance().setValues(values);
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
 
                         finish();
 

@@ -10,12 +10,9 @@ import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
-
 import com.yayandroid.theactivitymanager.TheActivityManager;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.service.VersionUpdateService;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
@@ -25,37 +22,29 @@ import java.io.File;
  */
 public class VersionUpdateHelper implements ServiceConnection {
 
-    private Context context;
-    private VersionUpdateService service;
-    private AlertDialog waitForUpdateDialog;
-    private ProgressDialog progressDialog;
-
-    private static boolean isCanceled;
-
-    private boolean showDialogOnStart;
-    private boolean toastInfo;
-
     public static final int NEED_UPDATE = 2;
     public static final int DONOT_NEED_UPDATE = 1;
     public static final int CHECK_FAILD = -1;
     public static final int USER_CANCELED = 0;
-
+    private static boolean isCanceled;
+    private Context context;
+    private VersionUpdateService service;
+    private AlertDialog waitForUpdateDialog;
+    private ProgressDialog progressDialog;
+    private boolean showDialogOnStart;
+    private boolean toastInfo;
     private CheckCallBack checkCallBack;
-
-    public interface CheckCallBack{
-        void callBack(int code);
-    }
 
     public VersionUpdateHelper(Context context) {
         this.context = context;
     }
 
-    public void setCheckCallBack(CheckCallBack checkCallBack) {
-        this.checkCallBack = checkCallBack;
-    }
-
     public static void resetCancelFlag() {
         isCanceled = false;
+    }
+
+    public void setCheckCallBack(CheckCallBack checkCallBack) {
+        this.checkCallBack = checkCallBack;
     }
 
     /**
@@ -176,6 +165,7 @@ public class VersionUpdateHelper implements ServiceConnection {
                 }
                 final AlertDialog.Builder builer = new AlertDialog.Builder(context);
                 builer.setTitle("版本升级");
+
                 builer.setMessage(versionUpdateModel.getDescription());
                 //当点确定按钮时从服务器上下载新的apk 然后安装
                 builer.setPositiveButton("立即更新", new DialogInterface.OnClickListener() {
@@ -275,6 +265,10 @@ public class VersionUpdateHelper implements ServiceConnection {
         }
         service = null;
         context = null;
+    }
+
+    public interface CheckCallBack {
+        void callBack(int code);
     }
 
 }

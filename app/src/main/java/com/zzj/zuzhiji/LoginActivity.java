@@ -1,18 +1,14 @@
 package com.zzj.zuzhiji;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
@@ -31,7 +27,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
 
     @BindView(R.id.tel)
@@ -42,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvGetVerify;
     CountDownTimer timer;
     private boolean isGetVerifyEnable = true;
-    private MaterialDialog dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,73 +69,67 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        if (TextUtils.isEmpty(etVerify.getText().toString().trim())){
+        if (TextUtils.isEmpty(etVerify.getText().toString().trim())) {
             Toast.makeText(this, "请输入验证码", Toast.LENGTH_SHORT).show();
             return;
         }
 
 
-            Network.getInstance().login(etTel.getText().toString().trim(), etVerify.getText().toString().trim())
-                    .doOnSubscribe(new Action0() {
-                        @Override
-                        public void call() {
-                            dialog = DialogUtils.showProgressDialog(LoginActivity.this, "登录", "正在登录，请稍等..."); // 需要在主线程执行
+        Network.getInstance().login(etTel.getText().toString().trim(), etVerify.getText().toString().trim())
+                .doOnSubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        mDialog = DialogUtils.showProgressDialog(LoginActivity.this, "正在登录，请稍等..."); // 需要在主线程执行
+                    }
+                })
+                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<LoginResult>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        DialogUtils.dismissDialog(mDialog);
+                    }
+
+                    @Override
+                    public void onNext(LoginResult loginResult) {
+
+
+                        String studioId = loginResult.studio;
+                        String studioTitle = Constant.EMPTY;
+                        if (TextUtils.isEmpty(studioId)) {
+                            studioId = Constant.EMPTY;
+                            studioTitle = Constant.EMPTY;
+                        } else {
+                            //// TODO: 17/4/14 暂定工作室title
+                            studioTitle = "心灵足道馆";
                         }
-                    })
-                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<LoginResult>() {
-                        @Override
-                        public void onCompleted() {
+                        SharedPreferencesUtils.getInstance().setLogin(
+                                loginResult.uuid,
+                                loginResult.nickName,
+                                TextUtils.isEmpty(loginResult.headSculpture) ? Constant.AVATOR_DEFAULT : loginResult.headSculpture,
+                                loginResult.userType,
+                                loginResult.loginName,
+                                TextUtils.isEmpty(loginResult.sex) ? Constant.GENDER_MALE : loginResult.sex,
+                                TextUtils.isEmpty(loginResult.summary) ? Constant.EMPTY : loginResult.summary,
+                                studioId,
+                                studioTitle
 
-                        }
+                        );
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            dismissDialog();
-                        }
-
-                        @Override
-                        public void onNext(LoginResult loginResult) {
+                        signIn(loginResult.uuid);
 
 
+                        DebugLog.e("uuid:" + loginResult.uuid);
 
 
-                            String studioId = loginResult.studio;
-                            String studioTitle = Constant.EMPTY;
-                            if (TextUtils.isEmpty(studioId)) {
-                                studioId = Constant.EMPTY;
-                                studioTitle = Constant.EMPTY;
-                            } else {
-                                //// TODO: 17/4/14 暂定工作室title
-                                studioTitle = "心灵足道馆";
-                            }
-                            SharedPreferencesUtils.getInstance().setLogin(
-                                    loginResult.uuid,
-                                    loginResult.nickName,
-                                    TextUtils.isEmpty(loginResult.headSculpture)?Constant.AVATOR_DEFAULT:loginResult.headSculpture,
-                                    loginResult.userType,
-                                    loginResult.loginName,
-                                    TextUtils.isEmpty(loginResult.sex) ? Constant.GENDER_MALE : loginResult.sex,
-                                    TextUtils.isEmpty(loginResult.summary) ? Constant.EMPTY : loginResult.summary,
-                                    studioId,
-                                    studioTitle
-
-                            );
-
-                            signIn(loginResult.uuid);
-
-
-                            
-                            DebugLog.e("uuid:" + loginResult.uuid);
-
-
-
-
-
-                        }
-                    });
+                    }
+                });
 
 
     }
@@ -160,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
 
 
                         // 加载所有会话到内存
@@ -171,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                         // 登录成功跳转界面
                         DebugLog.e("登录成功");
 
-                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
                     }
                 });
@@ -187,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
                         DebugLog.e("登录失败 Error code:" + i + ", message:" + s);
                         /**
                          * 关于错误码可以参考官方api详细说明
@@ -245,13 +235,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void dismissDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-            dialog = null;
-        }
-    }
-
     @OnClick(R.id.register)
     public void register(View view) {
         startActivity(new Intent(this, RegisterActivity.class));
@@ -274,21 +257,21 @@ public class LoginActivity extends AppCompatActivity {
         Network.getInstance().sendSms(etTel.getText().toString().trim())
 
                 .subscribe(new Subscriber<Object>() {
-                        @Override
-                        public void onCompleted() {
+                    @Override
+                    public void onCompleted() {
 
-                        }
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
 
-                        @Override
-                        public void onNext(Object o) {
+                    @Override
+                    public void onNext(Object o) {
 
-                        }
-                    });
+                    }
+                });
 
 
     }

@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.widget.Toast;
 
@@ -26,18 +27,16 @@ public class VersionUpdateService extends Service {
 
 
     private static final String TAG = VersionUpdateService.class.getSimpleName();
+    private final int NOTIFICATION_ID = 100;
     private LocalBinder binder = new LocalBinder();
-
     private DownLoadListener downLoadListener;
     private boolean downLoading;
     private int progress;
-
     private NotificationManager mNotificationManager;
     private NotificationUpdaterThread notificationUpdaterThread;
     private Notification.Builder notificationBuilder;
-    private final int NOTIFICATION_ID = 100;
-
     private UpdateInfo versionUpdateModel;
+    private CheckVersionCallBack checkVersionCallBack;
 
     public VersionUpdateService() {
     }
@@ -60,40 +59,8 @@ public class VersionUpdateService extends Service {
         downLoading = false;
     }
 
-    public interface DownLoadListener {
-        void begin();
-
-        void inProgress(long current, long total);
-
-        void downLoadLatestSuccess(File file);
-
-        void downLoadLatestFailed();
-    }
-
-    public interface CheckVersionCallBack {
-        void onSuccess();
-
-        void onError();
-    }
-
-    private CheckVersionCallBack checkVersionCallBack;
-
     public void setCheckVersionCallBack(CheckVersionCallBack checkVersionCallBack) {
         this.checkVersionCallBack = checkVersionCallBack;
-    }
-
-    private class NotificationUpdaterThread extends Thread {
-        @Override
-        public void run() {
-            while (true) {
-                notificationBuilder.setContentTitle("正在下载更新" + progress + "%"); // the label of the entry
-                notificationBuilder.setProgress(100, progress, false);
-                mNotificationManager.notify(NOTIFICATION_ID, notificationBuilder.getNotification());
-                if (progress >= 100) {
-                    break;
-                }
-            }
-        }
     }
 
     public boolean isDownLoading() {
@@ -192,10 +159,12 @@ public class VersionUpdateService extends Service {
         notificationUpdaterThread = new NotificationUpdaterThread();
         notificationUpdaterThread.start();
 
-        final File fileDir = getApplicationContext().getFilesDir();
         final String url = versionUpdateModel.apk_url;
-        final String fileName = "zzj.apk";
-        final File destFile = new File(fileDir, fileName);
+        final File destFile = new File(Environment.getExternalStoragePublicDirectory
+                (Environment.DIRECTORY_DOWNLOADS), "zzj.apk");
+        if (destFile.exists()) {
+            destFile.delete();
+        }
 
         downLoading = true;
 
@@ -207,7 +176,7 @@ public class VersionUpdateService extends Service {
         Network.getInstance().downloadApk(url, destFile, new DownloadProgressListener() {
             @Override
             public void update(long bytesRead, long contentLength, boolean done) {
-                DebugLog.d("download:" + bytesRead + "/" + contentLength);
+//                DebugLog.d("download:" + bytesRead + "/" + contentLength);
 
                 progress = (int) (bytesRead * 100 / contentLength);
                 if (downLoadListener != null) {
@@ -276,6 +245,36 @@ public class VersionUpdateService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
+    }
+
+    public interface DownLoadListener {
+        void begin();
+
+        void inProgress(long current, long total);
+
+        void downLoadLatestSuccess(File file);
+
+        void downLoadLatestFailed();
+    }
+
+    public interface CheckVersionCallBack {
+        void onSuccess();
+
+        void onError();
+    }
+
+    private class NotificationUpdaterThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                notificationBuilder.setContentTitle("正在下载更新" + progress + "%"); // the label of the entry
+                notificationBuilder.setProgress(100, progress, false);
+                mNotificationManager.notify(NOTIFICATION_ID, notificationBuilder.getNotification());
+                if (progress >= 100) {
+                    break;
+                }
+            }
+        }
     }
 
     public class LocalBinder extends Binder {

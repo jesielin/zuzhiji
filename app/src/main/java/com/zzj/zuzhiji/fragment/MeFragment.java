@@ -3,7 +3,6 @@ package com.zzj.zuzhiji.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +28,7 @@ import butterknife.OnClick;
  * Created by shawn on 2017-03-29.
  */
 
-public class MeFragment extends Fragment {
+public class MeFragment extends BaseFragment {
 
 
     @BindView(R.id.dongtai)
@@ -74,6 +73,7 @@ public class MeFragment extends Fragment {
         loadAvatorAndName();
     }
 
+
     private void loadAvatorAndName() {
         String avator = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR);
         String title = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME);
@@ -96,7 +96,6 @@ public class MeFragment extends Fragment {
     }
 
     private void setupLayout() {
-//        loadAvatorAndName();
 
 
         shipin.setVisibility(View.GONE);
@@ -109,25 +108,17 @@ public class MeFragment extends Fragment {
                 dongtai.setVisibility(View.VISIBLE);
                 anli.setVisibility(View.GONE);
                 jibie.setVisibility(View.GONE);
-//                shipin.setVisibility(View.GONE);
-                //huifu.setVisibility(View.GONE);
-//                guanzhu.setVisibility(View.VISIBLE);
-//                fensi.setVisibility(View.GONE);
                 break;
             case "1":
                 dongtai.setVisibility(View.GONE);
                 anli.setVisibility(View.VISIBLE);
                 jibie.setVisibility(View.VISIBLE);
-//                shipin.setVisibility(View.VISIBLE);
-                //huifu.setVisibility(View.VISIBLE);
-//                guanzhu.setVisibility(View.GONE);
-//                fensi.setVisibility(View.VISIBLE);
                 break;
         }
     }
 
     @OnClick({R.id.dongtai, R.id.anli})
-    public void toHomePage(View view) {
+    public void toHomePage() {
         startActivity(HomePageActivity.newIntent(getActivity(),
                 SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR),
                 SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME),
@@ -144,12 +135,12 @@ public class MeFragment extends Fragment {
 
 
     @OnClick(R.id.header)
-    public void setInfo(View view) {
+    public void setInfo() {
         startActivity(new Intent(getActivity(), UserInfoSettingActivity.class));
     }
 
     @OnClick(R.id.huifu)
-    public void message(View view) {
+    public void message() {
         startActivity(new Intent(getActivity(), CommentsReplyActivity.class));
     }
 }

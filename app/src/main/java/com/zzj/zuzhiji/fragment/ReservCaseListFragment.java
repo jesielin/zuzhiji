@@ -29,7 +29,7 @@ import rx.Subscriber;
  * Created by shawn on 17/4/10.
  */
 
-public class ReservCaseListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ReservCaseListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.list)
     RecyclerView recyclerView;
@@ -103,6 +103,21 @@ public class ReservCaseListFragment extends Fragment implements SwipeRefreshLayo
 
     }
 
+    private void doRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        onRefresh();
+    }
+
+    @OnClick(R.id.back)
+    public void back() {
+        getActivity().onBackPressed();
+    }
+
+    @Override
+    public void onRefresh() {
+        getDatas();
+    }
+
     public class ServiceVH extends RecyclerView.ViewHolder {
 
 
@@ -155,20 +170,5 @@ public class ReservCaseListFragment extends Fragment implements SwipeRefreshLayo
         public int getItemCount() {
             return datas.size();
         }
-    }
-
-    private void doRefresh() {
-        swipeRefreshLayout.setRefreshing(true);
-        onRefresh();
-    }
-
-    @OnClick(R.id.back)
-    public void back(View view) {
-        getActivity().onBackPressed();
-    }
-
-    @Override
-    public void onRefresh() {
-        getDatas();
     }
 }

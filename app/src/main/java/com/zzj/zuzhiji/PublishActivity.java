@@ -7,13 +7,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.zzj.zuzhiji.app.App;
@@ -27,7 +25,6 @@ import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +47,7 @@ import rx.schedulers.Timestamped;
  * Created by shawn on 2017-03-30.
  */
 
-public class PublishActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, BGASortableNinePhotoLayout.Delegate {
+public class PublishActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks, BGASortableNinePhotoLayout.Delegate {
 
     //    private static final int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;
 //    private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
@@ -63,7 +60,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
      */
     @BindView(R.id.image_group)
     BGASortableNinePhotoLayout mPhotosSnpl;
-    private MaterialDialog dialog;
+    long start_upload = 0;
     private Compressor compressor = new Compressor.Builder(App.getAppContext())
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
@@ -72,7 +69,6 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
             .setDestinationDirectoryPath(Glide.getPhotoCacheDir(App.getAppContext()).getAbsolutePath())
             .build();
     private ArrayList<String> paths = new ArrayList<>();
-//    private List<File> files = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,6 +128,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                 mPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedImages(data));
             }
         }
+
     }
 
     @OnClick(R.id.back)
@@ -139,7 +136,6 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
         finish();
     }
 
-    long start_upload = 0;
     @OnClick(R.id.complete)
     public void complete(View view) {
 
@@ -148,7 +144,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
             return;
         }
 
-        dialog = DialogUtils.showProgressDialog(this, "发表案例", "正在上传...");
+        mDialog = DialogUtils.showProgressDialog(this, "正在上传...");
         //TODO:DIALOG BUG
 
         Observable.create(new Observable.OnSubscribe<List<File>>() {
@@ -159,12 +155,12 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                 long size = 0;
                 for (String path : paths) {
                     File f = new File(path);
-                    size+=f.length();
+                    size += f.length();
                     files.add(compressor.compressToFile(new File(path)));
                 }
-                DebugLog.e("file total size:"+CommonUtils.getReadableFileSize(size));
+                DebugLog.e("file total size:" + CommonUtils.getReadableFileSize(size));
                 long temp_after = System.currentTimeMillis();
-                DebugLog.e("compress time:"+String.valueOf(temp_after-temp));
+                DebugLog.e("compress time:" + String.valueOf(temp_after - temp));
                 DebugLog.e("files:" + new Gson().toJson(files));
                 subscriber.onNext(files);
                 subscriber.onCompleted();
@@ -182,7 +178,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                     public void onError(Throwable e) {
                         DebugLog.e("error");
                         Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
                     }
 
                     @Override
@@ -197,12 +193,6 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
 
     }
 
-    private void dismissDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-            dialog = null;
-        }
-    }
 
     private void upload(List<File> files) {
         MultipartBody.Part[] parts = new MultipartBody.Part[files.size()];
@@ -229,7 +219,7 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), nickNameText);
         // 添加message
-        String messageText =  etSubTitle.getText().toString();
+        String messageText = etSubTitle.getText().toString();
         RequestBody message =
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), messageText);
@@ -246,15 +236,15 @@ public class PublishActivity extends AppCompatActivity implements EasyPermission
                     public void onError(Throwable e) {
                         DebugLog.e("error");
                         Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
                     }
 
                     @Override
                     public void onNext(Timestamped<Object> objectTimestamped) {
 
-                        DebugLog.e("upload time:"+(objectTimestamped.getTimestampMillis()-start_upload));
+                        DebugLog.e("upload time:" + (objectTimestamped.getTimestampMillis() - start_upload));
                         setResult(Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS);
-                        dismissDialog();
+                        DialogUtils.dismissDialog(mDialog);
                         finish();
 
                     }

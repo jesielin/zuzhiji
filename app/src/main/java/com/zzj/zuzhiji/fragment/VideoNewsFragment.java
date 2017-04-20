@@ -2,7 +2,6 @@ package com.zzj.zuzhiji.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,7 +33,7 @@ import rx.Subscriber;
  * Created by shawn on 17/3/27.
  */
 
-public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class VideoNewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.list)
     RecyclerView recyclerView;
@@ -149,7 +148,6 @@ public class VideoNewsFragment extends Fragment implements SwipeRefreshLayout.On
                 public void onClick(View v) {
                     DebugLog.e("url:" + item.contents);
                     startActivity(VideoPlayActivity.newIntent(getActivity(), item.contents));
-//                    startActivity(new Intent(getActivity(), VideoPlayActivity.class));
                 }
             });
 

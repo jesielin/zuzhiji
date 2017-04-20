@@ -23,8 +23,7 @@
                 android:id="@+id/avator_from"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/placeholder_avator" />
+                android:layout_marginLeft="10dp" />
 
             <TextView
 
@@ -61,8 +60,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/placeholder_avator" />
+                android:layout_marginRight="10dp" />
         </LinearLayout>
     </RelativeLayout>
 

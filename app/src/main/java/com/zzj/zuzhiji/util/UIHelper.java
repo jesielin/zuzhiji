@@ -2,15 +2,11 @@ package com.zzj.zuzhiji.util;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.Toast;
-
-import com.zzj.zuzhiji.app.App;
 
 
 /**
@@ -83,72 +79,36 @@ public class UIHelper {
         return result;
     }
 
-    /**
-     * 隐藏软键盘
-     */
-    public static void hideInputMethod(View view) {
-        try {
-            InputMethodManager imm = (InputMethodManager) view.getContext()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            DebugLog.e(e.getMessage());
-        }
-    }
-
-    public static void hideInputMethod(final View view, long delayMillis) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                hideInputMethod(view);
-            }
-        }, delayMillis);
-    }
 
     /**
      * 显示软键盘
      */
-    public static void showInputMethod(View view) {
-        if (view == null) return;
-        if (view instanceof EditText) view.requestFocus();
-//        if (view != null){
-//            view.setVisibility(View.VISIBLE);
-//            view.findViewById(editId).requestFocus();
-//        }
-        InputMethodManager imm = (InputMethodManager) view.getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            boolean success = imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-            DebugLog.i("showSoftKeyboard" + " isSuccess   >>>   " + success);
-        }
-    }
-
-    /**
-     * 显示软键盘
-     */
-    public static void showInputMethod(Context context) {
+    public static void showSoftInput(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+        //imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
     }
 
     /**
-     * 多少时间后显示软键盘
+     * 隐藏软键盘
+     * @param context
+     * @param view
      */
-    public static void showInputMethod(final View view, long delayMillis) {
-        if (view != null)
-        // 显示输入法
-        {
-            view.postDelayed(new Runnable() {
+    public static void hideSoftInput(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0); //强制隐藏键盘
+    }
 
-                @Override
-                public void run() {
-                    UIHelper.showInputMethod(view);
-                }
-            }, delayMillis);
-        }
+
+    /**
+     * 键盘显示状态
+     * @param context
+     * @return
+     */
+    public static boolean isShowSoftInput(Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        //获取状态信息
+        return imm.isActive();//true 打开
     }
 
 

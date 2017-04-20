@@ -2,7 +2,6 @@ package com.zzj.zuzhiji.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +32,7 @@ import rx.Subscriber;
  * Created by shawn on 17/3/27.
  */
 
-public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class TextNewsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.list)
     RecyclerView recyclerView;
@@ -143,7 +142,6 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
                     .placeholder(R.color.text_hint)
                     .into(holder.imv);
             holder.tvTitle.setText(item.title);
-//            holder.tvSubTitle.setText(item.contents);
             holder.tvHot.setText(item.hot);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
 
@@ -151,7 +149,6 @@ public class TextNewsFragment extends Fragment implements SwipeRefreshLayout.OnR
                 @Override
                 public void onClick(View v) {
                     startActivity(ArticleActivity.newIntent(getActivity(),item.title,item.contents));
-//                    Toast.makeText(getActivity(), "dianle", Toast.LENGTH_SHORT).show();
                 }
             });
         }

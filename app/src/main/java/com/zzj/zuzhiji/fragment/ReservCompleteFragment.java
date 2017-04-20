@@ -2,7 +2,6 @@ package com.zzj.zuzhiji.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,12 +30,7 @@ import rx.Subscriber;
  * Created by shawn on 17/4/10.
  */
 
-public class ReservCompleteFragment extends Fragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
-
-    private String title;
-    private String price;
-    private String service_id;
-    private String uuid;
+public class ReservCompleteFragment extends BaseFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     @BindView(R.id.title)
     TextView tvTitle;
@@ -51,15 +45,23 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
             now.get(Calendar.MONTH),
             now.get(Calendar.DAY_OF_MONTH)
     );
-
     TimePickerDialog tpd = TimePickerDialog.newInstance(
             ReservCompleteFragment.this,
             now.get(Calendar.HOUR_OF_DAY),
             now.get(Calendar.MINUTE),
             true
     );
-
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private String title;
+    private String price;
+    private String service_id;
+    private String uuid;
+    private int year = 0;
+    private int month = 0;
+    private int day = 0;
+    private int minute = 0;
+    private int hour = 0;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -105,7 +107,7 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
     }
 
     @OnClick(R.id.choose_date)
-    public void choose_date(View view) {
+    public void choose_date() {
 
 
         Calendar future = Calendar.getInstance();
@@ -130,17 +132,9 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
     }
 
     @OnClick(R.id.back)
-    public void back(View view) {
+    public void back() {
         getActivity().onBackPressed();
     }
-
-
-    private int year=0;
-    private int month=0;
-    private int day=0;
-    private int minute=0;
-    private int hour=0;
-    private boolean isSetTime;
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
@@ -149,16 +143,6 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
         this.month = monthOfYear;
         this.day = dayOfMonth;
 
-//        Calendar calendar = Calendar.getInstance();
-//        if (dayOfMonth == calendar.get(Calendar.DAY_OF_MONTH)) {
-//            calendar.add(Calendar.HOUR_OF_DAY, 1);
-//            if (calendar.get(Calendar.DAY_OF_MONTH) != dayOfMonth)
-//                tpd.setMinTime(24,0,0);
-//            else
-//                tpd.setMinTime(calendar.get(Calendar.HOUR_OF_DAY), 0, 0);
-//        } else {
-//            tpd.setMinTime(0, 0, 0);
-//        }
 
         DebugLog.e("year:"+year);
         tpd.show(getActivity().getFragmentManager(), "Timepickerdialog");
@@ -167,7 +151,7 @@ public class ReservCompleteFragment extends Fragment implements DatePickerDialog
 
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        isSetTime = true;
+
         this.hour = hourOfDay;
         this.minute = minute;
         Date date = new Date(this.year-1900, this.month, this.day, this.hour, this.minute, 0);

@@ -34,7 +34,6 @@ public interface Constant {
 
     String EMPTY = "";
 
-    int CHAT_MESSAGES_PAGE_SIZE = 20;
 
     String AVATOR_DEFAULT = "http://101.201.155.115:3113/heads/default/default.png";
     interface SHARED_KEY {

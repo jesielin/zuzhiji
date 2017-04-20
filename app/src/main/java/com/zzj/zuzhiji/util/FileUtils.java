@@ -48,23 +48,11 @@ public class FileUtils {
      */
     public static void writeFile(InputStream in, File file) throws IOException {
 
-//        if( !file.exists() )
-//            file.mkdirs();
-//        else if( !file.isDirectory() && file.canWrite() ){
-//            file.delete();
-//            file.mkdirs();
-//        }
-//
-//        if (!file.getParentFile().exists())
-//            file.getParentFile().mkdirs();
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
 
-        if (file != null && !file.exists())
-            file.createNewFile();
-
-//        if (file != null && file.exists())
-//            file.delete();
-
-
+        if (file != null && file.exists())
+            file.delete();
 
         FileOutputStream out = new FileOutputStream(file);
         byte[] buffer = new byte[1024 * 128];

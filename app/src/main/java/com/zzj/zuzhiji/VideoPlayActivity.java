@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.View;
@@ -26,7 +25,7 @@ import butterknife.ButterKnife;
  * Created by shawn on 2017-04-02.
  */
 
-public class VideoPlayActivity extends AppCompatActivity {
+public class VideoPlayActivity extends BaseActivity {
 
     public final static String IMG_TRANSITION = "IMG_TRANSITION";
     @BindView(R.id.player)
