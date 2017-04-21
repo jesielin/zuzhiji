@@ -20,6 +20,7 @@ import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.util.CommonUtils;
+import com.zzj.zuzhiji.util.DebugLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class TextNewsFragment extends BaseFragment implements SwipeRefreshLayout
     }
 
     private void setupLayout() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager
                 .getOrientation());
@@ -68,6 +69,20 @@ public class TextNewsFragment extends BaseFragment implements SwipeRefreshLayout
             public void run() {
                 swipeRefreshLayout.setRefreshing(true);
                 onRefresh();
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                DebugLog.d("last visible:" + linearLayoutManager.findLastVisibleItemPosition());
+                DebugLog.d("last visible complete:" + linearLayoutManager.findLastCompletelyVisibleItemPosition());
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
             }
         });
 

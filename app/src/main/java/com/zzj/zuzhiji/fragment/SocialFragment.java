@@ -2,7 +2,6 @@ package com.zzj.zuzhiji.fragment;
 
 import android.Manifest;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -58,6 +57,7 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
     RecyclerView recyclerView;
     @BindView(R.id.refresh)
     SwipeRefreshLayout swipeRefreshLayout;
+
 
     private SocialAdapter mAdapter = new SocialAdapter();
 
@@ -117,34 +117,14 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
         });
         recyclerView.setAdapter(mAdapter);
 
-
-//        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//            }
-//        });
-
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                DebugLog.e("newState:" + newState);
-                DebugLog.e("last:" + linearLayoutManager.findLastVisibleItemPosition());
-                DebugLog.e("item count:" + linearLayoutManager.getItemCount());
-                DebugLog.e("child count:" + linearLayoutManager.getChildCount());
-                if (!isLoading
-                        && newState == RecyclerView.SCROLL_STATE_IDLE
-                        && linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1
-                        && linearLayoutManager.getChildCount() > 0) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && mAdapter.isCanLoadMore()
+                        && linearLayoutManager.findLastCompletelyVisibleItemPosition() == mAdapter.getItemCount() - 1)
                     loadMore();
-                }
-
             }
 
             @Override
@@ -152,18 +132,6 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-
-                }
-
-
-            });
-        }
-
     }
 
     private void doRefresh() {
@@ -172,13 +140,9 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
 
 
-    private boolean isLoading = false;
-
     private void loadMore() {
 
-        if (mPage > mTotalPage)
-            return;
-        isLoading = true;
+
         Network.getInstance().getSocialItems(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)
                 , mPage, Constant.PAGE_SIZE)
                 .observeOn(Schedulers.io())
@@ -199,7 +163,7 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
                     @Override
                     public void onError(Throwable e) {
                         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        isLoading = false;
+
                     }
 
                     @Override
@@ -211,14 +175,15 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
                             DebugLog.e("totalPage:" + mTotalPage);
                             if (mPage < mTotalPage) {
                                 mAdapter.setCanLoadMore(true);
+                                mPage++;
 
                             } else {
                                 mAdapter.setCanLoadMore(false);
                             }
-                            mPage++;
+
 
                         }
-                        isLoading = false;
+
                     }
                 });
     }
@@ -357,38 +322,55 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
         }
     }
 
+    public class HeaderVH extends RecyclerView.ViewHolder {
+
+        public HeaderVH(View itemView) {
+            super(itemView);
+        }
+    }
+
     private class SocialAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private Gson gson;
-        private boolean canLoadMore = false;
         private static final int TYPE_LOAD_MORE = 1;
         private static final int TYPE_NORMAL = 2;
+        private static final int TYPE_HEADER = 3;
+        private Gson gson;
+        private boolean canLoadMore = false;
 
-
-        public void setCanLoadMore(boolean canLoadMore) {
-            this.canLoadMore = canLoadMore;
-//            notifyDataSetChanged();
-            notifyItemInserted(datas.size());
-        }
 
         SocialAdapter() {
             GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
             gson = gsonBuilder.create();
         }
 
+        public boolean isCanLoadMore() {
+            return canLoadMore;
+        }
+
+        public void setCanLoadMore(boolean canLoadMore) {
+            this.canLoadMore = canLoadMore;
+            notifyDataSetChanged();
+//            notifyItemInserted(datas.size());
+        }
+
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType == TYPE_NORMAL)
                 return new SocialVH(View.inflate(parent.getContext(), R.layout.item_social, null));
-            else
+            else if (viewType == TYPE_LOAD_MORE)
                 return new LoadMoreVH(View.inflate(parent.getContext(), R.layout.item_load_more, null));
+            else
+                return new HeaderVH(View.inflate(parent.getContext(), R.layout.header_social, null));
         }
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+            DebugLog.e("bind view holder:_" + position);
             if (getItemViewType(position) == TYPE_NORMAL) {
                 SocialVH vh = (SocialVH) holder;
-                final SocialItem item = datas.get(position);
+                DebugLog.d("get before");
+                final SocialItem item = datas.get(position - 1);
+                DebugLog.d("get after");
                 vh.bgaNinePhotoLayout.setData(item.photos);
                 vh.tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
                 vh.tvSubTitle.setText(item.message);
@@ -406,6 +388,10 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
                     }
                 });
             }
+//            else if (getItemViewType(position) == TYPE_LOAD_MORE) {
+//                DebugLog.d("on loadmore");
+//                loadMore();
+//            }
 //            else if (getItemViewType(position)== TYPE_LOAD_MORE) {
 //             DebugLog.e("on load more");
 //                loadMore();
@@ -428,15 +414,17 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
         @Override
         public int getItemCount() {
             if (canLoadMore)
-                return datas.size() + 1;
+                return datas.size() + 2;
             else
-                return datas.size();
+                return datas.size() + 1;
         }
 
         @Override
         public int getItemViewType(int position) {
 
-            if (position == datas.size())
+            if (position == 0)
+                return TYPE_HEADER;
+            else if (position == datas.size() + 1)
                 return TYPE_LOAD_MORE;
             else
                 return TYPE_NORMAL;
