@@ -2,6 +2,7 @@ package com.zzj.zuzhiji.fragment;
 
 import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -60,8 +61,6 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
 
     private SocialAdapter mAdapter = new SocialAdapter();
 
-    private int page = 1;
-    private int totalPage = 1;
 
     private List<SocialItem> datas = new ArrayList<>();
 
@@ -102,7 +101,7 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
     private void setupLayout() {
 
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager
                 .getOrientation());
@@ -119,11 +118,109 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
         recyclerView.setAdapter(mAdapter);
 
 
+//        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//            }
+//        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                DebugLog.e("newState:" + newState);
+                DebugLog.e("last:" + linearLayoutManager.findLastVisibleItemPosition());
+                DebugLog.e("item count:" + linearLayoutManager.getItemCount());
+                DebugLog.e("child count:" + linearLayoutManager.getChildCount());
+                if (!isLoading
+                        && newState == RecyclerView.SCROLL_STATE_IDLE
+                        && linearLayoutManager.findLastVisibleItemPosition() == linearLayoutManager.getItemCount() - 1
+                        && linearLayoutManager.getChildCount() > 0) {
+                    loadMore();
+                }
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                }
+
+
+            });
+        }
+
     }
 
     private void doRefresh() {
         swipeRefreshLayout.setRefreshing(true);
         onRefresh();
+    }
+
+
+    private boolean isLoading = false;
+
+    private void loadMore() {
+
+        if (mPage > mTotalPage)
+            return;
+        isLoading = true;
+        Network.getInstance().getSocialItems(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)
+                , mPage, Constant.PAGE_SIZE)
+                .observeOn(Schedulers.io())
+                .map(new Func1<SocialTotal, List<SocialItem>>() {
+                    @Override
+                    public List<SocialItem> call(SocialTotal socialTotal) {
+                        mTotalPage = socialTotal.total;
+                        return socialTotal.list;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<SocialItem>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        isLoading = false;
+                    }
+
+                    @Override
+                    public void onNext(List<SocialItem> socialItems) {
+                        if (socialItems != null) {
+                            datas.addAll(socialItems);
+
+                            DebugLog.e("page:" + mPage);
+                            DebugLog.e("totalPage:" + mTotalPage);
+                            if (mPage < mTotalPage) {
+                                mAdapter.setCanLoadMore(true);
+
+                            } else {
+                                mAdapter.setCanLoadMore(false);
+                            }
+                            mPage++;
+
+                        }
+                        isLoading = false;
+                    }
+                });
     }
 
     @Override
@@ -136,14 +233,15 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
             }
         }, 500);
 
+        mPage = 1;
 
         Network.getInstance().getSocialItems(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)
-                , page, Constant.PAGE_SIZE)
+                , mPage, Constant.PAGE_SIZE)
                 .observeOn(Schedulers.io())
                 .map(new Func1<SocialTotal, List<SocialItem>>() {
                     @Override
                     public List<SocialItem> call(SocialTotal socialTotal) {
-                        totalPage = socialTotal.total;
+                        mTotalPage = socialTotal.total;
                         return socialTotal.list;
                     }
                 })
@@ -165,7 +263,15 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
                         if (socialItems != null) {
                             datas.clear();
                             datas.addAll(socialItems);
-                            mAdapter.notifyDataSetChanged();
+
+                            DebugLog.e("page:" + mPage);
+                            DebugLog.e("totalPage:" + mTotalPage);
+                            if (mPage < mTotalPage) {
+                                mAdapter.setCanLoadMore(true);
+                                mPage++;
+                            } else {
+                                mAdapter.setCanLoadMore(false);
+                            }
 
                         }
                         swipeRefreshLayout.postDelayed(new Runnable() {
@@ -237,9 +343,33 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
         }
     }
 
-    private class SocialAdapter extends RecyclerView.Adapter<SocialVH> {
+
+    public class LoadMoreVH extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.bar)
+        View barView;
+        @BindView(R.id.text)
+        TextView tvStatus;
+
+        public LoadMoreVH(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    private class SocialAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private Gson gson;
+        private boolean canLoadMore = false;
+        private static final int TYPE_LOAD_MORE = 1;
+        private static final int TYPE_NORMAL = 2;
+
+
+        public void setCanLoadMore(boolean canLoadMore) {
+            this.canLoadMore = canLoadMore;
+//            notifyDataSetChanged();
+            notifyItemInserted(datas.size());
+        }
 
         SocialAdapter() {
             GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
@@ -247,36 +377,69 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
         }
 
         @Override
-        public SocialVH onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new SocialVH(View.inflate(parent.getContext(), R.layout.item_social, null));
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == TYPE_NORMAL)
+                return new SocialVH(View.inflate(parent.getContext(), R.layout.item_social, null));
+            else
+                return new LoadMoreVH(View.inflate(parent.getContext(), R.layout.item_load_more, null));
         }
 
         @Override
-        public void onBindViewHolder(final SocialVH holder, int position) {
-            final SocialItem item = datas.get(position);
-            holder.bgaNinePhotoLayout.setData(item.photos);
-            holder.tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
-            holder.tvSubTitle.setText(item.message);
-            holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
-            holder.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
-            DebugLog.e("avator address:" + CommonUtils.getAvatorAddress(item.momentOwner));
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+            if (getItemViewType(position) == TYPE_NORMAL) {
+                SocialVH vh = (SocialVH) holder;
+                final SocialItem item = datas.get(position);
+                vh.bgaNinePhotoLayout.setData(item.photos);
+                vh.tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
+                vh.tvSubTitle.setText(item.message);
+                vh.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
+                vh.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
+                DebugLog.e("avator address:" + CommonUtils.getAvatorAddress(item.momentOwner));
 
-            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(item.momentOwner),getActivity());
+                CommonUtils.loadAvator(vh.ivAvator, CommonUtils.getAvatorAddress(item.momentOwner), getActivity());
 
-            holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivityForResult(CaseDetailActivity.newIntent(getActivity(), gson.toJson(item)),
-                            Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_TO_DETAIL);
-                }
-            });
+                vh.clickAreaView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivityForResult(CaseDetailActivity.newIntent(getActivity(), gson.toJson(item)),
+                                Constant.ACTIVITY_CODE.REQUEST_CODE_SOCIAL_TO_DETAIL);
+                    }
+                });
+            }
+//            else if (getItemViewType(position)== TYPE_LOAD_MORE) {
+//             DebugLog.e("on load more");
+//                loadMore();
+//            }
+//            else {
+//                if (canLoadMore) {
+//                    LoadMoreVH vh = (LoadMoreVH) holder;
+//                    vh.tvStatus.setText("正在加载...");
+//                    vh.barView.setVisibility(View.VISIBLE);
+//                } else {
+//                    LoadMoreVH vh = (LoadMoreVH) holder;
+//                    vh.tvStatus.setText("最后一条了...");
+//                    vh.barView.setVisibility(View.GONE);
+//                }
+//
+//            }
         }
+
 
         @Override
         public int getItemCount() {
-            return datas.size();
+            if (canLoadMore)
+                return datas.size() + 1;
+            else
+                return datas.size();
         }
 
+        @Override
+        public int getItemViewType(int position) {
 
+            if (position == datas.size())
+                return TYPE_LOAD_MORE;
+            else
+                return TYPE_NORMAL;
+        }
     }
 }

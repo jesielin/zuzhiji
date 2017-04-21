@@ -8,7 +8,7 @@ public interface Constant {
 
     int DEFAULT_TIMEOUT = 5;
     int COUNT_DOWN_TIME = 60;
-    int PAGE_SIZE = 10;
+    int PAGE_SIZE = 5;
     int MAX = 10000;
     int IMAGE_UPLOAD_MAX_SIZE = 500;//KB
     int IMAGE_UPLOAD_MAX_HEIGHT = 1920;

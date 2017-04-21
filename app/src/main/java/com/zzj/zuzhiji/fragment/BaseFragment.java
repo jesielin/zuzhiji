@@ -10,4 +10,7 @@ import android.support.v4.app.Fragment;
 public class BaseFragment extends Fragment {
 
     protected ProgressDialog mProgressDialog;
+
+    protected int mPage = 1;
+    protected int mTotalPage = 1;
 }
