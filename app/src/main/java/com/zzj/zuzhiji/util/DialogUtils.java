@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zzj.zuzhiji.R;
@@ -27,6 +28,34 @@ public class DialogUtils {
         progressDialog.show();
 
         return progressDialog;
+    }
+
+    public static ProgressDialog showProgressDialogIndeterminate(Context context, String title) {
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setTitle(title);
+
+        progressDialog.show();
+
+        return progressDialog;
+    }
+
+    public static Dialog showContentDialog(Context context, String title, String content, String cancelText, String confirmText
+            , View.OnClickListener cancelListener, View.OnClickListener confirmListener) {
+        Dialog dialog = new Dialog(context);
+        dialog.setTitle(title);
+        dialog.setContentView(R.layout.dialog_content);
+        TextView tvContent = (TextView) dialog.findViewById(R.id.content);
+        Button btnCancel = (Button) dialog.findViewById(R.id.cancel);
+        Button btnConfirm = (Button) dialog.findViewById(R.id.confirm);
+        tvContent.setText(content);
+        btnCancel.setText(cancelText);
+        btnConfirm.setText(confirmText);
+        btnCancel.setOnClickListener(cancelListener);
+        btnConfirm.setOnClickListener(confirmListener);
+        dialog.show();
+        return dialog;
+
     }
 
     public static void dismissDialog(Dialog dialog) {

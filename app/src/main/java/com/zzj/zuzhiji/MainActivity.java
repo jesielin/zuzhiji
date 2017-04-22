@@ -15,7 +15,6 @@ import com.zzj.zuzhiji.fragment.MessageFragment;
 import com.zzj.zuzhiji.fragment.NewsFragment;
 import com.zzj.zuzhiji.fragment.SocialFragment;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.VersionUpdateHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +27,6 @@ public class MainActivity extends BaseActivity {
     RadioGroup rgNav;
     private FragmentNavigator mNavigator;
 
-    private VersionUpdateHelper versionUpdateHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,35 +40,6 @@ public class MainActivity extends BaseActivity {
 
 
         setCurrentTab(mNavigator.getCurrentPosition());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        VersionUpdateHelper.resetCancelFlag();//重置cancel标记
-//
-//        if (versionUpdateHelper == null) {
-//            versionUpdateHelper = new VersionUpdateHelper(this);
-//            versionUpdateHelper.setShowDialogOnStart(true);
-//            versionUpdateHelper.setCheckCallBack(new VersionUpdateHelper.CheckCallBack() {
-//                @Override
-//                public void callBack(int code) {
-//                    DebugLog.e("call back code:"+code);
-//                    //EventBus发送消息通知红点消失
-////                                            VersionUpdateEvent versionUpdateEvent = new VersionUpdateEvent();
-////                                            versionUpdateEvent.setShowTips(false);
-////                                            EventBus.getDefault().postSticky(versionUpdateEvent);
-//                }
-//            });
-//        }
-//        versionUpdateHelper.startUpdateVersion();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (versionUpdateHelper != null)
-            versionUpdateHelper.stopUpdateVersion();
     }
 
     @Override

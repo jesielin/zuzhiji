@@ -18,10 +18,8 @@ import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.network.entity.UserInfoResult;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,9 +30,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -127,12 +122,12 @@ public class Network {
                 .doOnNext(new Action1<InputStream>() {
                     @Override
                     public void call(InputStream inputStream) {
-                        try {
-                            FileUtils.writeFile(inputStream, file);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            throw new ApiException(e.getMessage());
-                        }
+//                        try {
+//                            FileUtils.writeFile(inputStream, file);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            throw new ApiException(e.getMessage());
+//                        }
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
