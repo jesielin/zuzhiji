@@ -35,6 +35,7 @@ public interface Constant {
     String EMPTY = "";
 
 
+
     String AVATOR_DEFAULT = "http://101.201.155.115:3113/heads/default/default.png";
     interface SHARED_KEY {
         String SUMMARY = "SUMMARY";
@@ -47,6 +48,7 @@ public interface Constant {
         String USER_GENDER = "USER_GENDER";
         String STUDIO_ID = "STUDIO_ID";
         String STUDIO_TITLE = "STUDIO_TITLE";
+        String DOWNLOAD_ID = "DOWNLOAD_ID";
 
         String NEWS_TAB_INDEX = "NEWS_TAB_INDEX";
 

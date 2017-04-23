@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -204,7 +204,6 @@
             </LinearLayout>
 
             <com.zzj.zuzhiji.view.MarqueeTextView
-                android:id="@+id/home_location_tv"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginBottom="5dp"
@@ -227,9 +226,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/md_white_1000"
-                android:paddingTop="4dp"
+                android:orientation="horizontal"
                 android:paddingBottom="4dp"
-                android:orientation="horizontal">
+                android:paddingTop="4dp">
 
                 <View
                     android:layout_width="2dp"
@@ -237,43 +236,42 @@
                     android:background="@color/colorPrimaryDark" />
 
                 <TextView
-                    android:layout_marginLeft="6dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
                     android:text="推荐技师"
-                    android:textSize="16dp"
+                    android:textColor="@color/md_black_1000"
 
-                    android:textColor="@color/md_black_1000" />
+                    android:textSize="16dp" />
             </LinearLayout>
 
             <android.support.design.widget.TabLayout
+                android:id="@+id/tablayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabSelectedTextColor="@color/colorPrimaryDark"
-                app:tabTextColor="@color/md_grey_400"
-                app:tabIndicatorColor="@color/colorPrimaryDark"
                 app:tabBackground="@color/md_white_1000"
+                app:tabIndicatorColor="@color/colorPrimaryDark"
+                app:tabSelectedTextColor="@color/colorPrimaryDark"
 
-                android:id="@+id/tablayout">
-
-                <android.support.design.widget.TabItem
-                    android:layout_width="0dp"
-                    android:id="@+id/tech"
-                    android:text="技师"
-                    android:layout_height="match_parent" />
+                app:tabTextColor="@color/md_grey_400">
 
                 <android.support.design.widget.TabItem
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="技师" />
+
+                <android.support.design.widget.TabItem
                     android:id="@+id/studio"
-                    android:text="工作室"
-                    android:layout_height="match_parent" />
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="工作室" />
             </android.support.design.widget.TabLayout>
 
             <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
                 android:id="@+id/recyclerview"
-                android:nestedScrollingEnabled="false"
-                android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false">
 
             </android.support.v7.widget.RecyclerView>
 

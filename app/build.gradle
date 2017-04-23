@@ -8,27 +8,26 @@ android {
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1
-        versionName "0.01"
+        versionName '0.1'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         // Enabling multidex support.
         multiDexEnabled false
     }
-
     splits {
         abi {
             enable true
             reset()
-            include 'x86', 'armeabi','armeabi-v7a', 'arm64-v8a' //select ABIs to build APKs for
+            include 'x86', 'armeabi', 'armeabi-v7a', 'arm64-v8a' //select ABIs to build APKs for
             universalApk true //generate an additional APK that contains all the ABIs
         }
     }
-
-    lintOptions{
+    // map for the version code
+    project.ext.versionCodes = ['x86': 1, 'armeabi': 1, 'armeabi-v7a': 1, 'arm64-v8a': 1]
+    lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
-
     signingConfigs {
 
 
@@ -39,26 +38,28 @@ android {
             keyPassword "zzjrelease"
         }
     }
-
     buildTypes {
-        release{
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-//        release {
-//
-//            signingConfig signingConfigs.release
-//
-//
-//            // 混淆
-//            minifyEnabled true
-//            // Zipalign优化
-//            zipAlignEnabled true
-//            // 移除无用的resource文件
-//            shrinkResources true
-//            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
+//        release{
+//            minifyEnabled false
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//
+//        }
+        debug {
+            minifyEnabled false
+        }
+        release {
+
+
+            signingConfig signingConfigs.release
+
+            // 混淆
+            minifyEnabled true
+            // Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
 //            applicationVariants.all { variant ->
 //                variant.outputs.each { output ->
 //                    def outputFile = output.outputFile
@@ -69,14 +70,24 @@ android {
 //                    }
 //                }
 //            }
-//        }
-    }
 
+//            android.applicationVariants.all { variant ->
+//                // assign different version code for each output
+//                variant.outputs.each { output ->
+//                    output.versionCodeOverride =
+//                            project.ext.versionCodes.get(output.getFilter(com.android.build.OutputFile.ABI), 0)
+////                            project.ext.versionCodes.get(android.defaultConfig.versionCode)
+//                }
+//            }
+        }
+    }
     sourceSets {
         main {
             // 设置Jni so文件路径 如果有jniLibs目录就不需要设置，好像手动创建的 jniLibs目录无效
             jniLibs.srcDirs = ['libs']
         }
+    }
+    productFlavors {
     }
 }
 
@@ -101,7 +112,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     //fragment manager
     compile 'com.github.Aspsine:FragmentNavigator:1.0.2'
-
     //banner
     compile 'com.youth.banner:banner:1.4.9'
     //compress image
@@ -117,30 +127,23 @@ dependencies {
     //debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     //releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     //testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-
-
     //event bus
-//    compile 'org.greenrobot:eventbus:3.0.0'
+    //    compile 'org.greenrobot:eventbus:3.0.0'
     //glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
-
     //activity manager
     compile 'com.yayandroid:TheActivityManager:1.0.6'
     //video player
     compile 'com.shuyu:GSYVideoPlayer:1.6.1'
-
-
     //multidex
     compile 'com.android.support:multidex:1.0.0'
-
     //date picker
     compile 'com.wdullaer:materialdatetimepicker:3.1.3'
     compile 'com.appeaser.sublimepickerlibrary:sublimepickerlibrary:2.1.1'
-
     //ease chat
     compile files('libs/hyphenatechat_3.3.1.jar')
-
     //file download
     compile 'com.liulishuo.filedownloader:library:1.4.2'
-
+    //update
+    compile 'com.github.czy1121:update:1.1.0'
 }

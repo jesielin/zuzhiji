@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/layout_bg"
     android:orientation="vertical"
+    android:paddingBottom="10dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/round_corner_touch_bg"
         android:clickable="true"
-        android:id="@+id/touch_area"
         android:orientation="vertical">
 
         <TextView
@@ -36,10 +35,10 @@
             android:background="@drawable/line" />
 
         <TextView
-            android:layout_marginTop="10dp"
             android:id="@+id/subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="我的我的我的我的我的我的我的我的我的我的我的我的"
@@ -49,8 +48,8 @@
         <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
             android:id="@+id/image_group"
             style="@style/MatchWrap"
-            android:paddingLeft="16dp"
             android:layout_marginTop="10dp"
+            android:paddingLeft="16dp"
             android:paddingRight="16dp"
             app:bga_npl_itemCornerRadius="0dp"
             app:bga_npl_itemSpanCount="3"

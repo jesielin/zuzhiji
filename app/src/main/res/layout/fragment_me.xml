@@ -25,12 +25,12 @@
             android:orientation="vertical">
 
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/touch_bg">
+                android:background="@drawable/touch_bg"
+                android:clickable="true">
 
                 <ImageView
                     android:id="@+id/avator"
@@ -46,34 +46,33 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/avator"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@id/avator"
                     android:orientation="vertical">
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:maxLength="10"
+                    android:singleLine="true"
                     android:text="我我我我我我我我我我我我我我我我我我我我我我"
                     android:textSize="20dp" />
 
                     <TextView
-                        android:layout_marginTop="5dp"
-                        android:text="我我我我我我我我我我我我我我我我我我我我我我"
-                        android:layout_width="wrap_content"
                         android:id="@+id/summary"
-                        android:visibility="gone"
-                        android:textSize="16dp"
-                        android:textColor="@color/text_hint"
-                        android:singleLine="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:maxLength="12"
-                        android:layout_height="wrap_content" />
+                        android:singleLine="true"
+                        android:text="我我我我我我我我我我我我我我我我我我我我我我"
+                        android:textColor="@color/text_hint"
+                        android:textSize="16dp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/imageView"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentRight="true"
@@ -104,12 +103,12 @@
                 android:background="@color/divider" />
 
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/dongtai"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:background="@drawable/touch_bg"
 
-                android:background="@drawable/touch_bg">
+                android:clickable="true">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -147,11 +146,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/anli"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
+                android:clickable="true"
                 android:visibility="visible">
 
                 <ImageView
@@ -190,11 +189,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/jibie"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
+                android:clickable="true"
                 android:visibility="visible">
 
                 <ImageView
@@ -234,11 +233,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/shipin"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
+                android:clickable="true"
                 android:visibility="visible">
 
                 <ImageView
@@ -277,11 +276,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/huifu"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
+                android:clickable="true"
                 android:visibility="visible">
 
                 <ImageView
@@ -327,11 +326,11 @@
             <!--android:layout_marginTop="20dp"-->
             <!--android:background="@color/divider"/>-->
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/guanzhu"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/touch_bg">
+                android:background="@drawable/touch_bg"
+                android:clickable="true">
 
                 <ImageView
                     android:layout_width="24dp"
@@ -369,11 +368,11 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/fensi"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/touch_bg"
+                android:clickable="true"
                 android:visibility="visible">
 
                 <ImageView
@@ -419,11 +418,11 @@
             <!--android:layout_marginTop="20dp"-->
             <!--android:background="@color/divider"/>-->
             <RelativeLayout
-                android:clickable="true"
                 android:id="@+id/shezhi"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/touch_bg">
+                android:background="@drawable/touch_bg"
+                android:clickable="true">
 
                 <ImageView
                     android:layout_width="24dp"
