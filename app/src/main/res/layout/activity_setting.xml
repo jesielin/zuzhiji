@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:background="@color/layout_bg"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/layout_bg"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
 
         <ImageView
             android:id="@+id/back"
             android:layout_width="40dp"
-            android:layout_centerVertical="true"
             android:layout_height="match_parent"
-            android:scaleType="centerInside"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:scaleType="centerInside"
             android:src="@drawable/back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="设置"
-            android:textSize="20dp"
             android:layout_centerInParent="true"
-            android:textColor="@color/colorPrimaryDark" />
+            android:text="设置"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp" />
 
 
     </RelativeLayout>
@@ -37,11 +37,11 @@
         android:layout_marginTop="20dp"
         android:background="@color/divider" />
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/about"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -78,11 +78,11 @@
         android:background="@color/divider" />
 
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/question"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -118,11 +118,11 @@
         android:background="@color/divider" />
 
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/check_version"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -158,11 +158,11 @@
         android:background="@color/divider" />
 
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/clean_cache"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -183,13 +183,13 @@
             android:layout_marginRight="21dp"
             android:src="@drawable/arrow_right" />
         <TextView
+            android:id="@+id/cache_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text=""
-            android:id="@+id/cache_size"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="65dp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="65dp"
+            android:text="" />
 
         <View
             android:layout_width="match_parent"
@@ -206,20 +206,20 @@
         android:background="@color/divider" />
 
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/logout"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:layout_marginTop="20dp"
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:layout_centerInParent="true"
             android:text="退出登录"
             android:textSize="16dp" />
 
@@ -232,11 +232,4 @@
             android:paddingLeft="20dp" />
     </RelativeLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="5dp" />
 </LinearLayout>
