@@ -1,8 +1,10 @@
 package com.zzj.zuzhiji.util;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,12 +32,15 @@ public class DialogUtils {
         return progressDialog;
     }
 
-    public static ProgressDialog showProgressDialogIndeterminate(Context context, String title) {
+    public static ProgressDialog showProgressDialogDeterminate(Context context, String title, boolean cancelable) {
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setIndeterminate(false);
+        progressDialog.setMax(100);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(cancelable);
         progressDialog.setTitle(title);
-
         progressDialog.show();
+
 
         return progressDialog;
     }
@@ -55,6 +60,20 @@ public class DialogUtils {
         btnConfirm.setOnClickListener(confirmListener);
         dialog.show();
         return dialog;
+
+    }
+
+    public static Dialog showAlterDialog(Context context, String title, String content, String cancelText, String confirmText
+            , DialogInterface.OnClickListener cancelListener, DialogInterface.OnClickListener confirmListener, boolean cancelable) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(content)
+                .setNegativeButton(cancelText, cancelListener)
+                .setPositiveButton(confirmText, confirmListener)
+                .setCancelable(cancelable)
+                .create();
+        alertDialog.show();
+        return alertDialog;
 
     }
 

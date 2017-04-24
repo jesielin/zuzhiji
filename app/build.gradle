@@ -142,8 +142,7 @@ dependencies {
     compile 'com.appeaser.sublimepickerlibrary:sublimepickerlibrary:2.1.1'
     //ease chat
     compile files('libs/hyphenatechat_3.3.1.jar')
-    //file download
-    compile 'com.liulishuo.filedownloader:library:1.4.2'
-    //update
-    compile 'com.github.czy1121:update:1.1.0'
+
+    //download
+    compile 'com.arialyy.aria:Aria:3.0.2'
 }

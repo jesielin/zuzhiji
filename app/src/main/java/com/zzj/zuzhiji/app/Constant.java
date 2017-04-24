@@ -51,7 +51,16 @@ public interface Constant {
         String DOWNLOAD_ID = "DOWNLOAD_ID";
 
         String NEWS_TAB_INDEX = "NEWS_TAB_INDEX";
+        String IGNORE_VERSION_CODE = "IGNORE_VERSION_CODE";
 
+
+    }
+
+    interface UPDATE {
+        int NO_UPDATE = 1;
+        int NEED_UPDATE = 2;
+        int MUST_UPDATE = 3;
+        int HAS_IGNORE_THIS_VERSION = 4;
 
     }
 
