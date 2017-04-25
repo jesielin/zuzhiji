@@ -8,4 +8,5 @@ package com.zzj.zuzhiji.network.entity;
 public class MessageResult {
     public String nickName;
     public String uuid;
+    public String headSculpture;
 }

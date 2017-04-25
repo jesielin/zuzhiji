@@ -41,12 +41,21 @@
             android:layout_centerInParent="true"
 
             />
-        <ImageView
+
+        <RelativeLayout
             android:layout_width="80dp"
-            android:layout_height="80dp"
             android:layout_centerInParent="true"
+            android:background="@drawable/placeholder_circle_image_transparent"
+            android:layout_height="80dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/icon_camera"
+                android:layout_centerInParent="true"
 
             />
+        </RelativeLayout>
     </RelativeLayout>
 
 

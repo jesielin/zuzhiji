@@ -42,6 +42,8 @@
 
 
             <com.youth.banner.Banner
+                android:focusableInTouchMode="true"
+                android:focusable="true"
                 android:id="@+id/banner"
                 android:layout_width="match_parent"
                 android:layout_height="120dp" />
@@ -203,23 +205,37 @@
 
             </LinearLayout>
 
-            <com.zzj.zuzhiji.view.MarqueeTextView
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:background="@color/md_white_1000"
                 android:gravity="center_vertical"
-                android:marqueeRepeatLimit="marquee_forever"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:scrollHorizontally="true"
                 android:id="@+id/notice"
                 android:singleLine="true"
-                android:ellipsize="marquee"
                 android:text="足知脊上线了..."
                 android:textColor="@color/text_hint"
                 android:textSize="16dp" />
+            <!--<com.zzj.zuzhiji.view.MarqueeTextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:background="@color/md_white_1000"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:marqueeRepeatLimit="marquee_forever"-->
+            <!--android:paddingLeft="5dp"-->
+            <!--android:paddingRight="5dp"-->
+            <!--android:scrollHorizontally="true"-->
+            <!--android:id="@+id/notice"-->
+            <!--android:singleLine="true"-->
+            <!--android:ellipsize="marquee"-->
+            <!--android:text="足知脊上线了..."-->
+            <!--android:textColor="@color/text_hint"-->
+            <!--android:textSize="16dp" />-->
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.yayandroid.theactivitymanager.TheActivityManager;
+import com.zzj.zuzhiji.BuildConfig;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
@@ -75,7 +76,8 @@ public class UpdateHelper implements ServiceConnection {
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {
-                        loadingDialog = DialogUtils.showProgressDialog(mContext, "正在获取版本信息..."); // 需要在主线程执行
+                        if (isManual)
+                            loadingDialog = DialogUtils.showProgressDialog(mContext, "正在获取版本信息..."); // 需要在主线程执行
                     }
                 })
                 .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
@@ -126,7 +128,8 @@ public class UpdateHelper implements ServiceConnection {
     }
 
     private void showIgnoreUpdate() {
-        Toast.makeText(mContext, "忽略此版本", Toast.LENGTH_SHORT).show();
+        if (BuildConfig.DEBUG)
+            Toast.makeText(mContext, "已忽略此版本", Toast.LENGTH_SHORT).show();
     }
 
     private void showMustUpdate() {

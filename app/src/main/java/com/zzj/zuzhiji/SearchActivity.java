@@ -197,7 +197,7 @@ public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.O
                 }
             });
 
-            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(item.uuid),SearchActivity.this);
+            CommonUtils.loadAvator(holder.ivAvator, item.headSculpture, SearchActivity.this);
 
         }
 

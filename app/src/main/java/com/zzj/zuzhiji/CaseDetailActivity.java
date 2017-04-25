@@ -145,7 +145,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
         if (item != null) {
 
             //TODO:
-            CommonUtils.loadAvator(ivAvator,CommonUtils.getAvatorAddress(item.momentOwner),this);
+            CommonUtils.loadAvator(ivAvator, item.momentOwnerHead, this);
 
             tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
             tvMessage.setText(item.message);
@@ -420,7 +420,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
                 holder.tvFriendName.setText(comment.targetCommenterNickname == null ? comment.targetCommenterUUID : comment.targetCommenterNickname);
             }
 
-            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(comment.commenterUUID),CaseDetailActivity.this);
+//            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(comment.commenterUUID),CaseDetailActivity.this);
 
 
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
@@ -445,8 +445,8 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
 
 
         public class ViewHolder {
-            @BindView(R.id.avator)
-            ImageView ivAvator;
+            //            @BindView(R.id.avator)
+//            ImageView ivAvator;
             @BindView(R.id.commenter_name)
             TextView tvCommenterName;
             @BindView(R.id.text_huifu)

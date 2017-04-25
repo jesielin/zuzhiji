@@ -16,8 +16,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
@@ -295,23 +293,25 @@ public class MessageFragment extends BaseFragment implements SwipeRefreshLayout.
                         Intent intent = new Intent(getActivity(), ChatActivity.class);
                         intent.putExtra("UUID", item.uuid);
                         intent.putExtra("TITLE",item.nickName);
+                        intent.putExtra("AVATOR", item.headSculpture);
                         startActivityForResult(intent,Constant.ACTIVITY_CODE.REQUEST_CODE_MESSAGE_TO_CHAT);
                     }
                 }
             });
 
-            Glide.with(getActivity())
-                    .load(CommonUtils.getAvatorAddress(item.uuid))
-                    .asBitmap()
-                    .centerCrop()
+            CommonUtils.loadAvator(holder.ivAvator, item.headSculpture, getActivity());
+//            Glide.with(getActivity())
+//                    .load(CommonUtils.getAvatorAddress(item.uuid))
+//                    .asBitmap()
+//                    .centerCrop()
 //                    .placeholder(R.color.text_hint)
-                    .error(R.color.avator_place_holder)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
+//                    .error(R.color.avator_place_holder)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .skipMemoryCache(true)
 //                    .priority(Priority.IMMEDIATE)
 
 
-                    .into(holder.ivAvator);
+//                    .into(holder.ivAvator);
 
 
             EMConversation conversation = EMClient.getInstance().chatManager().getConversation(item.uuid, null, true);

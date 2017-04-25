@@ -15,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
@@ -97,6 +95,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
     };
     private String title;
     private String mAvatorUrl;
+    private String friendAvatorUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +106,7 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
         // 获取当前会话的username(如果是群聊就是群id)
         mChatId = getIntent().getStringExtra("UUID");
         title = getIntent().getStringExtra("TITLE");
+        friendAvatorUrl = getIntent().getStringExtra("AVATOR");
         tvTitle.setText(title);
 
         mAvatorUrl = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR);
@@ -229,8 +229,6 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
          * 第三个表示如果会话不存在是否创建
          */
         mConversation = EMClient.getInstance().chatManager().getConversation(mChatId, null, true);
-
-
 
 
         int now_count = mConversation.getAllMessages().size();
@@ -423,25 +421,27 @@ public class ChatActivity extends BaseActivity implements EMMessageListener {
                     holder.vAreaFrom.setVisibility(View.VISIBLE);
                     holder.vAreaTo.setVisibility(View.GONE);
                     holder.tvMessageFrom.setText(messageText);
-                    Glide.with(ChatActivity.this)
-                            .load(CommonUtils.getAvatorAddress(mChatId))
-                            .asBitmap()
-                            .centerCrop()
-                            .error(R.color.avator_place_holder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(holder.ivAvatorFrom);
+                    CommonUtils.loadAvator(holder.ivAvatorFrom, friendAvatorUrl, ChatActivity.this);
+//                    Glide.with(ChatActivity.this)
+//                            .load(friendAvatorUrl)
+//                            .asBitmap()
+//                            .centerCrop()
+//                            .error(R.color.avator_place_holder)
+//                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                            .into(holder.ivAvatorFrom);
                     break;
                 case TYPE_TO:
                     holder.vAreaFrom.setVisibility(View.GONE);
                     holder.vAreaTo.setVisibility(View.VISIBLE);
                     holder.tvMessageTo.setText(messageText);
-                    Glide.with(ChatActivity.this)
-                            .load(mAvatorUrl)
-                            .asBitmap()
-                            .centerCrop()
-                            .error(R.color.avator_place_holder)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(holder.ivAvatorTo);
+                    CommonUtils.loadAvator(holder.ivAvatorTo, mAvatorUrl, ChatActivity.this);
+//                    Glide.with(ChatActivity.this)
+//                            .load(mAvatorUrl)
+//                            .asBitmap()
+//                            .centerCrop()
+//                            .error(R.color.avator_place_holder)
+//                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                            .into(holder.ivAvatorTo);
                     break;
             }
 

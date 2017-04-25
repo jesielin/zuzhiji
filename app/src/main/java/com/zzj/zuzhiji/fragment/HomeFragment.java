@@ -117,7 +117,9 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                         }
                     }
                 });
-        tvNotice.requestFocus();
+
+        //// TODO: 17/4/25 跑马灯效果
+//        tvNotice.requestFocus();
     }
 
 
@@ -361,7 +363,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             recommendTechVH.tvSubTitle.setText(item.summary);
 
 
-            CommonUtils.loadAvator(recommendTechVH.ivAvator, CommonUtils.getAvatorAddress(item.uuid), getActivity());
+            CommonUtils.loadAvator(recommendTechVH.ivAvator, item.headSculpture, getActivity());
             recommendTechVH.clickArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
