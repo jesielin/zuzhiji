@@ -4,7 +4,6 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.R;
 
 import java.text.DecimalFormat;
@@ -51,8 +50,8 @@ public class CommonUtils {
 
 //                    .placeholder(R.color.text_hint)
 //                    .error(R.drawable.avator_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .skipMemoryCache(true)
 //                    .priority(Priority.IMMEDIATE)
                     .transform(new GlideCircleTransform(context))
 

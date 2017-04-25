@@ -79,6 +79,7 @@ public interface HttpService {
      * @return
      */
 
+    @GET("/getNotice")
     Observable<HttpResult<List<Notice>>> getNotice(@Query("currentDate") String currentDate, @Query("sign") String sign);
 
     /**

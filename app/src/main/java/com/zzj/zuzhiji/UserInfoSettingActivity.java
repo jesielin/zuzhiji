@@ -380,7 +380,7 @@ public class UserInfoSettingActivity extends BaseActivity {
                     @Override
                     public void onNext(SetInfoResult setInfoResult) {
                         Map<String, String> values = new ArrayMap<String, String>();
-                        values.put(Constant.SHARED_KEY.AVATOR, CommonUtils.getAvatorAddress(setInfoResult.uuid));
+                        values.put(Constant.SHARED_KEY.AVATOR, setInfoResult.headSculpture);
                         values.put(Constant.SHARED_KEY.NICK_NAME, setInfoResult.nickName);
                         values.put(Constant.SHARED_KEY.USER_GENDER, setInfoResult.sex);
                         values.put(Constant.SHARED_KEY.STUDIO_ID, setInfoResult.studio == null ? "" : setInfoResult.studio);

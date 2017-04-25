@@ -29,13 +29,16 @@ import com.zzj.zuzhiji.SearchActivity;
 import com.zzj.zuzhiji.ServiceActivity;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -61,6 +64,9 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @BindView(R.id.tablayout)
     TabLayout tabLayout;
 
+    @BindView(R.id.notice)
+    TextView tvNotice;
+
     private RecommendTechAdapter mTechAdapter = new RecommendTechAdapter();
     private RecommendStudioAdapter mStudioAdapter = new RecommendStudioAdapter();
 
@@ -81,7 +87,37 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         setupRecyclerView();
 
         setupTab();
+
+        setupNotice();
         return contentView;
+    }
+
+    private void setupNotice() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        String str = formatter.format(curDate);
+        Network.getInstance().getNotice(str)
+                .subscribe(new Subscriber<List<Notice>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+
+                    }
+
+                    @Override
+                    public void onNext(List<Notice> notices) {
+
+                        if (notices != null && notices.size() > 0) {
+                            tvNotice.setText(notices.get(0).content);
+                        }
+                    }
+                });
+        tvNotice.requestFocus();
     }
 
 

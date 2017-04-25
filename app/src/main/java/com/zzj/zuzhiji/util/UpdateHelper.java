@@ -181,11 +181,16 @@ public class UpdateHelper implements ServiceConnection {
 
         int remoteVersionCode = Integer.valueOf(info.version_code);
         int localVersionCode = getVersionCode();
+        DebugLog.e("local version code:" + localVersionCode);
+        DebugLog.e("remote version code:" + remoteVersionCode);
+
         if (localVersionCode < remoteVersionCode) {
             String ignore = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.IGNORE_VERSION_CODE);
+            DebugLog.e("ignore version code:" + ignore);
+
             if (!isManual && !TextUtils.isEmpty(ignore) && Integer.valueOf(ignore) == remoteVersionCode)
                 return Constant.UPDATE.HAS_IGNORE_THIS_VERSION;
-            if (info.isMustUpgrade())
+            else if (info.isMustUpgrade())
                 return Constant.UPDATE.MUST_UPDATE;
             else
                 return Constant.UPDATE.NEED_UPDATE;

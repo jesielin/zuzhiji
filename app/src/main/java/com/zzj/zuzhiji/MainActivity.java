@@ -15,6 +15,7 @@ import com.zzj.zuzhiji.fragment.MessageFragment;
 import com.zzj.zuzhiji.fragment.NewsFragment;
 import com.zzj.zuzhiji.fragment.SocialFragment;
 import com.zzj.zuzhiji.util.DebugLog;
+import com.zzj.zuzhiji.util.UpdateHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,6 +28,8 @@ public class MainActivity extends BaseActivity {
     RadioGroup rgNav;
     private FragmentNavigator mNavigator;
 
+    private UpdateHelper updateHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +41,17 @@ public class MainActivity extends BaseActivity {
         mNavigator.setDefaultPosition(0);
         mNavigator.onCreate(savedInstanceState);
 
-
+        updateHelper = new UpdateHelper(this, false);
         setCurrentTab(mNavigator.getCurrentPosition());
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (updateHelper != null)
+            updateHelper.check();
     }
 
     @Override

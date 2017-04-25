@@ -111,7 +111,7 @@ public class RegisterActivity extends BaseActivity {
                         SharedPreferencesUtils.getInstance().setLogin(
                                 registerResult.uuid,
                                 registerResult.nickName,
-                                Constant.AVATOR_DEFAULT,
+                                registerResult.headSculpture,
                                 registerResult.userType,
                                 registerResult.loginName,
                                 Constant.GENDER_MALE,

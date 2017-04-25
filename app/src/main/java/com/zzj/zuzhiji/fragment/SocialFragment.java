@@ -368,17 +368,17 @@ public class SocialFragment extends BaseFragment implements SwipeRefreshLayout.O
             DebugLog.e("bind view holder:_" + position);
             if (getItemViewType(position) == TYPE_NORMAL) {
                 SocialVH vh = (SocialVH) holder;
-                DebugLog.d("get before");
+//                DebugLog.d("get before");
                 final SocialItem item = datas.get(position - 1);
-                DebugLog.d("get after");
+//                DebugLog.d("get after");
                 vh.bgaNinePhotoLayout.setData(item.photos);
                 vh.tvTitle.setText(item.momentUserNickname == null ? item.momentOwner : item.momentUserNickname);
                 vh.tvSubTitle.setText(item.message);
                 vh.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
                 vh.tvCommentNum.setText(item.comments == null ? "0" : String.valueOf(item.comments.size()));
-                DebugLog.e("avator address:" + CommonUtils.getAvatorAddress(item.momentOwner));
+//                DebugLog.e("avator address:" + CommonUtils.getAvatorAddress(item.momentOwner));
 
-                CommonUtils.loadAvator(vh.ivAvator, CommonUtils.getAvatorAddress(item.momentOwner), getActivity());
+                CommonUtils.loadAvator(vh.ivAvator, item.momentOwnerHead, getActivity());
 
                 vh.clickAreaView.setOnClickListener(new View.OnClickListener() {
                     @Override

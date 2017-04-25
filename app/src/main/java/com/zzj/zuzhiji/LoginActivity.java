@@ -51,6 +51,8 @@ public class LoginActivity extends BaseActivity {
         TheActivityManager.getInstance().finishInstance(MainActivity.class);
         TheActivityManager.getInstance().finishInstance(SettingActivity.class);
         ButterKnife.bind(this);
+
+
     }
 
     @Override
@@ -112,7 +114,7 @@ public class LoginActivity extends BaseActivity {
                         SharedPreferencesUtils.getInstance().setLogin(
                                 loginResult.uuid,
                                 loginResult.nickName,
-                                TextUtils.isEmpty(loginResult.headSculpture) ? Constant.AVATOR_DEFAULT : loginResult.headSculpture,
+                                loginResult.headSculpture,
                                 loginResult.userType,
                                 loginResult.loginName,
                                 TextUtils.isEmpty(loginResult.sex) ? Constant.GENDER_MALE : loginResult.sex,

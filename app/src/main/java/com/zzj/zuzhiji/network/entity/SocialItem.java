@@ -26,6 +26,7 @@ public class SocialItem {
     public String momentUserNickname;
     public String momentsID;
     public String momentOwner;
+    public String momentOwnerHead;
     public ArrayList<String> photos;
     public String message;
     public List<CommentItem> comments;

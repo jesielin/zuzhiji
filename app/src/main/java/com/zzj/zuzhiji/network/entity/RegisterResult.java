@@ -19,4 +19,5 @@ public class RegisterResult {
     public String status;
     public String createDate;
     public String nickName;
+    public String headSculpture;
 }

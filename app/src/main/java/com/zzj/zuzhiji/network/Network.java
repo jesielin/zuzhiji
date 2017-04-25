@@ -8,6 +8,7 @@ import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
+import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
 import com.zzj.zuzhiji.network.entity.ServiceItem;
@@ -145,6 +146,10 @@ public class Network {
 
     public Observable<List<NewsResult>> getNews(String type) {
         return compose(normalHttpService.getNews(type, sign));
+    }
+
+    public Observable<List<Notice>> getNotice(String date) {
+        return compose(normalHttpService.getNotice(date, sign));
     }
 
     public Observable<Object> addFriend(String ownerUUID, String friendUUID) {
