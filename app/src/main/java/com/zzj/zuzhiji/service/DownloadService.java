@@ -7,9 +7,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadTarget;
@@ -81,14 +83,24 @@ public class DownloadService extends Service {
             notificationBuilder.setTicker("下载完成");
             notificationBuilder.setContentText("下载完成");
 
-            Uri uri = Uri.fromFile(new File(task.getDownloadEntity().getDownloadPath()));
+
+            File file = new File(task.getDownloadEntity().getDownloadPath());
+            Uri uri;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                uri = FileProvider.getUriForFile(DownloadService.this, getApplicationContext().getPackageName() + ".provider", file);
+
+            else
+                uri = Uri.fromFile(file);
+
             Intent installIntent = new Intent(Intent.ACTION_VIEW);
             installIntent.setDataAndType(uri, "application/vnd.android.package-archive");
+
+            installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             PendingIntent updatePendingIntent = PendingIntent.getActivity(DownloadService.this, 0, installIntent, 0);
             notificationBuilder.setContentIntent(updatePendingIntent);
             mNotificationManager.notify(NOTIFICATION_ID, notificationBuilder.getNotification());
 
-            installApk(task.getDownloadEntity().getDownloadPath());
+            installApk(uri);
             DebugLog.e("task complete");
 
         }
@@ -119,25 +131,32 @@ public class DownloadService extends Service {
         return new DownloadBinder();
     }
 
+
     public void startDownload(String apkUrl, DownloadListener downloadListener) {
         DebugLog.e("service download:" + apkUrl);
         this.downloadListener = downloadListener;
 
+
         String path;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {//如果已经挂载
-            //sd卡已经挂载，可以进行读写操作了
-            path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "zzj.apk";
+//            sd卡已经挂载，可以进行读写操作了
+//            path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "zzj.apk";
+            path = Environment.getExternalStorageDirectory().getPath() + File.separator + "zzj.apk";
         } else {
             //sd未挂载，在此进行提示
-            path = getFilesDir().getAbsolutePath() + File.separator + "zzj.apk";
+
+
+            path = getExternalCacheDir().getAbsolutePath() + File.separator + "zzj.apk";
+//            path = getFilesDir().getAbsolutePath() + File.separator + "zzj.apk";
         }
+
         DebugLog.e("path:" + path);
 
 
         boolean b = Aria.download(this).taskExists(apkUrl);
         DownloadTarget downloadTarget = Aria.download(this)
                 .addSchedulerListener(listener)
-                .load(apkUrl)     //读取下载地址
+                .load(apkUrl) //读取下载地址
                 .setDownloadPath(path);//设置文件保存的完整路径
         if (b) {
 
@@ -145,6 +164,10 @@ public class DownloadService extends Service {
         } else {
             downloadTarget.start();
         }
+
+
+
+
 
 
     }
@@ -179,10 +202,11 @@ public class DownloadService extends Service {
         }
     }
 
-    private void installApk(String filePath) {
+    private void installApk(Uri uri) {
         Intent installIntent = new Intent(Intent.ACTION_VIEW);
         installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        installIntent.setDataAndType(Uri.fromFile(new File(filePath)),
+        installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        installIntent.setDataAndType(uri,
                 "application/vnd.android.package-archive");
         startActivity(installIntent);
     }

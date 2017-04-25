@@ -22,6 +22,7 @@ public interface Constant {
     int REQUEST_CODE_PERMISSION_PHOTO_PICKER = 1;
     int REQUEST_CODE_CHOOSE_PHOTO = 1;
     int REQUEST_CODE_PHOTO_PREVIEW = 2;
+    int REQUEST_CODE_DOWNLOAD = 3;
 
     String USER_TYPE_SINGLE = "0";
     String USER_TYPE_TECH = "1";

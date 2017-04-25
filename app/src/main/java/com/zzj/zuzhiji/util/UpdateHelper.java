@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji.util;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -20,6 +21,8 @@ import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
 import com.zzj.zuzhiji.service.DownloadService;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -71,41 +74,51 @@ public class UpdateHelper implements ServiceConnection {
         this.isManual = isManual;
     }
 
+    @AfterPermissionGranted(Constant.REQUEST_CODE_DOWNLOAD)
     public void check() {
-        Network.getInstance().update()
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        if (isManual)
-                            loadingDialog = DialogUtils.showProgressDialog(mContext, "正在获取版本信息..."); // 需要在主线程执行
-                    }
-                })
-                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<UpdateInfo>() {
-                    @Override
-                    public void onCompleted() {
+        String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(mContext, perms)) {
+            // Already have permission, do the thing
+            // ...
+            Network.getInstance().update()
+                    .doOnSubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            if (isManual)
+                                loadingDialog = DialogUtils.showProgressDialog(mContext, "正在获取版本信息..."); // 需要在主线程执行
+                        }
+                    })
+                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<UpdateInfo>() {
+                        @Override
+                        public void onCompleted() {
 
-                    }
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        DialogUtils.dismissDialog(loadingDialog);
-                    }
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            DialogUtils.dismissDialog(loadingDialog);
+                        }
 
-                    @Override
-                    public void onNext(final UpdateInfo updateInfo) {
-                        DialogUtils.dismissDialog(loadingDialog);
-                        DebugLog.d("version code:" + getVersionCode());
-                        DebugLog.d("remote version code:" + updateInfo.version_code);
+                        @Override
+                        public void onNext(final UpdateInfo updateInfo) {
+                            DialogUtils.dismissDialog(loadingDialog);
+                            DebugLog.d("version code:" + getVersionCode());
+                            DebugLog.d("remote version code:" + updateInfo.version_code);
 
-                        info = updateInfo;
+                            info = updateInfo;
 
-                        resolveUpdateInfo();
+                            resolveUpdateInfo();
 
-                    }
-                });
+                        }
+                    });
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(mContext, "下载需要以下权限:\n\n读写SD卡", Constant.REQUEST_CODE_DOWNLOAD, perms);
+        }
+
     }
 
     private void resolveUpdateInfo() {
