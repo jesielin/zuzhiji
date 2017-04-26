@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.yayandroid.theactivitymanager.TheActivityManager;
-import com.zzj.zuzhiji.BuildConfig;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.UpdateInfo;
@@ -141,8 +140,9 @@ public class UpdateHelper implements ServiceConnection {
     }
 
     private void showIgnoreUpdate() {
-        if (BuildConfig.DEBUG)
-            Toast.makeText(mContext, "已忽略此版本", Toast.LENGTH_SHORT).show();
+        //// TODO: 2017-04-26
+//        if (BuildConfig.DEBUG)
+//            Toast.makeText(mContext, "已忽略此版本", Toast.LENGTH_SHORT).show();
     }
 
     private void showMustUpdate() {

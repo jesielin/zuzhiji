@@ -92,6 +92,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
 
     private String targetFriendId = "";
     private String targetFriendNickName = "";
+    private String targetHeader = "";
 
 
     private CommentAdapter mAdapter = new CommentAdapter();
@@ -171,6 +172,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
                 setEditableState(true);
                 isChatThis = true;
                 targetFriendId = "";
+                targetHeader = "";
                 targetFriendNickName = "";
                 etComment.setHint("添加评论:");
                 targetCommentView = vContent;
@@ -263,6 +265,8 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
                                 isChangeComment = true;
                                 //TODO:
                                 comments.add(new CommentItem(
+                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR),
+                                        targetHeader,
                                         SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
                                         SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME),
                                         targetFriendId,
@@ -421,6 +425,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
 
 //            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(comment.commenterUUID),CaseDetailActivity.this);
 //            CommonUtils.loadAvator(holder.ivAvator,comment.);
+            CommonUtils.loadAvator(holder.ivAvator, comment.commenterHead, CaseDetailActivity.this);
 
 
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
@@ -431,6 +436,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
                     targetFriendId = comment.commenterUUID;
                     isChatThis = false;
                     targetCommentView = holder.clickAreaView;
+                    targetHeader = comment.targetCommentHead;
                     etComment.setHint("回复" + comment.commenterUUID + ":");
 
                     UIHelper.showSoftInput(CaseDetailActivity.this, etComment);

@@ -27,16 +27,30 @@ package com.zzj.zuzhiji.network.entity;
  * "targetCommenterUUID": "1",
  * "message": "不错"
  * }
+ *
+ * {
+ "commenterHead": "http://101.201.155.115:3113/heads/egvrrwn935-head.jpg",
+ "commenterUUID": "egvrrwn935",
+ "targetCommenterUUID": "",
+ "targetCommenterNickname": "",
+ "targetCommentHead": null,
+ "commenterNickname": "出差",
+ "message": "想那些"
+ }
  */
 public class CommentItem {
+    public String commenterHead;
     public String targetCommenterNickname;
     public String commenterNickname;
     public String commenterUUID;
     public String targetCommenterUUID;
+    public String targetCommentHead;
     public String message;
 
 
-    public CommentItem(String commenterUUID, String commenterNickname, String targetCommenterUUID, String targetCommenterNickname, String message) {
+    public CommentItem(String commenterHead, String targetCommentHead, String commenterUUID, String commenterNickname, String targetCommenterUUID, String targetCommenterNickname, String message) {
+        this.commenterHead = commenterHead;
+        this.targetCommentHead = targetCommentHead;
         this.commenterUUID = commenterUUID;
         this.commenterNickname = commenterNickname;
         this.targetCommenterUUID = targetCommenterUUID;
