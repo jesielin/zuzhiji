@@ -210,7 +210,6 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
         });
 
 
-
         etComment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -421,6 +420,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
             }
 
 //            CommonUtils.loadAvator(holder.ivAvator,CommonUtils.getAvatorAddress(comment.commenterUUID),CaseDetailActivity.this);
+//            CommonUtils.loadAvator(holder.ivAvator,comment.);
 
 
             holder.clickAreaView.setOnClickListener(new View.OnClickListener() {
@@ -445,8 +445,8 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
 
 
         public class ViewHolder {
-            //            @BindView(R.id.avator)
-//            ImageView ivAvator;
+            @BindView(R.id.avator)
+            ImageView ivAvator;
             @BindView(R.id.commenter_name)
             TextView tvCommenterName;
             @BindView(R.id.text_huifu)
