@@ -145,4 +145,7 @@ dependencies {
 
     //download
     compile 'com.arialyy.aria:Aria:3.0.2'
+
+    //address picker
+    compile 'com.contrarywind:Android-PickerView:3.2.4'
 }

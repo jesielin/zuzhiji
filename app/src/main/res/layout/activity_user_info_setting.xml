@@ -44,15 +44,16 @@
 
         <RelativeLayout
             android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_centerInParent="true"
-            android:background="@drawable/placeholder_circle_image_transparent"
-            android:layout_height="80dp">
+            android:background="@drawable/placeholder_circle_image_transparent">
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
                 android:src="@drawable/icon_camera"
-                android:layout_centerInParent="true"
 
             />
         </RelativeLayout>
@@ -60,11 +61,11 @@
 
 
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/nickname_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -85,13 +86,13 @@
             android:layout_marginRight="21dp"
             android:src="@drawable/arrow_right" />
         <TextView
+            android:id="@+id/nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text=""
-            android:id="@+id/nickname"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="65dp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="65dp"
+            android:text="" />
 
         <View
             android:layout_width="match_parent"
@@ -102,11 +103,11 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/gender_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -127,13 +128,13 @@
             android:layout_marginRight="21dp"
             android:src="@drawable/arrow_right" />
         <TextView
+            android:id="@+id/gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text=""
-            android:id="@+id/gender"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="65dp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="65dp"
+            android:text="" />
 
         <View
             android:layout_width="match_parent"
@@ -144,11 +145,11 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/summary_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -170,14 +171,14 @@
             android:src="@drawable/arrow_right" />
 
         <TextView
+            android:id="@+id/summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:id="@+id/summary"
-            android:singleLine="true"
-            android:maxLength="10"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="65dp" />
+            android:layout_centerVertical="true"
+            android:layout_marginRight="65dp"
+            android:maxLength="10"
+            android:singleLine="true" />
 
         <View
             android:layout_width="match_parent"
@@ -187,11 +188,11 @@
             android:paddingLeft="20dp" />
     </RelativeLayout>
     <RelativeLayout
-        android:clickable="true"
         android:id="@+id/studio_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/touch_bg">
+        android:background="@drawable/touch_bg"
+        android:clickable="true">
 
 
         <TextView
@@ -212,13 +213,13 @@
             android:layout_marginRight="21dp"
             android:src="@drawable/arrow_right" />
         <TextView
+            android:id="@+id/studio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text=""
-            android:id="@+id/studio"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="65dp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="65dp"
+            android:text="" />
 
         <View
             android:layout_width="match_parent"

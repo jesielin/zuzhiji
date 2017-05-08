@@ -242,6 +242,11 @@ public class LoginActivity extends BaseActivity {
         startActivity(new Intent(this, RegisterActivity.class));
     }
 
+    @OnClick(R.id.register_studio)
+    public void registerStudio(View view) {
+        startActivity(new Intent(this, RegisterStudioActivity.class));
+    }
+
     @OnClick(R.id.get_verify)
     public void getVerify(View view) {
         if (!isGetVerifyEnable)

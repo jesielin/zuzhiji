@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity {
 
         updateHelper = new UpdateHelper(this, false);
         setCurrentTab(mNavigator.getCurrentPosition());
+
     }
 
 

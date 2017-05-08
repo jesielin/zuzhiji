@@ -32,6 +32,13 @@ public class DialogUtils {
         return progressDialog;
     }
 
+    public static Dialog showAddressDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        AlertDialog alertDialog = builder.create();
+        return alertDialog;
+    }
+
     public static ProgressDialog showProgressDialogDeterminate(Context context, String title, boolean cancelable) {
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setIndeterminate(false);

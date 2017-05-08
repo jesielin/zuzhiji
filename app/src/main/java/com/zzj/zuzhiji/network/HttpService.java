@@ -5,6 +5,7 @@ import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
+import com.zzj.zuzhiji.network.entity.PItem;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
 import com.zzj.zuzhiji.network.entity.ServiceItem;
@@ -130,6 +131,50 @@ public interface HttpService {
             @Part MultipartBody.Part imgs,
             @Part("sign") RequestBody sign
 
+    );
+
+    /**
+     * loginName  联系电话
+
+     identifyingCode 短信验证码
+
+     bankcardno 银行卡号
+
+     title 工作室名称
+
+     summary  简介
+
+     serial  红外序列号
+
+     province  省id
+
+     city  市id
+
+     address 详细地址
+
+     license   公司资质（图片）
+
+     headSculpture 工作室头像（图片）
+
+     sign 签名
+
+     /registerStudio
+     */
+    @Multipart
+    @POST("/registerStudio")
+    Observable<HttpResult<Object>> registerStudio(
+            @Part("loginName") RequestBody loginName,
+            @Part("identifyingCode") RequestBody identifyingCode,
+            @Part("title") RequestBody title,
+            @Part("summary") RequestBody summary,
+            @Part("serial") RequestBody serial,
+            @Part("province") RequestBody province,
+            @Part("city") RequestBody city,
+            @Part("address") RequestBody address,
+            @Part("bankcardno") RequestBody bankcardno,
+            @Part MultipartBody.Part headSculpture,
+            @Part MultipartBody.Part license,
+            @Part("sign") RequestBody sign
     );
 
     /**
@@ -377,4 +422,10 @@ public interface HttpService {
                                           @Query("startDate") String startDate,
                                           @Query("service") String service,
                                           @Query("sign") String sign);
+
+    ///getarea?pid=0&sign=123
+    @GET("/getareaall")
+    Observable<HttpResult<List<PItem>>> getArea(@Query("sign") String sign);
+
+
 }

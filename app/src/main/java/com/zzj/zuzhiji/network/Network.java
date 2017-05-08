@@ -9,6 +9,7 @@ import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
+import com.zzj.zuzhiji.network.entity.PItem;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
 import com.zzj.zuzhiji.network.entity.ServiceItem;
@@ -96,6 +97,11 @@ public class Network {
         smsHttpService = smsRetrofit.create(HttpService.class);
     }
 
+    //获取单例
+    public static Network getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
     public void downloadApk(String url, final File file, DownloadProgressListener listener,Subscriber subscriber){
         DownloadProgressInterceptor interceptor = new DownloadProgressInterceptor(listener);
         OkHttpClient downloadHttpClientBulder = new OkHttpClient.Builder()
@@ -135,13 +141,44 @@ public class Network {
                 .subscribe(subscriber);
     }
 
-    //获取单例
-    public static Network getInstance() {
-        return SingletonHolder.INSTANCE;
+    public Observable<Object> registerStudio(
+            RequestBody loginName,
+            RequestBody identifyCode,
+            RequestBody title,
+            RequestBody summary,
+            RequestBody serial,
+            RequestBody province,
+            RequestBody city,
+            RequestBody address,
+            RequestBody bankcardno,
+            MultipartBody.Part headSculpture,
+            MultipartBody.Part license
+    ) {
+        RequestBody description =
+                RequestBody.create(
+                        MediaType.parse("multipart/form-data"), sign);
+        return compose(normalHttpService.registerStudio(
+                loginName,
+                identifyCode,
+                title,
+                summary,
+                serial,
+                province,
+                city,
+                address,
+                bankcardno,
+                headSculpture,
+                license,
+                description
+        ));
     }
 
     public Observable<UpdateInfo> update(){
         return compose(normalHttpService.update(sign));
+    }
+
+    public Observable<List<PItem>> getArea() {
+        return compose(normalHttpService.getArea(sign));
     }
 
     public Observable<List<NewsResult>> getNews(String type) {
