@@ -40,6 +40,8 @@ public class RegisterActivity extends BaseActivity {
     TextView tvGetVerify;
     @BindView(R.id.nickname)
     EditText etNickName;
+    @BindView(R.id.bankcardno)
+    EditText etBankcardno;
 
     CountDownTimer timer;
     private boolean isGetVerifyEnable = true;
@@ -50,7 +52,11 @@ public class RegisterActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+
         ButterKnife.bind(this);
+
+        etBankcardno.setVisibility(View.GONE);
     }
 
 
@@ -59,8 +65,10 @@ public class RegisterActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.operator:
                 type = "1";
+                etBankcardno.setVisibility(View.VISIBLE);
                 break;
             case R.id.single:
+                etBankcardno.setVisibility(View.GONE);
                 type = "0";
                 break;
         }
@@ -83,8 +91,14 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
 
+        if ("1".equals(type) && TextUtils.isEmpty(etBankcardno.getText().toString().trim())) {
+            Toast.makeText(this, "请输入银行卡号", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        Network.getInstance().register(etTel.getText().toString().trim(), etVerify.getText().toString().trim(), type, etNickName.getText().toString())
+
+        Network.getInstance().register(etTel.getText().toString().trim(), etVerify.getText().toString().trim(), type, etNickName.getText().toString(),
+                "1".equals(type) ? etBankcardno.getText().toString().trim() : "")
                 .doOnSubscribe(new Action0() {
                     @Override
                     public void call() {

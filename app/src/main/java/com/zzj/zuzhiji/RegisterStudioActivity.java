@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,14 +21,19 @@ import android.widget.Toast;
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
 import com.zzj.zuzhiji.app.App;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.CItem;
 import com.zzj.zuzhiji.network.entity.PItem;
+import com.zzj.zuzhiji.network.entity.RegisterStudioResult;
 import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCircleTransform;
+import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 import com.zzj.zuzhiji.util.UIHelper;
 
 import java.io.File;
@@ -306,7 +312,7 @@ public class RegisterStudioActivity extends BaseActivity {
 
         Network.getInstance().registerStudio(
                 loginName, identifyCode, title, summary, serial, province, city, address, bankcardno, avatorPart, docsPart
-        ).subscribe(new Subscriber<Object>() {
+        ).subscribe(new Subscriber<RegisterStudioResult>() {
             @Override
             public void onCompleted() {
 
@@ -314,15 +320,132 @@ public class RegisterStudioActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable e) {
-
                 DialogUtils.dismissDialog(mDialog);
                 Toast.makeText(RegisterStudioActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onNext(Object o) {
-                DialogUtils.dismissDialog(mDialog);
+            public void onNext(RegisterStudioResult registerStudioResult) {
                 Toast.makeText(RegisterStudioActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+
+                SharedPreferencesUtils.getInstance().setStudioLogin(
+                        registerStudioResult.summary,
+                        registerStudioResult.address,
+                        registerStudioResult.operateStatus,
+                        registerStudioResult.city,
+                        registerStudioResult.title,
+                        registerStudioResult.uuid,
+                        registerStudioResult.headSculpture,
+                        registerStudioResult.license,
+                        registerStudioResult.province,
+                        registerStudioResult.serial,
+                        registerStudioResult.loginName,
+                        registerStudioResult.userType,
+                        registerStudioResult.createDate,
+                        registerStudioResult.status
+                );
+
+                signIn(registerStudioResult.uuid);
+            }
+        });
+    }
+
+    /**
+     * 登录方法
+     */
+    private void signIn(String uuid) {
+
+        String password = "123456";
+
+        EMClient.getInstance().login(uuid, password, new EMCallBack() {
+            /**
+             * 登陆成功的回调
+             */
+            @Override
+            public void onSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DialogUtils.dismissDialog(mDialog);
+
+                        // 加载所有会话到内存
+                        EMClient.getInstance().chatManager().loadAllConversations();
+                        // 加载所有群组到内存，如果使用了群组的话
+                        // EMClient.getInstance().groupManager().loadAllGroups();
+
+                        // 登录成功跳转界面
+                        DebugLog.e("登录成功");
+
+                        onBackPressed();
+                    }
+                });
+            }
+
+            /**
+             * 登陆错误的回调
+             *
+             * @param i
+             * @param s
+             */
+            @Override
+            public void onError(final int i, final String s) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DialogUtils.dismissDialog(mDialog);
+                        Log.d("lzan13", "登录失败 Error code:" + i + ", message:" + s);
+                        /**
+                         * 关于错误码可以参考官方api详细说明
+                         * http://www.easemob.com/apidoc/android/chat3.0/classcom_1_1hyphenate_1_1_e_m_error.html
+                         */
+                        switch (i) {
+                            // 网络异常 2
+                            case EMError.NETWORK_ERROR:
+                                Toast.makeText(RegisterStudioActivity.this, "网络错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无效的用户名 101
+                            case EMError.INVALID_USER_NAME:
+                                Toast.makeText(RegisterStudioActivity.this, "无效的用户名 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无效的密码 102
+                            case EMError.INVALID_PASSWORD:
+                                Toast.makeText(RegisterStudioActivity.this, "无效的密码 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 用户认证失败，用户名或密码错误 202
+                            case EMError.USER_AUTHENTICATION_FAILED:
+                                Toast.makeText(RegisterStudioActivity.this, "用户认证失败，用户名或密码错误 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 用户不存在 204
+                            case EMError.USER_NOT_FOUND:
+                                Toast.makeText(RegisterStudioActivity.this, "用户不存在 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 无法访问到服务器 300
+                            case EMError.SERVER_NOT_REACHABLE:
+                                Toast.makeText(RegisterStudioActivity.this, "无法访问到服务器 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 等待服务器响应超时 301
+                            case EMError.SERVER_TIMEOUT:
+                                Toast.makeText(RegisterStudioActivity.this, "等待服务器响应超时 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 服务器繁忙 302
+                            case EMError.SERVER_BUSY:
+                                Toast.makeText(RegisterStudioActivity.this, "服务器繁忙 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            // 未知 Server 异常 303 一般断网会出现这个错误
+                            case EMError.SERVER_UNKNOWN_ERROR:
+                                Toast.makeText(RegisterStudioActivity.this, "未知的服务器异常 code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                Toast.makeText(RegisterStudioActivity.this, "ml_sign_in_failed code: " + i + ", message:" + s, Toast.LENGTH_LONG).show();
+                                break;
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
             }
         });
     }

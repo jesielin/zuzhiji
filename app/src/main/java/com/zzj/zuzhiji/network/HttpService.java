@@ -7,6 +7,7 @@ import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
+import com.zzj.zuzhiji.network.entity.RegisterStudioResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
 import com.zzj.zuzhiji.network.entity.ServiceItem;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
@@ -70,7 +71,13 @@ public interface HttpService {
      * @return
      */
     @GET("/register")
-    Observable<HttpResult<RegisterResult>> register(@Query("loginName") String loginName, @Query("identifyingCode") String identifyingCode, @Query("regType") String regType, @Query("nickname") String nickName, @Query("sign") String sign);
+    Observable<HttpResult<RegisterResult>> register(
+            @Query("loginName") String loginName,
+            @Query("identifyingCode") String identifyingCode,
+            @Query("regType") String regType,
+            @Query("nickname") String nickName,
+            @Query("bankcardno") String bankcardno,
+            @Query("sign") String sign);
 
     /**
      * 首页动态
@@ -162,7 +169,7 @@ public interface HttpService {
      */
     @Multipart
     @POST("/registerStudio")
-    Observable<HttpResult<Object>> registerStudio(
+    Observable<HttpResult<RegisterStudioResult>> registerStudio(
             @Part("loginName") RequestBody loginName,
             @Part("identifyingCode") RequestBody identifyingCode,
             @Part("title") RequestBody title,

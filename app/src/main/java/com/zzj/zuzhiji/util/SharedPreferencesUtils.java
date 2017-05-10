@@ -58,6 +58,61 @@ public class SharedPreferencesUtils {
                 .apply();
     }
 
+    public void setStudioLogin(
+            String summary,
+            String address,
+            String operateStatus,
+            String city,
+            String title,
+            String uuid,
+            String headSculpture,
+            String license,
+            String province,
+            String serial,
+            String loginName,
+            String userType,
+            String createDate,
+            String status
+    ) {
+        mSharedPreference.edit()
+                .putString(Constant.SHARED_KEY.SUMMARY, summary)
+                .putString(Constant.SHARED_KEY.ADDRESS, address)
+                .putString(Constant.SHARED_KEY.OPERATESTATUS, operateStatus)
+                .putString(Constant.SHARED_KEY.CITY, city)
+                .putString(Constant.SHARED_KEY.NICK_NAME, title)
+                .putString(Constant.SHARED_KEY.UUID, uuid)
+                .putString(Constant.SHARED_KEY.AVATOR, headSculpture)
+                .putString(Constant.SHARED_KEY.LICENSE, license)
+                .putString(Constant.SHARED_KEY.PROVINCE, province)
+                .putString(Constant.SHARED_KEY.SERIAL, serial)
+                .putString(Constant.SHARED_KEY.LOGIN_NAME, loginName)
+                .putString(Constant.SHARED_KEY.USER_TYPE, userType)
+                .putString(Constant.SHARED_KEY.CREATEDATE, createDate)
+                .putString(Constant.SHARED_KEY.STATUS, status)
+
+                .apply();
+    }
+
+    public void setStudioLogout() {
+        mSharedPreference.edit()
+                .putString(Constant.SHARED_KEY.SUMMARY, "")
+                .putString(Constant.SHARED_KEY.ADDRESS, "")
+                .putString(Constant.SHARED_KEY.OPERATESTATUS, "")
+                .putString(Constant.SHARED_KEY.CITY, "")
+                .putString(Constant.SHARED_KEY.NICK_NAME, "")
+                .putString(Constant.SHARED_KEY.UUID, "")
+                .putString(Constant.SHARED_KEY.AVATOR, "")
+                .putString(Constant.SHARED_KEY.LICENSE, "")
+                .putString(Constant.SHARED_KEY.PROVINCE, "")
+                .putString(Constant.SHARED_KEY.SERIAL, "")
+                .putString(Constant.SHARED_KEY.LOGIN_NAME, "")
+                .putString(Constant.SHARED_KEY.USER_TYPE, "")
+                .putString(Constant.SHARED_KEY.CREATEDATE, "")
+                .putString(Constant.SHARED_KEY.STATUS, "")
+
+                .apply();
+    }
+
     public String getValue(String key) {
         return mSharedPreference.getString(key, "");
     }

@@ -19,5 +19,40 @@ package com.zzj.zuzhiji.network.entity;
  */
 
 public class RegisterStudioResult {
-    //// TODO: 2017-05-09  
+    //// TODO: 2017-05-09
+
+    public String summary;
+    public String address;
+    public String operateStatus;
+    public String city;
+    public String title;
+    public String uuid;
+    public String headSculpture;
+    public String license;
+    public String province;
+    public String serial;
+    public String loginName;
+    public String userType;
+    public String createDate;
+    public String status;
+
+    @Override
+    public String toString() {
+        return "RegisterStudioResult{" +
+                "summary='" + summary + '\'' +
+                ", \naddress='" + address + '\'' +
+                ", \noperateStatus='" + operateStatus + '\'' +
+                ", \ncity='" + city + '\'' +
+                ", \ntitle='" + title + '\'' +
+                ", \nuuid='" + uuid + '\'' +
+                ", \nheadSculpture='" + headSculpture + '\'' +
+                ", \nlicense='" + license + '\'' +
+                ", \nprovince='" + province + '\'' +
+                ", \nserial='" + serial + '\'' +
+                ", \nloginName='" + loginName + '\'' +
+                ", \nuserType='" + userType + '\'' +
+                ", \ncreateDate='" + createDate + '\'' +
+                ", \nstatus='" + status + '\'' +
+                '}';
+    }
 }

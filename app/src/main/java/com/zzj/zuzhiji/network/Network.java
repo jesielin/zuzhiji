@@ -11,6 +11,7 @@ import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
+import com.zzj.zuzhiji.network.entity.RegisterStudioResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
 import com.zzj.zuzhiji.network.entity.ServiceItem;
 import com.zzj.zuzhiji.network.entity.SetInfoResult;
@@ -141,7 +142,7 @@ public class Network {
                 .subscribe(subscriber);
     }
 
-    public Observable<Object> registerStudio(
+    public Observable<RegisterStudioResult> registerStudio(
             RequestBody loginName,
             RequestBody identifyCode,
             RequestBody title,
@@ -193,8 +194,8 @@ public class Network {
         return compose(normalHttpService.addFriend(ownerUUID, friendUUID, sign));
     }
 
-    public Observable<RegisterResult> register(String loginName, String verifyCode, String type, String nickName) {
-        return compose(normalHttpService.register(loginName, verifyCode, type, nickName, sign));
+    public Observable<RegisterResult> register(String loginName, String verifyCode, String type, String nickName, String bankcardno) {
+        return compose(normalHttpService.register(loginName, verifyCode, type, nickName, bankcardno, sign));
     }
 
     public Observable<LoginResult> login(String loginName, String identifyCode) {

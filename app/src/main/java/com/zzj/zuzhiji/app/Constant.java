@@ -39,6 +39,18 @@ public interface Constant {
 
     String AVATOR_DEFAULT = "http://101.201.155.115:3113/heads/default/default.png";
     interface SHARED_KEY {
+
+
+        String ADDRESS = "ADDRESS";
+        String OPERATESTATUS = "OPERATESTATUS";
+        String CITY = "CITY";
+        String LICENSE = "LICENSE";
+        String PROVINCE = "PROVINCE";
+        String SERIAL = "SERIAL";
+        String CREATEDATE = "CREATEDATE";
+        String STATUS = "STATUS";
+
+
         String SUMMARY = "SUMMARY";
         String SHARED_FILE_NAME = "ZZJ";
         String UUID = "UUID";

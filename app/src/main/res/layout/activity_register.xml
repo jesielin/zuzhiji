@@ -125,6 +125,21 @@
             android:textColorHint="@color/text_hint"
             android:textSize="18dp" />
 
+        <EditText
+            android:id="@+id/bankcardno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="银行卡号"
+            android:inputType="number"
+            android:padding="10dp"
+            android:singleLine="true"
+
+            android:textColorHint="@color/text_hint"
+            android:textSize="18dp"
+            android:visibility="gone" />
+
+
         <Button
             android:id="@+id/register"
             android:layout_width="240dp"
