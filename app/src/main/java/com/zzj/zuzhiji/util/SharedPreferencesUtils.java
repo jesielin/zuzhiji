@@ -30,7 +30,7 @@ public class SharedPreferencesUtils {
         return !TextUtils.isEmpty(mSharedPreference.getString(Constant.SHARED_KEY.UUID, ""));
     }
 
-    public void setLogin(String uuid, String nickName, String avator, String userType, String loginName, String sex, String summary, String studioId, String studioTitle) {
+    public void setLogin(String uuid, String nickName, String avator, String userType, String loginName, String sex, String summary, String studioId, String studioTitle, String bankcardno) {
         mSharedPreference.edit()
                 .putString(Constant.SHARED_KEY.UUID,uuid)
                 .putString(Constant.SHARED_KEY.NICK_NAME,nickName)
@@ -41,6 +41,7 @@ public class SharedPreferencesUtils {
                 .putString(Constant.SHARED_KEY.SUMMARY, summary)
                 .putString(Constant.SHARED_KEY.STUDIO_ID, studioId)
                 .putString(Constant.SHARED_KEY.STUDIO_TITLE, studioTitle)
+                .putString(Constant.SHARED_KEY.BANKCARDNO, bankcardno)
                 .apply();
     }
 
@@ -55,6 +56,15 @@ public class SharedPreferencesUtils {
                 .putString(Constant.SHARED_KEY.STUDIO_ID, "")
                 .putString(Constant.SHARED_KEY.STUDIO_TITLE, "")
                 .putString(Constant.SHARED_KEY.SUMMARY, "")
+                .putString(Constant.SHARED_KEY.BANKCARDNO, "")
+                .putString(Constant.SHARED_KEY.ADDRESS, "")
+                .putString(Constant.SHARED_KEY.OPERATESTATUS, "")
+                .putString(Constant.SHARED_KEY.CITY, "")
+                .putString(Constant.SHARED_KEY.LICENSE, "")
+                .putString(Constant.SHARED_KEY.PROVINCE, "")
+                .putString(Constant.SHARED_KEY.SERIAL, "")
+                .putString(Constant.SHARED_KEY.CREATEDATE, "")
+                .putString(Constant.SHARED_KEY.STATUS, "")
                 .apply();
     }
 
@@ -72,7 +82,8 @@ public class SharedPreferencesUtils {
             String loginName,
             String userType,
             String createDate,
-            String status
+            String status,
+            String bankcardno
     ) {
         mSharedPreference.edit()
                 .putString(Constant.SHARED_KEY.SUMMARY, summary)
@@ -89,29 +100,12 @@ public class SharedPreferencesUtils {
                 .putString(Constant.SHARED_KEY.USER_TYPE, userType)
                 .putString(Constant.SHARED_KEY.CREATEDATE, createDate)
                 .putString(Constant.SHARED_KEY.STATUS, status)
+                .putString(Constant.SHARED_KEY.BANKCARDNO, bankcardno)
 
                 .apply();
     }
 
-    public void setStudioLogout() {
-        mSharedPreference.edit()
-                .putString(Constant.SHARED_KEY.SUMMARY, "")
-                .putString(Constant.SHARED_KEY.ADDRESS, "")
-                .putString(Constant.SHARED_KEY.OPERATESTATUS, "")
-                .putString(Constant.SHARED_KEY.CITY, "")
-                .putString(Constant.SHARED_KEY.NICK_NAME, "")
-                .putString(Constant.SHARED_KEY.UUID, "")
-                .putString(Constant.SHARED_KEY.AVATOR, "")
-                .putString(Constant.SHARED_KEY.LICENSE, "")
-                .putString(Constant.SHARED_KEY.PROVINCE, "")
-                .putString(Constant.SHARED_KEY.SERIAL, "")
-                .putString(Constant.SHARED_KEY.LOGIN_NAME, "")
-                .putString(Constant.SHARED_KEY.USER_TYPE, "")
-                .putString(Constant.SHARED_KEY.CREATEDATE, "")
-                .putString(Constant.SHARED_KEY.STATUS, "")
 
-                .apply();
-    }
 
     public String getValue(String key) {
         return mSharedPreference.getString(key, "");

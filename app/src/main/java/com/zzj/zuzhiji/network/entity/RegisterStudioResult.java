@@ -35,6 +35,7 @@ public class RegisterStudioResult {
     public String userType;
     public String createDate;
     public String status;
+    public String bankcardno;
 
     @Override
     public String toString() {

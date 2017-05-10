@@ -120,7 +120,8 @@ public class LoginActivity extends BaseActivity {
                                 TextUtils.isEmpty(loginResult.sex) ? Constant.GENDER_MALE : loginResult.sex,
                                 TextUtils.isEmpty(loginResult.summary) ? Constant.EMPTY : loginResult.summary,
                                 studioId,
-                                studioTitle
+                                studioTitle,
+                                loginResult.bankcardno
 
                         );
 

@@ -157,6 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:hint="红外序列号"
+                    android:inputType="number"
                     android:padding="10dp"
                     android:singleLine="true"
                     android:textColorHint="@color/text_hint"

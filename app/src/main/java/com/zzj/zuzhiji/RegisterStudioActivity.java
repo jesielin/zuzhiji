@@ -342,7 +342,8 @@ public class RegisterStudioActivity extends BaseActivity {
                         registerStudioResult.loginName,
                         registerStudioResult.userType,
                         registerStudioResult.createDate,
-                        registerStudioResult.status
+                        registerStudioResult.status,
+                        registerStudioResult.bankcardno
                 );
 
                 signIn(registerStudioResult.uuid);

@@ -50,6 +50,7 @@ public interface Constant {
         String CREATEDATE = "CREATEDATE";
         String STATUS = "STATUS";
 
+        String BANKCARDNO = "BANKCARDNO";
 
         String SUMMARY = "SUMMARY";
         String SHARED_FILE_NAME = "ZZJ";

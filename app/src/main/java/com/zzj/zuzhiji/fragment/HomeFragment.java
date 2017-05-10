@@ -29,6 +29,7 @@ import com.zzj.zuzhiji.SearchActivity;
 import com.zzj.zuzhiji.ServiceActivity;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.network.entity.Tech;
@@ -215,17 +216,18 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     private void setupBanner() {
-        List<Integer> integers = Arrays.asList(R.drawable.placeholder_advert1, R.drawable.placeholder_advert2);
+//        List<Integer> integers = Arrays.asList(R.drawable.placeholder_advert1, R.drawable.placeholder_advert2);
+        List<String> integers = Arrays.asList("http://101.201.155.115:3113/information/word/apptop1.jpg", "http://101.201.155.115:3113/information/word/apptop1.jpg");
 
         //设置图片加载器
         banner.setImageLoader(new GlideImageLoader());
         //设置图片集合
-        banner.setImages(integers);
+//        banner.setImages(integers);
 
         banner.setDelayTime(3000);
 
         //banner设置方法全部调用完毕时最后调用
-        banner.start();
+//        banner.start();
     }
 
     @OnClick(R.id.search)
@@ -235,6 +237,32 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
+
+        Network.getInstance().getAdvert("1")
+                .subscribe(new Subscriber<List<AdvertResult>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(List<AdvertResult> advertResults) {
+
+                        List<String> banners = new ArrayList<String>();
+                        for (AdvertResult result : advertResults) {
+                            banners.add(result.imgurl);
+                        }
+
+                        banner.setImages(banners);
+                        banner.start();
+                    }
+                });
 
         switch (tabIndex) {
             case 0:

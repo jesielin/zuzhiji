@@ -131,7 +131,8 @@ public class RegisterActivity extends BaseActivity {
                                 Constant.GENDER_MALE,
                                 Constant.EMPTY,
                                 Constant.EMPTY,
-                                Constant.EMPTY
+                                Constant.EMPTY,
+                                registerResult.bankcardno
                         );
 
                         signIn(registerResult.uuid);

@@ -24,5 +24,6 @@ public class LoginResult {
     public String summary;
     public String studio;
     public String studioTitle;
+    public String bankcardno;
 
 }
