@@ -118,7 +118,7 @@
             android:gravity="center"
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
-            android:text="确认" />
+            android:text="下单" />
     </LinearLayout>
 
 

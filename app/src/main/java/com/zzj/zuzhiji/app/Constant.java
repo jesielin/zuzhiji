@@ -6,6 +6,8 @@ package com.zzj.zuzhiji.app;
 
 public interface Constant {
 
+    String APP_ID = "wx74a229d11fd9c1b0";
+
     int DEFAULT_TIMEOUT = 5;
     int COUNT_DOWN_TIME = 60;
     int PAGE_SIZE = 5;

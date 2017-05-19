@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,10 +13,8 @@ import android.widget.Toast;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import com.zzj.zuzhiji.R;
-import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.SharedPreferencesUtils;
+import com.zzj.zuzhiji.wxapi.WXPayEntryActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,7 +23,6 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
 
 /**
  * Created by shawn on 17/4/10.
@@ -55,7 +53,8 @@ public class ReservCompleteFragment extends BaseFragment implements DatePickerDi
     private String title;
     private String price;
     private String service_id;
-    private String uuid;
+    private String studio_id;
+    private String tech_uuid;
     private int year = 0;
     private int month = 0;
     private int day = 0;
@@ -81,29 +80,40 @@ public class ReservCompleteFragment extends BaseFragment implements DatePickerDi
             return;
         }
 
-
+        Bundle bundle = getArguments();
+        Intent intent = new Intent(getActivity(), WXPayEntryActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
         DebugLog.e("time:"+tvTime.getText().toString());
-        Network.getInstance().reserv(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                uuid,
-                tvTime.getText().toString(),
-                service_id)
-                .subscribe(new Subscriber<Object>() {
-                    @Override
-                    public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-
-                    }
-                });
+//        Fragment f = new PayFragment();
+//        Bundle bundle = getArguments();
+//        f.setArguments(bundle);
+//
+//        getActivity().getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.container, f).addToBackStack("fifth").commit();
+//        Network.getInstance().reserv(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+//                uuid,
+//                tvTime.getText().toString(),
+//                service_id)
+//                .subscribe(new Subscriber<Object>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(Object o) {
+//
+//                    }
+//                });
     }
 
     @OnClick(R.id.choose_date)
@@ -121,8 +131,10 @@ public class ReservCompleteFragment extends BaseFragment implements DatePickerDi
 
     private void resolveArgs() {
         Bundle arguments = getArguments();
-        service_id = arguments.getString("ID");
-        uuid = arguments.getString("UUID");
+        DebugLog.e("bundle:" + arguments.toString());
+        service_id = arguments.getString("SERVICE_ID");
+        studio_id = arguments.getString("STUDIO_ID");
+        tech_uuid = arguments.getString("TECH_ID");
         price = arguments.getString("PRICE");
         title = arguments.getString("TITLE");
 

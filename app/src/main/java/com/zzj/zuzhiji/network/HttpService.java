@@ -6,6 +6,7 @@ import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
+import com.zzj.zuzhiji.network.entity.PayResult;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.RegisterStudioResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
@@ -433,6 +434,26 @@ public interface HttpService {
     ///getarea?pid=0&sign=123
     @GET("/getareaall")
     Observable<HttpResult<List<PItem>>> getArea(@Query("sign") String sign);
+
+    ///getStudioByUser?sign=123&userUuid=m2lo8j2h16
+    @GET("/getStudioByUser")
+    Observable<HttpResult<List<StudioItem>>> getStudioByUser(@Query("userUuid") String uuid, @Query("sign") String sign);
+
+    ///pay
+//    uuid 用户uuid
+//
+//    serviceId 服务id
+//
+//    technicianId 技师id
+//
+//    studioId 工作室id
+//
+//    payType 支付方式 2：微信支付 3：线下支付
+    @GET("/pay")
+    Observable<HttpResult<PayResult>> pay(@Query("uuid") String uuid, @Query("serviceId") String serviceId,
+                                          @Query("technicianId") String technicianId,
+                                          @Query("studioId") String studioId,
+                                          @Query("payType") String payType);
 
 
 }

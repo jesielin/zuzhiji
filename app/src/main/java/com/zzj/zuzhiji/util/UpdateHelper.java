@@ -204,6 +204,7 @@ public class UpdateHelper implements ServiceConnection {
             String ignore = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.IGNORE_VERSION_CODE);
             DebugLog.e("ignore version code:" + ignore);
 
+            //// TODO: 2017-05-15 应该换下位置 if else
             if (!isManual && !TextUtils.isEmpty(ignore) && Integer.valueOf(ignore) == remoteVersionCode)
                 return Constant.UPDATE.HAS_IGNORE_THIS_VERSION;
             else if (info.isMustUpgrade())

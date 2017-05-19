@@ -10,6 +10,7 @@ import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
+import com.zzj.zuzhiji.network.entity.PayResult;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.RegisterStudioResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
@@ -237,6 +238,14 @@ public class Network {
 
     public Observable<List<Tech>> getRecommendTech(int size) {
         return compose(normalHttpService.getRecommendTechs(size, sign));
+    }
+
+    public Observable<List<StudioItem>> getStudioByUser(String uuid) {
+        return compose(normalHttpService.getStudioByUser(uuid, sign));
+    }
+
+    public Observable<PayResult> pay(String uuid, String serviceId, String techId, String studioId, String type) {
+        return compose(normalHttpService.pay(uuid, serviceId, techId, studioId, type));
     }
 
     public Observable<SetInfoResult> setUserInfo(RequestBody uuid, RequestBody nickName, RequestBody sex, RequestBody studio, RequestBody summary, MultipartBody.Part avator) {

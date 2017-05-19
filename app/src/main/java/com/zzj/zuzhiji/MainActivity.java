@@ -15,7 +15,6 @@ import com.zzj.zuzhiji.fragment.MessageFragment;
 import com.zzj.zuzhiji.fragment.NewsFragment;
 import com.zzj.zuzhiji.fragment.SocialFragment;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.UpdateHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +27,7 @@ public class MainActivity extends BaseActivity {
     RadioGroup rgNav;
     private FragmentNavigator mNavigator;
 
-    private UpdateHelper updateHelper;
+//    private UpdateHelper updateHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class MainActivity extends BaseActivity {
         mNavigator.setDefaultPosition(0);
         mNavigator.onCreate(savedInstanceState);
 
-        updateHelper = new UpdateHelper(this, false);
+//        updateHelper = new UpdateHelper(this, false);
         setCurrentTab(mNavigator.getCurrentPosition());
 
     }
@@ -51,8 +50,9 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        if (updateHelper != null)
-            updateHelper.check();
+        //// TODO: 2017-05-20 取消版本更新监控
+//        if (updateHelper != null)
+//            updateHelper.check();
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.zzj.zuzhiji.util.DebugLog;
 import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.GlideCacheUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
-import com.zzj.zuzhiji.util.UpdateHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,7 +26,7 @@ public class SettingActivity extends BaseActivity {
 
     @BindView(R.id.cache_size)
     TextView tvCacheSize;
-    private UpdateHelper updateHelper;
+//    private UpdateHelper updateHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +35,7 @@ public class SettingActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         tvCacheSize.setText(GlideCacheUtils.getInstance().getCacheSize(getApplicationContext()));
-        updateHelper = new UpdateHelper(this, true);
+//        updateHelper = new UpdateHelper(this, true);
 
     }
 
@@ -73,7 +72,8 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick(R.id.check_version)
     public void update(View view) {
-        updateHelper.check();
+//        updateHelper.check();
+        Toast.makeText(this, "有BUG，在调试", Toast.LENGTH_SHORT).show();
     }
 
 

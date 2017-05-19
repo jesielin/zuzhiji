@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.ServiceItem;
+import com.zzj.zuzhiji.util.DebugLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,8 @@ public class ReservCaseListFragment extends BaseFragment implements SwipeRefresh
 
     private ServiceAdapter mAdapter = new ServiceAdapter();
 
-    private String uuid;
+    private String tech_uuid;
+    private String studio_uuid;
 
     @Nullable
     @Override
@@ -50,7 +52,10 @@ public class ReservCaseListFragment extends BaseFragment implements SwipeRefresh
         ButterKnife.bind(this, contentView);
 
         Bundle arguments = getArguments();
-        uuid = arguments.getString("UUID");
+        tech_uuid = arguments.getString("TECH_ID");
+        studio_uuid = arguments.getString("STUDIO_ID");
+
+        DebugLog.e("bundle:" + arguments.toString());
 
 
         setupLayout();
@@ -59,7 +64,7 @@ public class ReservCaseListFragment extends BaseFragment implements SwipeRefresh
     }
 
     private void getDatas() {
-        Network.getInstance().getService(uuid)
+        Network.getInstance().getService(tech_uuid)
                 .subscribe(new Subscriber<List<ServiceItem>>() {
                     @Override
                     public void onCompleted() {
@@ -153,15 +158,14 @@ public class ReservCaseListFragment extends BaseFragment implements SwipeRefresh
                 public void onClick(View v) {
 
                     Fragment f = new ReservCompleteFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("ID", item.id);
+                    Bundle bundle = getArguments();
+                    bundle.putString("SERVICE_ID", item.id);
                     bundle.putString("PRICE", item.price);
                     bundle.putString("TITLE", item.title);
-                    bundle.putString("UUID", uuid);
                     f.setArguments(bundle);
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.container, f).addToBackStack("third").commit();
+                            .replace(R.id.container, f).addToBackStack("fourth").commit();
                 }
             });
         }

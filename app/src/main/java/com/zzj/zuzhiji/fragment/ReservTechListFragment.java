@@ -225,9 +225,9 @@ public class ReservTechListFragment extends BaseFragment implements SwipeRefresh
                 @Override
                 public void onClick(View v) {
                     UIHelper.hideSoftInput(getActivity(), etSearch);
-                    Fragment f = new ReservCaseListFragment();
+                    Fragment f = new ReservTechStudioListFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putString("UUID", item.uuid);
+                    bundle.putString("TECH_ID", item.uuid);
                     f.setArguments(bundle);
                     getActivity().getSupportFragmentManager()
                             .beginTransaction()
