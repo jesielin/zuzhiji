@@ -51,6 +51,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     private String service_id;
     private String studio_id;
     private String tech_uuid;
+    private String time;
 
     private String pay_type = "2";
 
@@ -99,7 +100,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                 service_id,
                 tech_uuid,
                 studio_id,
-                pay_type
+                pay_type,
+                time
         ).subscribe(new Subscriber<PayResult>() {
             @Override
             public void onCompleted() {
@@ -173,6 +175,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         tech_uuid = arguments.getString("TECH_ID");
         price = arguments.getString("PRICE");
         title = arguments.getString("TITLE");
+        time = arguments.getString("TIME");
 
         tvPrice.setText(price);
     }
@@ -199,17 +202,17 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
             switch (resp.errCode) {
                 case 0:
                     //支付成功
-                    Toast.makeText(this, "支付成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "支付成功\nCode:" + resp.errCode, Toast.LENGTH_SHORT).show();
                     TheActivityManager.getInstance().finishInstance(WXPayEntryActivity.class);
                     TheActivityManager.getInstance().finishInstance(ReservationActivity.class);
                     break;
                 case -1:
                     //错误	可能的原因：签名错误、未注册APPID、项目设置APPID不正确、注册的APPID与设置的不匹配、其他异常等。
-                    Toast.makeText(this, "支付异常", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "支付异常\nCode:" + resp.errCode + "\nMessage:" + resp.errStr, Toast.LENGTH_LONG).show();
                     break;
                 case -2:
                     //取消
-                    Toast.makeText(this, "取消支付", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "取消支付\nCode:" + resp.errCode, Toast.LENGTH_SHORT).show();
                     break;
             }
 

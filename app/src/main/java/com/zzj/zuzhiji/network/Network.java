@@ -244,8 +244,8 @@ public class Network {
         return compose(normalHttpService.getStudioByUser(uuid, sign));
     }
 
-    public Observable<PayResult> pay(String uuid, String serviceId, String techId, String studioId, String type) {
-        return compose(normalHttpService.pay(uuid, serviceId, techId, studioId, type));
+    public Observable<PayResult> pay(String uuid, String serviceId, String techId, String studioId, String type, String time) {
+        return compose(normalHttpService.pay(uuid, serviceId, techId, studioId, type, time));
     }
 
     public Observable<SetInfoResult> setUserInfo(RequestBody uuid, RequestBody nickName, RequestBody sex, RequestBody studio, RequestBody summary, MultipartBody.Part avator) {

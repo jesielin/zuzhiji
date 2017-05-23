@@ -453,7 +453,8 @@ public interface HttpService {
     Observable<HttpResult<PayResult>> pay(@Query("uuid") String uuid, @Query("serviceId") String serviceId,
                                           @Query("technicianId") String technicianId,
                                           @Query("studioId") String studioId,
-                                          @Query("payType") String payType);
+                                          @Query("payType") String payType,
+                                          @Query("subscribeTime") String subscribeTime);
 
 
 }

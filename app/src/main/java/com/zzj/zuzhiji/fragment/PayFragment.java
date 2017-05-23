@@ -9,20 +9,13 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.zzj.zuzhiji.R;
-import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.Network;
-import com.zzj.zuzhiji.network.entity.PayResult;
 import com.zzj.zuzhiji.util.DialogUtils;
-import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
 
 /**
  * Created by shawn on 2017-05-19.
@@ -68,45 +61,45 @@ public class PayFragment extends BaseFragment {
     @OnClick(R.id.pay)
     public void pay() {
         mProgressDialog = DialogUtils.showProgressDialog(getActivity(), "请稍候....");
-        Network.getInstance().pay(
-                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                service_id,
-                tech_uuid,
-                studio_id,
-                pay_type
-        ).subscribe(new Subscriber<PayResult>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                DialogUtils.dismissDialog(mProgressDialog);
-            }
-
-            @Override
-            public void onNext(PayResult payResult) {
-
-                api = WXAPIFactory.createWXAPI(getActivity(), null);
-                api.registerApp(Constant.APP_ID);
-                PayReq request = new PayReq();
-                request.appId = payResult.appid;
-                request.partnerId = payResult.partnerid;
-                request.prepayId = payResult.prepayid;
-                request.packageValue = "Sign=WXPay";
-                request.nonceStr = payResult.noncestr;
-                request.timeStamp = payResult.timestamp;
-                request.sign = payResult.sign;
-                api.sendReq(request);
-
-                DialogUtils.dismissDialog(mProgressDialog);
-
-
-            }
-        });
+//        Network.getInstance().pay(
+//                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+//                service_id,
+//                tech_uuid,
+//                studio_id,
+//                pay_type
+//        ).subscribe(new Subscriber<PayResult>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                DialogUtils.dismissDialog(mProgressDialog);
+//            }
+//
+//            @Override
+//            public void onNext(PayResult payResult) {
+//
+//                api = WXAPIFactory.createWXAPI(getActivity(), null);
+//                api.registerApp(Constant.APP_ID);
+//                PayReq request = new PayReq();
+//                request.appId = payResult.appid;
+//                request.partnerId = payResult.partnerid;
+//                request.prepayId = payResult.prepayid;
+//                request.packageValue = "Sign=WXPay";
+//                request.nonceStr = payResult.noncestr;
+//                request.timeStamp = payResult.timestamp;
+//                request.sign = payResult.sign;
+//                api.sendReq(request);
+//
+//                DialogUtils.dismissDialog(mProgressDialog);
+//
+//
+//            }
+//        });
     }
 
     @OnClick({R.id.wechat, R.id.underline})

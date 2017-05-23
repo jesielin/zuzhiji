@@ -81,6 +81,7 @@ public class ReservCompleteFragment extends BaseFragment implements DatePickerDi
         }
 
         Bundle bundle = getArguments();
+        bundle.putString("TIME", tvTime.getText().toString());
         Intent intent = new Intent(getActivity(), WXPayEntryActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
