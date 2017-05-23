@@ -340,7 +340,9 @@ public class RegisterStudioActivity extends BaseActivity {
                         registerStudioResult.province,
                         registerStudioResult.serial,
                         registerStudioResult.loginName,
-                        registerStudioResult.userType,
+                        "3",
+                        //// TODO: 2017-05-24 dd
+//                        registerStudioResult.userType,
                         registerStudioResult.createDate,
                         registerStudioResult.status,
                         registerStudioResult.bankcardno

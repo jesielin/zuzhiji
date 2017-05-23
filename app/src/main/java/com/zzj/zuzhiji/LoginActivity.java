@@ -115,6 +115,7 @@ public class LoginActivity extends BaseActivity {
                                 loginResult.uuid,
                                 loginResult.nickName,
                                 loginResult.headSculpture,
+                                //// TODO: 2017-05-24 studio type ?
                                 loginResult.userType,
                                 loginResult.loginName,
                                 TextUtils.isEmpty(loginResult.sex) ? Constant.GENDER_MALE : loginResult.sex,

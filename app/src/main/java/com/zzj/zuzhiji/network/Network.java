@@ -263,6 +263,14 @@ public class Network {
 //        }
     }
 
+    public Observable<Object> joinStudio(String uuid, String studioId) {
+        return compose(normalHttpService.joinStudio(uuid, studioId, sign));
+    }
+
+    public Observable<List<StudioItem>> getUnjoinStudioByUser(String uuid) {
+        return compose(normalHttpService.getUnjoinStudioByUser(uuid, sign));
+    }
+
     public Observable<Object> sendSms(String mobile) {
         return compose(smsHttpService.sendSms(mobile, sign));
     }

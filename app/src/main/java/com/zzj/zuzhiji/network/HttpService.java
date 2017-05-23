@@ -456,5 +456,16 @@ public interface HttpService {
                                           @Query("payType") String payType,
                                           @Query("subscribeTime") String subscribeTime);
 
+    ///getunjoinStudioByUser?sign=123&userUuid=m2lo8j2h16
+    @GET("/getunjoinStudioByUser")
+    Observable<HttpResult<List<StudioItem>>> getUnjoinStudioByUser(
+            @Query("userUuid") String userUuid,
+            @Query("sign") String sign
+    );
+
+    // /joinStudio?sign=123&userUuid=1231&studioId=1
+    @GET("/joinStudio")
+    Observable<HttpResult<Object>> joinStudio(@Query("userUuid") String userUuid, @Query("studioId") String studioId, @Query("sign") String sign);
+
 
 }

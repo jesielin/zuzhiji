@@ -152,7 +152,7 @@ public class ReservCaseListFragment extends BaseFragment implements SwipeRefresh
             final ServiceItem item = datas.get(position);
 
             holder.tvPrice.setText(item.price);
-            holder.tvTitle.setText(item.title);
+            holder.tvTitle.setText(item.title + " " + item.content);
             holder.clickArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

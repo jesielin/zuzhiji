@@ -12,4 +12,5 @@ public class ServiceItem {
     public String techUuid;
     public String status;
     public String id;
+    public String content;
 }
