@@ -122,17 +122,18 @@ public class UserInfoSettingActivity extends BaseActivity {
                 break;
         }
 
-        String userType = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_TYPE);
-        switch (userType) {
-            case Constant.USER_TYPE_SINGLE:
-                //个人
-                studioView.setVisibility(View.GONE);
-                break;
-            case Constant.USER_TYPE_TECH:
-                //技师
-                studioView.setVisibility(View.VISIBLE);
-                break;
-        }
+        studioView.setVisibility(View.GONE);
+//        String userType = SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_TYPE);
+//        switch (userType) {
+//            case Constant.USER_TYPE_SINGLE:
+//                //个人
+//                studioView.setVisibility(View.GONE);
+//                break;
+//            case Constant.USER_TYPE_TECH:
+//                //技师
+//                studioView.setVisibility(View.VISIBLE);
+//                break;
+//        }
 
 
         tvStudio.setText(studioTitle);
@@ -362,7 +363,7 @@ public class UserInfoSettingActivity extends BaseActivity {
                         MediaType.parse("multipart/form-data"), summaryText);
 
 
-        Network.getInstance().setUserInfo(uuid, nickName, gender, studio, summary, avatorPart)
+        Network.getInstance().setUserInfo(uuid, nickName, gender, summary, avatorPart)
                 .subscribe(new Subscriber<SetInfoResult>() {
                     @Override
                     public void onCompleted() {

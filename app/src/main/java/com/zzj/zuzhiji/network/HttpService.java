@@ -135,7 +135,7 @@ public interface HttpService {
             @Part("nickName") RequestBody nickName,
             @Part("sex") RequestBody sex,
             @Part("summary") RequestBody summary,
-            @Part("studio") RequestBody studio,
+//            @Part("studio") RequestBody studio,
             @Part MultipartBody.Part imgs,
             @Part("sign") RequestBody sign
 
@@ -205,7 +205,7 @@ public interface HttpService {
             @Part("uuid") RequestBody uuid,
             @Part("nickName") RequestBody nickName,
             @Part("sex") RequestBody sex,
-            @Part("studio") RequestBody studio,
+//            @Part("studio") RequestBody studio,
 
             @Part MultipartBody.Part imgs,
             @Part("sign") RequestBody sign
