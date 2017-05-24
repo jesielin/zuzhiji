@@ -120,21 +120,24 @@ public class MeFragment extends BaseFragment {
         DebugLog.e("userType:" + userType);
         switch (userType) {
             case "0":
-                dongtai.setVisibility(View.VISIBLE);
-                anli.setVisibility(View.GONE);
+                //工作室
+                dongtai.setVisibility(View.GONE);
+                anli.setVisibility(View.VISIBLE);
                 jibie.setVisibility(View.GONE);
                 joinStudio.setVisibility(View.GONE);
                 break;
             case "1":
+                //技师
                 dongtai.setVisibility(View.GONE);
                 anli.setVisibility(View.VISIBLE);
                 jibie.setVisibility(View.VISIBLE);
                 joinStudio.setVisibility(View.VISIBLE);
                 break;
             case "2":
-                dongtai.setVisibility(View.GONE);
-                anli.setVisibility(View.VISIBLE);
-                jibie.setVisibility(View.VISIBLE);
+                //个人
+                dongtai.setVisibility(View.VISIBLE);
+                anli.setVisibility(View.GONE);
+                jibie.setVisibility(View.GONE);
                 joinStudio.setVisibility(View.GONE);
                 break;
         }
