@@ -8,33 +8,23 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zzj.zuzhiji.CommentsReplyActivity;
 import com.zzj.zuzhiji.HomePageActivity;
+import com.zzj.zuzhiji.JoinStudioActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SettingActivity;
 import com.zzj.zuzhiji.UserInfoSettingActivity;
 import com.zzj.zuzhiji.app.Constant;
-import com.zzj.zuzhiji.network.Network;
-import com.zzj.zuzhiji.network.entity.StudioItem;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
-import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 
 /**
  * Created by shawn on 2017-03-29.
@@ -145,86 +135,87 @@ public class MeFragment extends BaseFragment {
 
     @OnClick(R.id.join)
     public void joinStu() {
-        Network.getInstance().getUnjoinStudioByUser(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID))
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mProgressDialog = DialogUtils.showProgressDialog(getActivity(), "正在获取工作室列表...");
-
-                    }
-                })
-                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<StudioItem>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "获取工作室错误:" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        DialogUtils.dismissDialog(mProgressDialog);
-                    }
-
-                    @Override
-                    public void onNext(final List<StudioItem> studioItems) {
-                        DialogUtils.dismissDialog(mProgressDialog);
-
-                        if (studioItems != null && studioItems.size() == 0) {
-                            Toast.makeText(getActivity(), "当前没有可选工作室", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        final List<String> items = new ArrayList<String>();
-                        final String[] contents = new String[studioItems.size()];
-                        for (int i = 0; i < studioItems.size(); i++) {
-                            contents[i] = studioItems.get(i).title;
-                        }
-
-                        chooseDialog = DialogUtils.showSingleChoiceDialog(getActivity(), "选择工作室", contents, new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                DialogUtils.dismissDialog(chooseDialog);
-
-                                Network.getInstance().joinStudio(
-                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                                        studioItems.get(position).id
-                                )
-                                        .doOnSubscribe(new Action0() {
-                                            @Override
-                                            public void call() {
-                                                mProgressDialog = DialogUtils.showProgressDialog(getActivity(), "正在加入工作室...");
-
-                                            }
-                                        })
-                                        .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(new Subscriber<Object>() {
-                                            @Override
-                                            public void onCompleted() {
-
-                                            }
-
-                                            @Override
-                                            public void onError(Throwable e) {
-
-                                                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                DialogUtils.dismissDialog(mProgressDialog);
-                                            }
-
-                                            @Override
-                                            public void onNext(Object o) {
-                                                Toast.makeText(getActivity(), "加入工作室成功", Toast.LENGTH_SHORT).show();
-                                                DialogUtils.dismissDialog(mProgressDialog);
-
-                                            }
-                                        });
-                            }
-                        });
-
-                    }
-                });
+        startActivity(new Intent(getActivity(), JoinStudioActivity.class));
+//        Network.getInstance().getUnjoinStudioByUser(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID))
+//                .doOnSubscribe(new Action0() {
+//                    @Override
+//                    public void call() {
+//                        mProgressDialog = DialogUtils.showProgressDialog(getActivity(), "正在获取工作室列表...");
+//
+//                    }
+//                })
+//                .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<List<StudioItem>>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Toast.makeText(getActivity(), "获取工作室错误:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        DialogUtils.dismissDialog(mProgressDialog);
+//                    }
+//
+//                    @Override
+//                    public void onNext(final List<StudioItem> studioItems) {
+//                        DialogUtils.dismissDialog(mProgressDialog);
+//
+//                        if (studioItems != null && studioItems.size() == 0) {
+//                            Toast.makeText(getActivity(), "当前没有可选工作室", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                        final List<String> items = new ArrayList<String>();
+//                        final String[] contents = new String[studioItems.size()];
+//                        for (int i = 0; i < studioItems.size(); i++) {
+//                            contents[i] = studioItems.get(i).title;
+//                        }
+//
+//                        chooseDialog = DialogUtils.showSingleChoiceDialog(getActivity(), "选择工作室", contents, new AdapterView.OnItemClickListener() {
+//                            @Override
+//                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                                DialogUtils.dismissDialog(chooseDialog);
+//
+//                                Network.getInstance().joinStudio(
+//                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+//                                        studioItems.get(position).id
+//                                )
+//                                        .doOnSubscribe(new Action0() {
+//                                            @Override
+//                                            public void call() {
+//                                                mProgressDialog = DialogUtils.showProgressDialog(getActivity(), "正在加入工作室...");
+//
+//                                            }
+//                                        })
+//                                        .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+//                                        .observeOn(AndroidSchedulers.mainThread())
+//                                        .subscribe(new Subscriber<Object>() {
+//                                            @Override
+//                                            public void onCompleted() {
+//
+//                                            }
+//
+//                                            @Override
+//                                            public void onError(Throwable e) {
+//
+//                                                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                                                DialogUtils.dismissDialog(mProgressDialog);
+//                                            }
+//
+//                                            @Override
+//                                            public void onNext(Object o) {
+//                                                Toast.makeText(getActivity(), "加入工作室成功", Toast.LENGTH_SHORT).show();
+//                                                DialogUtils.dismissDialog(mProgressDialog);
+//
+//                                            }
+//                                        });
+//                            }
+//                        });
+//
+//                    }
+//                });
     }
 
     @OnClick({R.id.dongtai, R.id.anli})

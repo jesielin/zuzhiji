@@ -160,7 +160,9 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @OnClick(R.id.reservation)
     public void reserv(View view) {
-        startActivity(new Intent(getActivity(), ReservationActivity.class));
+        Intent intent = new Intent(getActivity(), ReservationActivity.class);
+        intent.putExtra(ReservationActivity.KEY_FROM, ReservationActivity.FROM_HOME);
+        startActivity(intent);
     }
 
     @OnClick(R.id.customer_service)

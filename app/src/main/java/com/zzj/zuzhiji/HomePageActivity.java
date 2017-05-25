@@ -185,6 +185,15 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
 
     }
 
+
+    @OnClick(R.id.reservation)
+    public void reserv() {
+        Intent intent = new Intent(HomePageActivity.this, ReservationActivity.class);
+        intent.putExtra(ReservationActivity.KEY_FROM, ReservationActivity.FROM_TECH);
+        intent.putExtra("TECH_ID", friendUuid);
+        startActivity(intent);
+    }
+
     @OnClick(R.id.star)
     public void star() {
 

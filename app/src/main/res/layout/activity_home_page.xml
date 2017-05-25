@@ -186,11 +186,11 @@
                     android:background="@color/text_hint" />
 
                 <LinearLayout
+                    android:id="@+id/reservation"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@drawable/touch_bg"
-
                     android:clickable="true"
                     android:gravity="center"
                     android:orientation="horizontal">

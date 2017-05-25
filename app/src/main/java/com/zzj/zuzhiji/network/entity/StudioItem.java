@@ -13,4 +13,5 @@ public class StudioItem {
     public String id;
     public String title;
     public String status;
+    public String headSculpture;
 }

@@ -151,6 +151,9 @@
         <activity
             android:name=".ReservationActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".JoinStudioActivity"
+            android:screenOrientation="portrait"></activity>
 
 
         <activity
