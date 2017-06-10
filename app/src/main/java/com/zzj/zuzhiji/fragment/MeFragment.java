@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.zzj.zuzhiji.CommentsReplyActivity;
 import com.zzj.zuzhiji.HomePageActivity;
 import com.zzj.zuzhiji.JoinStudioActivity;
+import com.zzj.zuzhiji.PaidListActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.SettingActivity;
 import com.zzj.zuzhiji.UserInfoSettingActivity;
@@ -47,6 +48,7 @@ public class MeFragment extends BaseFragment {
     View guanzhu;
     @BindView(R.id.fensi)
     View fensi;
+
     @BindView(R.id.summary)
     TextView tvSummary;
     @BindView(R.id.join)
@@ -131,6 +133,12 @@ public class MeFragment extends BaseFragment {
                 joinStudio.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    @OnClick(R.id.paidlist)
+    public void showPaidList() {
+
+        startActivity(new Intent(getActivity(), PaidListActivity.class));
     }
 
     @OnClick(R.id.join)
@@ -225,8 +233,7 @@ public class MeFragment extends BaseFragment {
                 SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME),
                 "",
                 SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.USER_TYPE),
-                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                Constant.USER_IS_FRIEND));
+                SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID)));
     }
 
     @OnClick(R.id.shezhi)

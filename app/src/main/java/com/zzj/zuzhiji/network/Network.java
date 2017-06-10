@@ -10,7 +10,9 @@ import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
+import com.zzj.zuzhiji.network.entity.PaidTotal;
 import com.zzj.zuzhiji.network.entity.PayResult;
+import com.zzj.zuzhiji.network.entity.RecommendBean;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.RegisterStudioResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
@@ -236,12 +238,20 @@ public class Network {
         return compose(normalHttpService.getUserMoment(uuid, page, rows, sign));
     }
 
-    public Observable<List<Tech>> getRecommendTech(int size) {
-        return compose(normalHttpService.getRecommendTechs(size, sign));
+    public Observable<List<RecommendBean>> getRecommendTech(int size, String userType) {
+        return compose(normalHttpService.getRecommendTechs(size, userType, sign));
+    }
+
+    public Observable<PaidTotal> getPaidList(String uuid, int page) {
+        return compose(normalHttpService.getPaidList(uuid, page, sign));
     }
 
     public Observable<List<StudioItem>> getStudioByUser(String uuid) {
         return compose(normalHttpService.getStudioByUser(uuid, sign));
+    }
+
+    public Observable<String> isFriend(String userUuid, String techUuid) {
+        return compose(normalHttpService.isFriend(userUuid, techUuid, sign));
     }
 
     public Observable<PayResult> pay(String uuid, String serviceId, String techId, String studioId, String type, String time) {

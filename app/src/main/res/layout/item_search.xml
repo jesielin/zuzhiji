@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/clickArea"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/touch_bg"
 
+    android:background="@drawable/touch_bg"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -13,9 +14,9 @@
 
         <ImageView
             android:id="@+id/avator"
-            android:layout_margin="10dp"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:layout_margin="10dp"
 
              />
 
@@ -28,23 +29,23 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_marginLeft="20dp"
+                android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:maxLength="10"
                 android:text=""
                 android:textSize="18dp" />
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text=""
                 android:lines="2"
+                android:text=""
+                android:textSize="14dp"
 
-                android:textSize="14dp" />
+                android:visibility="gone" />
         </LinearLayout>
 
         <!--<Button-->

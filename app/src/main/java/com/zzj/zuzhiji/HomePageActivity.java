@@ -118,15 +118,15 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
                                    String nickName,
                                    String summary,
                                    String type,
-                                   String friendUuid,
-                                   String isFriend) {
+                                   String friendUuid
+    ) {
         Intent intent = new Intent(context, HomePageActivity.class);
         intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_AVATOR, avator);
         intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_NICKNAME, nickName);
         intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY, summary);
         intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE, type);
         intent.putExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID, friendUuid);
-        intent.putExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND, isFriend);
+//        intent.putExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND, isFriend);
         return intent;
     }
 
@@ -139,8 +139,9 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
             friendSummary = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_SUMMARY);
             friendType = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_TYPE);
             friendUuid = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_UUID);
-            isFriend = intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND);
+//            isFriend = intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND) == null ? "" : intent.getStringExtra(Constant.HOME_PAGE_KEYS.IS_FRIEND);
             friendAvator = intent.getStringExtra(Constant.HOME_PAGE_KEYS.FRIEND_AVATOR);
+
 
         }
 
@@ -161,13 +162,7 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
         tvSummary.setText(friendSummary);
         tvName.setText(friendNickName);
 
-        if (Constant.USER_IS_FRIEND.equals(isFriend)) {
-            isReserv = true;
-            starLightsUp();
-        } else {
-            isReserv = false;
-            starLightsDown();
-        }
+
 
 
         CommonUtils.loadAvator(ivAvator, friendAvator, this);
@@ -232,7 +227,7 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
                     .doOnSubscribe(new Action0() {
                         @Override
                         public void call() {
-                            mDialog = DialogUtils.showProgressDialog(HomePageActivity.this, "正在关注，请稍等..."); // 需要在主线程执行
+                            mDialog = DialogUtils.showProgressDialog(HomePageActivity.this, "取消关注，请稍等..."); // 需要在主线程执行
                         }
                     })
                     .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
@@ -338,6 +333,35 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
 
     @Override
     public void onRefresh() {
+
+        Network.getInstance().isFriend(SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                friendUuid).subscribe(new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+                Toast.makeText(HomePageActivity.this, "无法获取关注信息", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onNext(String s) {
+
+                isFriend = s;
+
+                if (Constant.USER_IS_FRIEND.equals(isFriend)) {
+                    isReserv = true;
+                    starLightsUp();
+                } else {
+                    isReserv = false;
+                    starLightsDown();
+                }
+            }
+        });
 
         CommonUtils.loadAvator(ivAvator, friendAvator, this);
 

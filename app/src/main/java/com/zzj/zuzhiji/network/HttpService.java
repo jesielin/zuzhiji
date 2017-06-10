@@ -6,7 +6,9 @@ import com.zzj.zuzhiji.network.entity.MessageResult;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
+import com.zzj.zuzhiji.network.entity.PaidTotal;
 import com.zzj.zuzhiji.network.entity.PayResult;
+import com.zzj.zuzhiji.network.entity.RecommendBean;
 import com.zzj.zuzhiji.network.entity.RegisterResult;
 import com.zzj.zuzhiji.network.entity.RegisterStudioResult;
 import com.zzj.zuzhiji.network.entity.ReplyItem;
@@ -96,10 +98,13 @@ public interface HttpService {
      *
      * @param size 推荐人数控制
      * @param sign
+     * @param userType 0工作室 1技师
      * @return
      */
     @GET("/getRecommendTechs")
-    Observable<HttpResult<List<Tech>>> getRecommendTechs(@Query("size") int size, @Query("sign") String sign);
+    Observable<HttpResult<List<RecommendBean>>> getRecommendTechs(@Query("size") int size,
+                                                                  @Query("userType") String userType,
+                                                                  @Query("sign") String sign);
 
     /**
      * 首页搜索技师
@@ -113,6 +118,10 @@ public interface HttpService {
     //searchTechs?currentPage=2&size=1&techName=小&owner=itrqXZ6Q36&sign=123
     @GET("/searchTechs")
     Observable<HttpResult<List<Tech>>> searchTechs(@Query("currentPage") int currentPage, @Query("size") int size, @Query("techName") String techName, @Query("owner") String owner, @Query("sign") String sign);
+
+
+    @GET("/isFriend")
+    Observable<HttpResult<String>> isFriend(@Query("userUuid") String userUuid, @Query("techUuid") String techUuid, @Query("sign") String sign);
 
     /**
      * 更新用户信息
@@ -140,6 +149,11 @@ public interface HttpService {
             @Part("sign") RequestBody sign
 
     );
+
+    @GET("/paidList")
+    Observable<HttpResult<PaidTotal>> getPaidList(@Query("uuid") String uuid,
+                                                  @Query("page") int page,
+                                                  @Query("sign") String sign);
 
     /**
      * loginName  联系电话

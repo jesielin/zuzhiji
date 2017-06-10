@@ -31,8 +31,7 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.Notice;
-import com.zzj.zuzhiji.network.entity.StudioItem;
-import com.zzj.zuzhiji.network.entity.Tech;
+import com.zzj.zuzhiji.network.entity.RecommendBean;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
@@ -71,8 +70,8 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private RecommendTechAdapter mTechAdapter = new RecommendTechAdapter();
     private RecommendStudioAdapter mStudioAdapter = new RecommendStudioAdapter();
 
-    private List<Tech> teches = new ArrayList<>();
-    private List<StudioItem> studios = new ArrayList<>();
+    private List<RecommendBean> techs = new ArrayList<>();
+    private List<RecommendBean> studios = new ArrayList<>();
 
     private int tabIndex = 0;
 
@@ -132,7 +131,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                     case 0:
                         tabIndex = 0;
                         recyclerView.setAdapter(mTechAdapter);
-                        if (teches.size() == 0)
+                        if (techs.size() == 0)
                             doRefresh();
 
                         break;
@@ -179,10 +178,13 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @OnClick(R.id.video)
     public void video(View view) {
-        MainActivity activity = (MainActivity) getActivity();
 
-        SharedPreferencesUtils.getInstance().setValue(Constant.SHARED_KEY.NEWS_TAB_INDEX, Constant.SHARED_VALUES.NEWS_VIDEO_TAB_INDEX);
-        activity.switchFragment(2);
+        Toast.makeText(getActivity(), "该模块正在开发中..", Toast.LENGTH_SHORT).show();
+        //// TODO: 2017-05-29 peixun
+//        MainActivity activity = (MainActivity) getActivity();
+//
+//        SharedPreferencesUtils.getInstance().setValue(Constant.SHARED_KEY.NEWS_TAB_INDEX, Constant.SHARED_VALUES.NEWS_VIDEO_TAB_INDEX);
+//        activity.switchFragment(2);
     }
 
     @OnClick(R.id.news)
@@ -268,8 +270,8 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         switch (tabIndex) {
             case 0:
-                Network.getInstance().getRecommendTech(Constant.PAGE_SIZE)
-                        .subscribe(new Subscriber<List<Tech>>() {
+                Network.getInstance().getRecommendTech(Constant.PAGE_SIZE, "1")
+                        .subscribe(new Subscriber<List<RecommendBean>>() {
                             @Override
                             public void onCompleted() {
 
@@ -282,21 +284,21 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                             }
 
                             @Override
-                            public void onNext(List<Tech> teches) {
-
-                                if (teches != null && teches.size() > 0) {
-                                    HomeFragment.this.teches.clear();
-                                    HomeFragment.this.teches.addAll(teches);
+                            public void onNext(List<RecommendBean> recommendBeen) {
+                                if (recommendBeen != null && recommendBeen.size() > 0) {
+                                    HomeFragment.this.techs.clear();
+                                    HomeFragment.this.techs.addAll(recommendBeen);
                                     recyclerView.setAdapter(mTechAdapter);
 
                                 }
                                 swipeRefreshLayout.setRefreshing(false);
                             }
                         });
+
                 break;
             case 1:
-                Network.getInstance().getAllStudio()
-                        .subscribe(new Subscriber<List<StudioItem>>() {
+                Network.getInstance().getRecommendTech(Constant.PAGE_SIZE, "0")
+                        .subscribe(new Subscriber<List<RecommendBean>>() {
                             @Override
                             public void onCompleted() {
 
@@ -309,10 +311,10 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                             }
 
                             @Override
-                            public void onNext(List<StudioItem> studioItems) {
-                                if (studioItems != null && studioItems.size() > 0) {
+                            public void onNext(List<RecommendBean> recommendBeen) {
+                                if (recommendBeen != null && recommendBeen.size() > 0) {
                                     HomeFragment.this.studios.clear();
-                                    HomeFragment.this.studios.addAll(studioItems);
+                                    HomeFragment.this.studios.addAll(recommendBeen);
                                     recyclerView.setAdapter(mStudioAdapter);
 
                                 }
@@ -345,6 +347,10 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         @BindView(R.id.title)
         TextView tvTitle;
+        @BindView(R.id.subtitle)
+        TextView tvSubtitle;
+        @BindView(R.id.avator)
+        ImageView ivAvator;
 
         public RecommendStudioVH(View itemView) {
             super(itemView);
@@ -359,14 +365,15 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         @Override
         public RecommendStudioVH onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            return new RecommendStudioVH(View.inflate(parent.getContext(), R.layout.item_recommend_studio, null));
+            return new RecommendStudioVH(View.inflate(parent.getContext(), R.layout.item_studio, null));
         }
 
         @Override
         public void onBindViewHolder(RecommendStudioVH holder, final int position) {
-            StudioItem studioItem = studios.get(position);
+            RecommendBean studioItem = studios.get(position);
             RecommendStudioVH recommendStudioVH = holder;
-            recommendStudioVH.tvTitle.setText(studioItem.title);
+            recommendStudioVH.tvTitle.setText(studioItem.nickName);
+            CommonUtils.loadAvator(holder.ivAvator, studioItem.headSculpture, getActivity());
         }
 
         @Override
@@ -381,16 +388,19 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         @Override
         public RecommendTechVH onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            return new RecommendTechVH(View.inflate(parent.getContext(), R.layout.item_recommend, null));
+            return new RecommendTechVH(View.inflate(parent.getContext(), R.layout.item_search, null));
         }
 
         @Override
         public void onBindViewHolder(RecommendTechVH holder, final int position) {
 
-            final Tech item = teches.get(position);
+            final RecommendBean item = techs.get(position);
             RecommendTechVH recommendTechVH = holder;
             recommendTechVH.tvTitle.setText(TextUtils.isEmpty(item.nickName) ? item.id : item.nickName);
-            recommendTechVH.tvSubTitle.setText(item.summary);
+            if (TextUtils.isEmpty(item.summary))
+                recommendTechVH.tvSubTitle.setVisibility(View.GONE);
+            else
+                recommendTechVH.tvSubTitle.setText(item.summary);
 
 
             CommonUtils.loadAvator(recommendTechVH.ivAvator, item.headSculpture, getActivity());
@@ -402,8 +412,8 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                             item.nickName,
                             item.summary,
                             item.userType,
-                            item.uuid,
-                            item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_HOME_TO_HOME_PAGE);
+                            item.uuid
+                    ), Constant.ACTIVITY_CODE.REQUEST_CODE_HOME_TO_HOME_PAGE);
                 }
             });
 
@@ -416,7 +426,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         @Override
         public int getItemCount() {
-            return teches.size();
+            return techs.size();
         }
     }
 

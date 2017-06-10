@@ -36,5 +36,10 @@ public class Tech {
     public String headSculpture;
     public String isFriend;
 
-
+    public Tech(String nickName, String uuid, String headSculpture, String summary) {
+        this.nickName = nickName;
+        this.uuid = uuid;
+        this.headSculpture = headSculpture;
+        this.summary = summary;
+    }
 }

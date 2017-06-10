@@ -192,8 +192,8 @@ public class SearchActivity extends BaseActivity implements SwipeRefreshLayout.O
                             item.nickName,
                             item.summary,
                             item.userType,
-                            item.uuid,
-                            item.isFriend), Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE);
+                            item.uuid
+                    ), Constant.ACTIVITY_CODE.REQUEST_CODE_SEARCH_TO_HOME_PAGE);
                 }
             });
 

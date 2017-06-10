@@ -16,7 +16,9 @@ public interface Constant {
     int IMAGE_UPLOAD_MAX_HEIGHT = 1920;
     int IMAGE_UPLOAD_MAX_WIDTH = 1080;
     int IMAGE_UPLOAD_QUALITY = 75;
-    String BASE_URL_NOR = "http://101.201.155.115:6068";
+
+    String BASE_URL_NOR = "https://api.zuzhiji.com";
+    //    String BASE_URL_NOR = "http://101.201.155.115:6068";
     String BASE_URL_SMS = "http://101.201.155.115:8086";
     String BASE_URL_DOWNLOAD = "http://101.201.155.115:3113";
 
@@ -29,8 +31,8 @@ public interface Constant {
     String USER_TYPE_SINGLE = "0";
     String USER_TYPE_TECH = "1";
 
-    String USER_IS_FRIEND = "1";
-    String USER_NOT_FRIEND = "0";
+    String USER_IS_FRIEND = "0";
+    String USER_NOT_FRIEND = "1";
 
     String GENDER_MALE = "1";
     String GENDER_FEMALE = "0";

@@ -159,6 +159,9 @@
         <activity
             android:name=".RegisterStudioActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".PaidListActivity"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".wxapi.WXPayEntryActivity"

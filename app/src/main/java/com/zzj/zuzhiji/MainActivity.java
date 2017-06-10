@@ -12,7 +12,7 @@ import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.fragment.HomeFragment;
 import com.zzj.zuzhiji.fragment.MeFragment;
 import com.zzj.zuzhiji.fragment.MessageFragment;
-import com.zzj.zuzhiji.fragment.NewsFragment;
+import com.zzj.zuzhiji.fragment.NewsFragment2;
 import com.zzj.zuzhiji.fragment.SocialFragment;
 import com.zzj.zuzhiji.util.DebugLog;
 
@@ -144,7 +144,8 @@ public class MainActivity extends BaseActivity {
                     f = new SocialFragment();
                     break;
                 case 2:
-                    f = new NewsFragment();
+                    //// TODO: 2017-05-29  
+                    f = new NewsFragment2();
                     break;
                 case 3:
                     f = new MessageFragment();

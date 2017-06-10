@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
+import com.zzj.zuzhiji.network.entity.RecommendBean;
 import com.zzj.zuzhiji.network.entity.Tech;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
@@ -168,8 +169,8 @@ public class ReservTechListFragment extends BaseFragment implements SwipeRefresh
                         }
                     });
         } else {
-            Network.getInstance().getRecommendTech(Constant.PAGE_SIZE)
-                    .subscribe(new Subscriber<List<Tech>>() {
+            Network.getInstance().getRecommendTech(Constant.PAGE_SIZE, "1")
+                    .subscribe(new Subscriber<List<RecommendBean>>() {
                         @Override
                         public void onCompleted() {
 
@@ -182,15 +183,18 @@ public class ReservTechListFragment extends BaseFragment implements SwipeRefresh
                         }
 
                         @Override
-                        public void onNext(List<Tech> teches) {
+                        public void onNext(List<RecommendBean> teches) {
                             if (teches != null && teches.size() > 0) {
                                 datas.clear();
-                                datas.addAll(teches);
+                                for (RecommendBean bean : teches) {
+                                    datas.add(new Tech(bean.nickName, bean.uuid, bean.headSculpture, bean.summary));
+                                }
                                 mAdapter.notifyDataSetChanged();
                             }
                             refreshLayout.setRefreshing(false);
                         }
                     });
+
         }
     }
 
@@ -235,7 +239,8 @@ public class ReservTechListFragment extends BaseFragment implements SwipeRefresh
                 }
             });
 
-            CommonUtils.loadAvator(holder.ivAvator, CommonUtils.getAvatorAddress(item.uuid), getActivity());
+
+            CommonUtils.loadAvator(holder.ivAvator, item.headSculpture, getActivity());
 
         }
 

@@ -69,7 +69,7 @@ public class RegisterActivity extends BaseActivity {
                 break;
             case R.id.single:
                 etBankcardno.setVisibility(View.GONE);
-                type = "0";
+                type = "2";
                 break;
         }
     }

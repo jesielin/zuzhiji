@@ -462,6 +462,48 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/paidlist"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/touch_bg"
+                android:clickable="true"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/huifu" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="60dp"
+
+                    android:text="我的订单"
+                    android:textSize="16dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="21dp"
+                    android:layout_marginRight="21dp"
+                    android:src="@drawable/arrow_right" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/divider"
+                    android:paddingLeft="20dp" />
+            </RelativeLayout>
+            <RelativeLayout
                 android:id="@+id/shezhi"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

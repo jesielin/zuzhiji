@@ -18,6 +18,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.yayandroid.theactivitymanager.TheActivityManager;
+import com.zzj.zuzhiji.PaidListActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.ReservationActivity;
 import com.zzj.zuzhiji.app.Constant;
@@ -89,6 +90,11 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     @OnClick(R.id.pay)
     public void pay() {
 
+        if ("3".equals(pay_type)) {
+            Toast.makeText(this, "线下支付尚未开通", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (isAlreadyMakeOrder) {
             payOrder();
             return;
@@ -156,13 +162,13 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                 pay_type = "2";
                 rbWechat.setChecked(true);
                 rbUnderline.setChecked(false);
-                Toast.makeText(this, "微信支付", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "微信支付", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.underline:
                 pay_type = "3";
                 rbWechat.setChecked(false);
                 rbUnderline.setChecked(true);
-                Toast.makeText(this, "线下支付", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "线下支付", Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -203,16 +209,20 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                 case 0:
                     //支付成功
                     Toast.makeText(this, "支付成功\nCode:" + resp.errCode, Toast.LENGTH_SHORT).show();
-                    TheActivityManager.getInstance().finishInstance(WXPayEntryActivity.class);
-                    TheActivityManager.getInstance().finishInstance(ReservationActivity.class);
+                    startActivity(new Intent(this, PaidListActivity.class));
+
                     break;
                 case -1:
                     //错误	可能的原因：签名错误、未注册APPID、项目设置APPID不正确、注册的APPID与设置的不匹配、其他异常等。
                     Toast.makeText(this, "支付异常\nCode:" + resp.errCode + "\nMessage:" + resp.errStr, Toast.LENGTH_LONG).show();
+                    TheActivityManager.getInstance().finishInstance(WXPayEntryActivity.class);
+                    TheActivityManager.getInstance().finishInstance(ReservationActivity.class);
                     break;
                 case -2:
                     //取消
                     Toast.makeText(this, "取消支付\nCode:" + resp.errCode, Toast.LENGTH_SHORT).show();
+                    TheActivityManager.getInstance().finishInstance(WXPayEntryActivity.class);
+                    TheActivityManager.getInstance().finishInstance(ReservationActivity.class);
                     break;
             }
 
