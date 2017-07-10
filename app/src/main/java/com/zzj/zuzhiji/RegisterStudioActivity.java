@@ -1,6 +1,7 @@
 package com.zzj.zuzhiji;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -111,6 +112,7 @@ public class RegisterStudioActivity extends BaseActivity {
             .build();
     private int imgWhich = 0;
     private OptionsPickerView pvOptions;
+    private boolean isAgree = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,6 +149,29 @@ public class RegisterStudioActivity extends BaseActivity {
 
                     }
                 });
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!isAgree) {
+            mDialog = DialogUtils.showProtocolDialog(true, this, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    isAgree = true;
+                    DialogUtils.dismissDialog(mDialog);
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    isAgree = false;
+                    DialogUtils.dismissDialog(mDialog);
+                    onBackPressed();
+                }
+            });
+        }
     }
 
     @OnClick(R.id.choose_img)

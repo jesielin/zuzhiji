@@ -1,5 +1,6 @@
 package com.zzj.zuzhiji;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,9 +46,13 @@ public class RegisterActivity extends BaseActivity {
     EditText etBankcardno;
 
     CountDownTimer timer;
+    @BindView(R.id.operator)
+    RadioButton rbOperator;
+    @BindView(R.id.single)
+    RadioButton rbSingle;
     private boolean isGetVerifyEnable = true;
     private String type = "0";
-
+    private boolean isAgree = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,19 +65,39 @@ public class RegisterActivity extends BaseActivity {
         etBankcardno.setVisibility(View.GONE);
     }
 
-
     @OnClick({R.id.operator, R.id.single})
     public void typeCheck(View view) {
         switch (view.getId()) {
             case R.id.operator:
-                type = "1";
-                etBankcardno.setVisibility(View.VISIBLE);
+                if (isAgree) {
+                    etBankcardno.setVisibility(View.VISIBLE);
+                    type = "1";
+                } else {
+                    mDialog = DialogUtils.showProtocolDialog(false, this, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            isAgree = true;
+                            DialogUtils.dismissDialog(mDialog);
+                            etBankcardno.setVisibility(View.VISIBLE);
+                            type = "1";
+                        }
+                    }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            DialogUtils.dismissDialog(mDialog);
+                            rbSingle.setChecked(true);
+
+                        }
+                    });
+                }
                 break;
             case R.id.single:
                 etBankcardno.setVisibility(View.GONE);
                 type = "2";
                 break;
         }
+
     }
 
     @OnClick(R.id.register)

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -37,6 +38,23 @@ public class DialogUtils {
 
         AlertDialog alertDialog = builder.create();
         return alertDialog;
+    }
+
+    public static Dialog showProtocolDialog(boolean isStudio, Context context, DialogInterface.OnClickListener posiListener, DialogInterface.OnClickListener negaListener) {
+        WebView webView = new WebView(context);
+        if (isStudio)
+            webView.loadUrl("file:///android_asset/studio.html");
+        else
+            webView.loadUrl("file:///android_asset/tech.html");
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(webView);
+
+        builder.setPositiveButton("同意", posiListener);
+        builder.setNegativeButton("取消", negaListener);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        return alertDialog;
+
     }
 
     public static ProgressDialog showProgressDialogDeterminate(Context context, String title, boolean cancelable) {
