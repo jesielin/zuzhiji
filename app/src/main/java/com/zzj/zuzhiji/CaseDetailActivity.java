@@ -97,6 +97,55 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
 
     private CommentAdapter mAdapter = new CommentAdapter();
     private List<CommentItem> comments = new ArrayList<>();
+    View.OnClickListener sendListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (UIHelper.isShowSoftInput(CaseDetailActivity.this))
+                UIHelper.hideSoftInput(CaseDetailActivity.this, etComment);
+
+            Network.getInstance().sendComment(item.momentsID, item.momentOwner, SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                    targetFriendId, etComment.getText().toString(), SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME), targetFriendNickName)
+                    .doOnSubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            mDialog = DialogUtils.showProgressDialog(CaseDetailActivity.this, "评论中，请稍等..."); // 需要在主线程执行
+                        }
+                    })
+                    .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Object>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(CaseDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            DialogUtils.dismissDialog(mDialog);
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                            isChangeComment = true;
+                            //TODO:
+                            comments.add(new CommentItem(
+                                    SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR),
+                                    targetHeader,
+                                    SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
+                                    SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME),
+                                    targetFriendId,
+                                    targetFriendNickName,
+                                    etComment.getText().toString()
+                            ));
+                            mAdapter.notifyDataSetChanged();
+                            etComment.setText("");
+                            DialogUtils.dismissDialog(mDialog);
+                        }
+                    });
+
+        }
+    };
 
     public static Intent newIntent(Context context, String itemJson) {
         Intent intent = new Intent(context, CaseDetailActivity.class);
@@ -117,7 +166,6 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
         item = new Gson().fromJson(itemJson, SocialItem.class);
     }
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +180,6 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
     public void content(View view) {
         Toast.makeText(this, "评论", Toast.LENGTH_SHORT).show();
     }
-
 
     private void setupLayout() {
 
@@ -232,55 +279,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
             }
         });
 
-        tvSendComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (UIHelper.isShowSoftInput(CaseDetailActivity.this))
-                    UIHelper.hideSoftInput(CaseDetailActivity.this, etComment);
-
-                Network.getInstance().sendComment(item.momentsID, item.momentOwner, SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                        targetFriendId, etComment.getText().toString(), SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME), targetFriendNickName)
-                        .doOnSubscribe(new Action0() {
-                            @Override
-                            public void call() {
-                                mDialog = DialogUtils.showProgressDialog(CaseDetailActivity.this, "评论中，请稍等..."); // 需要在主线程执行
-                            }
-                        })
-                        .subscribeOn(AndroidSchedulers.mainThread()) // 指定主线程
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<Object>() {
-                            @Override
-                            public void onCompleted() {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Toast.makeText(CaseDetailActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                DialogUtils.dismissDialog(mDialog);
-                            }
-
-                            @Override
-                            public void onNext(Object o) {
-                                isChangeComment = true;
-                                //TODO:
-                                comments.add(new CommentItem(
-                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.AVATOR),
-                                        targetHeader,
-                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.UUID),
-                                        SharedPreferencesUtils.getInstance().getValue(Constant.SHARED_KEY.NICK_NAME),
-                                        targetFriendId,
-                                        targetFriendNickName,
-                                        etComment.getText().toString()
-                                ));
-                                mAdapter.notifyDataSetChanged();
-                                etComment.setText("");
-                                DialogUtils.dismissDialog(mDialog);
-                            }
-                        });
-
-            }
-        });
+//        tvSendComment.setOnClickListener(sendListener);
 
     }
 
@@ -297,13 +296,13 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
 
     private void enableSendButton() {
         tvSendComment.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        tvSendComment.setClickable(true);
+        tvSendComment.setOnClickListener(sendListener);
     }
 
 
     private void disableSendButton() {
         tvSendComment.setTextColor(getResources().getColor(R.color.text_hint));
-        tvSendComment.setClickable(false);
+        tvSendComment.setOnClickListener(null);
     }
 
     private void setupKeyboardAction() {
@@ -437,7 +436,7 @@ public class CaseDetailActivity extends BaseActivity implements BGANinePhotoLayo
                     isChatThis = false;
                     targetCommentView = holder.clickAreaView;
                     targetHeader = comment.targetCommentHead;
-                    etComment.setHint("回复" + comment.commenterUUID + ":");
+                    etComment.setHint("回复" + comment.commenterNickname + ":");
 
                     UIHelper.showSoftInput(CaseDetailActivity.this, etComment);
 

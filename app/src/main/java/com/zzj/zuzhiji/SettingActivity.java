@@ -108,7 +108,8 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void run() {
                 Toast.makeText(SettingActivity.this, "已清除", Toast.LENGTH_SHORT).show();
-                tvCacheSize.setText(GlideCacheUtils.getInstance().getCacheSize(getApplicationContext()));
+//                tvCacheSize.setText(GlideCacheUtils.getInstance().getCacheSize(getApplicationContext()));
+                tvCacheSize.setText("0MB");
             }
         }, 2000);
     }

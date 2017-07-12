@@ -23,6 +23,8 @@ import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,8 +41,12 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
     RecyclerView recyclerView;
     @BindView(R.id.refresh)
     SwipeRefreshLayout swipeRefreshLayout;
-
-
+    Comparator comparator = new Comparator<NewsResult>() {
+        @Override
+        public int compare(NewsResult newsResult, NewsResult t1) {
+            return (int) (Double.valueOf(t1.createDate) - Double.valueOf(newsResult.createDate));
+        }
+    };
     private List<NewsResult> datas = new ArrayList<>();
     private TextNewsAdapter textNewsAdapter = new TextNewsAdapter();
 
@@ -110,6 +116,7 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
                         if (newsResults != null) {
                             datas.clear();
                             datas.addAll(newsResults);
+                            Collections.sort(datas, comparator);
                             textNewsAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
                         }
