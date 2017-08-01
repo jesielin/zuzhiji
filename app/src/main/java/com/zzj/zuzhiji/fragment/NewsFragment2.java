@@ -19,6 +19,7 @@ import com.zzj.zuzhiji.ArticleActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.NewsResult;
+import com.zzj.zuzhiji.network.entity.NewsTotal;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
 
@@ -30,6 +31,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by shawn on 2017-03-29.
@@ -47,6 +51,8 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
             return (int) (Double.valueOf(t1.createDate) - Double.valueOf(newsResult.createDate));
         }
     };
+    int page = 1;
+    int totalPage = 1;
     private List<NewsResult> datas = new ArrayList<>();
     private TextNewsAdapter textNewsAdapter = new TextNewsAdapter();
 
@@ -98,7 +104,18 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
     @Override
     public void onRefresh() {
 
-        Network.getInstance().getNews("1")
+        page = 1;
+        Network.getInstance().getNews("1", page)
+                .observeOn(Schedulers.io())
+                .map(new Func1<NewsTotal, List<NewsResult>>() {
+                    @Override
+                    public List<NewsResult> call(NewsTotal newsTotal) {
+                        totalPage = newsTotal.totalPage;
+
+                        return newsTotal.items;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<NewsResult>>() {
                     @Override
                     public void onCompleted() {
@@ -117,12 +134,60 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
                             datas.clear();
                             datas.addAll(newsResults);
                             Collections.sort(datas, comparator);
-                            textNewsAdapter.notifyDataSetChanged();
+                            DebugLog.e("data size:" + datas.size());
+                            if (page < totalPage)
+                                textNewsAdapter.setCanLoadMore(true);
+                            else
+                                textNewsAdapter.setCanLoadMore(false);
+//                            textNewsAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
                         }
                     }
                 });
 
+    }
+
+    private void onLoadMore() {
+        DebugLog.e("loading more...");
+        page++;
+        Network.getInstance().getNews("1", page)
+                .observeOn(Schedulers.io())
+                .map(new Func1<NewsTotal, List<NewsResult>>() {
+                    @Override
+                    public List<NewsResult> call(NewsTotal newsTotal) {
+                        totalPage = newsTotal.totalPage;
+
+                        return newsTotal.items;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<NewsResult>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onNext(List<NewsResult> newsResults) {
+                        if (newsResults != null) {
+                            datas.addAll(newsResults);
+                            Collections.sort(datas, comparator);
+                            DebugLog.e("data size:" + datas.size());
+                            if (page < totalPage)
+                                textNewsAdapter.setCanLoadMore(true);
+                            else
+                                textNewsAdapter.setCanLoadMore(false);
+//                            textNewsAdapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    }
+                });
     }
 
     class TextNewsVH extends RecyclerView.ViewHolder {
@@ -146,39 +211,79 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
 
     }
 
+    class LoadMoreVH extends RecyclerView.ViewHolder {
 
-    private class TextNewsAdapter extends RecyclerView.Adapter<TextNewsVH> {
+        public LoadMoreVH(View itemView) {
+            super(itemView);
+        }
+    }
 
-        @Override
-        public TextNewsVH onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new TextNewsVH(View.inflate(parent.getContext(), R.layout.item_text_news, null));
+
+    private class TextNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+
+        int NORMAL_TYPE = 1;
+        int LOAD_TYPE = 2;
+        boolean canLoadMore = false;
+
+        public void setCanLoadMore(boolean canLoadMore) {
+            this.canLoadMore = canLoadMore;
+            notifyDataSetChanged();
         }
 
         @Override
-        public void onBindViewHolder(TextNewsVH holder, int position) {
+        public int getItemViewType(int position) {
+            if (datas.size() == position && canLoadMore) {
+                return LOAD_TYPE;
+            } else
+                return NORMAL_TYPE;
+        }
 
-            final NewsResult item = datas.get(position);
-            Glide.with(getActivity()).load(item.titleImgUrl)
-                    .asBitmap().fitCenter()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (LOAD_TYPE == viewType)
+                return new LoadMoreVH(View.inflate(parent.getContext(), R.layout.item_load_more, null));
+            else
+                return new TextNewsVH(View.inflate(parent.getContext(), R.layout.item_text_news, null));
+        }
 
-                    .placeholder(R.color.text_hint)
-                    .into(holder.imv);
-            holder.tvTitle.setText(item.title);
-            holder.tvHot.setText(item.hot);
-            holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(ArticleActivity.newIntent(getActivity(), item.title, item.contents));
-                }
-            });
+
+            if (getItemViewType(position) == LOAD_TYPE) {
+
+                onLoadMore();
+
+
+            } else {
+                TextNewsVH vh = (TextNewsVH) holder;
+                final NewsResult item = datas.get(position);
+                Glide.with(getActivity()).load(item.titleImgUrl)
+                        .asBitmap().fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+                        .placeholder(R.color.text_hint)
+                        .into(vh.imv);
+                vh.tvTitle.setText(item.title);
+                vh.tvHot.setText(item.hot);
+                vh.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
+
+                vh.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(ArticleActivity.newIntent(getActivity(), item.title, item.contents));
+                    }
+                });
+            }
         }
 
         @Override
         public int getItemCount() {
-            return datas.size();
+            if (canLoadMore)
+                return datas.size() + 1;
+            else
+                return datas.size();
         }
     }
 

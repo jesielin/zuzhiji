@@ -3,7 +3,7 @@ package com.zzj.zuzhiji.network;
 import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
-import com.zzj.zuzhiji.network.entity.NewsResult;
+import com.zzj.zuzhiji.network.entity.NewsTotal;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
 import com.zzj.zuzhiji.network.entity.PaidTotal;
@@ -374,7 +374,7 @@ public interface HttpService {
      * @return
      */
     @GET("getInformations")
-    Observable<HttpResult<List<NewsResult>>> getNews(@Query("type") String type, @Query("sign") String sign);
+    Observable<HttpResult<NewsTotal>> getNews(@Query("type") String type, @Query("page") int page, @Query("sign") String sign);
 
     //getIndexAdvert?position=1&sign=123
 

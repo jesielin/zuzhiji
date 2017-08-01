@@ -11,13 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zzj.zuzhiji.ArticleActivity;
 import com.zzj.zuzhiji.R;
-import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.NewsResult;
 import com.zzj.zuzhiji.util.CommonUtils;
 import com.zzj.zuzhiji.util.DebugLog;
@@ -27,7 +25,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
 
 /**
  * Created by shawn on 17/3/27.
@@ -91,29 +88,29 @@ public class TextNewsFragment extends BaseFragment implements SwipeRefreshLayout
     @Override
     public void onRefresh() {
 
-            Network.getInstance().getNews("1")
-                    .subscribe(new Subscriber<List<NewsResult>>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-
-                        @Override
-                        public void onNext(List<NewsResult> newsResults) {
-                            if (newsResults != null) {
-                                datas.clear();
-                                datas.addAll(newsResults);
-                                textNewsAdapter.notifyDataSetChanged();
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        }
-                    });
+//            Network.getInstance().getNews("1")
+//                    .subscribe(new Subscriber<List<NewsResult>>() {
+//                        @Override
+//                        public void onCompleted() {
+//
+//                        }
+//
+//                        @Override
+//                        public void onError(Throwable e) {
+//                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                            swipeRefreshLayout.setRefreshing(false);
+//                        }
+//
+//                        @Override
+//                        public void onNext(List<NewsResult> newsResults) {
+//                            if (newsResults != null) {
+//                                datas.clear();
+//                                datas.addAll(newsResults);
+//                                textNewsAdapter.notifyDataSetChanged();
+//                                swipeRefreshLayout.setRefreshing(false);
+//                            }
+//                        }
+//                    });
 
     }
 

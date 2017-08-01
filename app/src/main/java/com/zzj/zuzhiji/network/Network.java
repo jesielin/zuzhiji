@@ -7,7 +7,7 @@ import com.zzj.zuzhiji.network.download.DownloadProgressListener;
 import com.zzj.zuzhiji.network.entity.AdvertResult;
 import com.zzj.zuzhiji.network.entity.LoginResult;
 import com.zzj.zuzhiji.network.entity.MessageResult;
-import com.zzj.zuzhiji.network.entity.NewsResult;
+import com.zzj.zuzhiji.network.entity.NewsTotal;
 import com.zzj.zuzhiji.network.entity.Notice;
 import com.zzj.zuzhiji.network.entity.PItem;
 import com.zzj.zuzhiji.network.entity.PaidTotal;
@@ -185,8 +185,8 @@ public class Network {
         return compose(normalHttpService.getArea(sign));
     }
 
-    public Observable<List<NewsResult>> getNews(String type) {
-        return compose(normalHttpService.getNews(type, sign));
+    public Observable<NewsTotal> getNews(String type, int page) {
+        return compose(normalHttpService.getNews(type, page, sign));
     }
 
     public Observable<List<Notice>> getNotice(String date) {
