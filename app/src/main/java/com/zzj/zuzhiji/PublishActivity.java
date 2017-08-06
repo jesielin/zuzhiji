@@ -23,8 +23,10 @@ import com.zzj.zuzhiji.util.DialogUtils;
 import com.zzj.zuzhiji.util.SharedPreferencesUtils;
 
 import java.io.File;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +42,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.schedulers.Timestamped;
 
@@ -61,6 +64,7 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
     @BindView(R.id.image_group)
     BGASortableNinePhotoLayout mPhotosSnpl;
     long start_upload = 0;
+    Subscription s;
     private Compressor compressor = new Compressor.Builder(App.getAppContext())
             .setMaxWidth(Constant.IMAGE_UPLOAD_MAX_WIDTH)
             .setMaxHeight(Constant.IMAGE_UPLOAD_MAX_HEIGHT)
@@ -94,6 +98,8 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
             // 拍照后照片的存放目录，改成你自己拍照后要存放照片的目录。如果不传递该参数的话就没有拍照功能
             File takePhotoDir = new File(Environment.getExternalStorageDirectory(), "BGAPhotoPickerTakePhoto");
 
+            DebugLog.e("mac item count:" + mPhotosSnpl.getMaxItemCount());
+            DebugLog.e("path size:" + paths.size());
             startActivityForResult(BGAPhotoPickerActivity.newIntent(this, takePhotoDir, mPhotosSnpl.getMaxItemCount(), paths, true), Constant.REQUEST_CODE_CHOOSE_PHOTO);
         } else {
             EasyPermissions.requestPermissions(this, "图片选择需要以下权限:\n\n1.访问设备上的照片\n\n2.拍照", Constant.REQUEST_CODE_PERMISSION_PHOTO_PICKER, perms);
@@ -121,11 +127,17 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == Constant.REQUEST_CODE_CHOOSE_PHOTO)
-                mPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedImages(data));
+            if (requestCode == Constant.REQUEST_CODE_CHOOSE_PHOTO) {
+                DebugLog.e("REQUEST_CODE_CHOOSE_PHOTO");
+//                mPhotosSnpl.addMoreData(BGAPhotoPickerActivity.getSelectedImages(data));
+                paths = BGAPhotoPickerPreviewActivity.getSelectedImages(data);
+                mPhotosSnpl.setData(paths);
+            }
 
             else if (requestCode == Constant.REQUEST_CODE_PHOTO_PREVIEW) {
-                mPhotosSnpl.setData(BGAPhotoPickerPreviewActivity.getSelectedImages(data));
+                paths = BGAPhotoPickerPreviewActivity.getSelectedImages(data);
+                mPhotosSnpl.setData(paths);
+                DebugLog.e("REQUEST_CODE_PHOTO_PREVIEW");
             }
         }
 
@@ -136,6 +148,16 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
         finish();
     }
 
+    private void showDialog() {
+        mDialog = DialogUtils.showProgressDialog(this, "正在上传...");
+        mDialog.setCancelable(false);
+
+    }
+
+    private void dissmissDialog() {
+        DialogUtils.dismissDialog(mDialog);
+    }
+
     @OnClick(R.id.complete)
     public void complete(View view) {
 
@@ -144,10 +166,10 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
             return;
         }
 
-        mDialog = DialogUtils.showProgressDialog(this, "正在上传...");
+        showDialog();
         //TODO:DIALOG BUG
 
-        Observable.create(new Observable.OnSubscribe<List<File>>() {
+        s = Observable.create(new Observable.OnSubscribe<List<File>>() {
             @Override
             public void call(Subscriber<? super List<File>> subscriber) {
                 List<File> files = new ArrayList<File>();
@@ -176,9 +198,15 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugLog.e("error");
+                        DebugLog.e("error:");
+                        if (e instanceof TimeoutException) {
+                            DebugLog.e("chaoshi");
+                        } else {
+                            DebugLog.e("weichaoshi");
+                        }
+
                         Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        DialogUtils.dismissDialog(mDialog);
+                        dissmissDialog();
                     }
 
                     @Override
@@ -192,7 +220,6 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
 
 
     }
-
 
     private void upload(List<File> files) {
         MultipartBody.Part[] parts = new MultipartBody.Part[files.size()];
@@ -224,9 +251,8 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
                 RequestBody.create(
                         MediaType.parse("multipart/form-data"), messageText);
 
-        Network.getInstance().postSocial(uuid, message, nickName, parts)
-                .timestamp()
-                .subscribe(new Subscriber<Timestamped<Object>>() {
+        s = Network.getInstance().postSocial(uuid, message, nickName, parts)
+                .subscribe(new Subscriber<Object>() {
                     @Override
                     public void onCompleted() {
 
@@ -234,21 +260,42 @@ public class PublishActivity extends BaseActivity implements EasyPermissions.Per
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugLog.e("error");
-                        Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        DialogUtils.dismissDialog(mDialog);
+                        DebugLog.e("error" + e.getClass());
+                        if (e instanceof SocketTimeoutException || e instanceof TimeoutException) {
+                            Toast.makeText(PublishActivity.this, "超时了，请检查网络连接..", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(PublishActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        dissmissDialog();
                     }
 
                     @Override
-                    public void onNext(Timestamped<Object> objectTimestamped) {
-
-                        DebugLog.e("upload time:" + (objectTimestamped.getTimestampMillis() - start_upload));
+                    public void onNext(Object o) {
+//                        DebugLog.e("upload time:" + (objectTimestamped.getTimestampMillis() - start_upload));
                         setResult(Constant.ACTIVITY_CODE.RESULT_CODE_PUBLISH_SUCCESS);
-                        DialogUtils.dismissDialog(mDialog);
+                        dissmissDialog();
                         finish();
-
                     }
                 });
+
+//                .subscribe(new Subscriber<Timestamped<Object>>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(Timestamped<Object> objectTimestamped) {
+//
+//
+//
+//                    }
+//                });
     }
 
 

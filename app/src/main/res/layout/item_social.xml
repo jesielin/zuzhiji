@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
+    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:padding="10dp"
+    android:layout_height="match_parent"
     android:background="@drawable/touch_bg"
     android:clickable="true"
-    android:id="@+id/container"
-    android:layout_height="match_parent">
+    android:orientation="horizontal"
+    android:padding="10dp">
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="55dp"
-
         android:id="@+id/avator"
+        android:layout_width="50dp"
+
+        android:layout_height="55dp"
          />
 
     <LinearLayout
@@ -24,36 +24,37 @@
         android:orientation="vertical">
 
         <TextView
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:singleLine="true"
-            android:textColor="@color/md_black_1000"
-            android:text="" />
-
-        <TextView
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/md_black_1000"
+            android:textSize="20dp" />
+
+        <TextView
             android:id="@+id/subtitle"
-            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16dp"
+            android:layout_marginTop="5dp"
+            android:maxLines="5"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="简介:神经系统神经系统神经系统神经系统神经系统神经系统神经系统神经系统"
             android:textColor="@color/text_hint"
-            android:text="简介:神经系统神经系统神经系统神经系统神经系统神经系统神经系统神经系统" />
+            android:textSize="16dp" />
 
         <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
             android:id="@+id/image_group"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="10dp"
-            app:bga_npl_itemCornerRadius="0dp"
-            app:bga_npl_itemSpanCount="3"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
+            app:bga_npl_itemCornerRadius="0dp"
+            app:bga_npl_itemSpanCount="3"
             app:bga_npl_itemWhiteSpacing="4dp"
 
             app:bga_npl_itemWidth="0dp"
@@ -62,11 +63,11 @@
             app:bga_npl_showAsLargeWhenOnlyOne="true" />
 
         <RelativeLayout
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
                 android:id="@+id/date"
@@ -92,12 +93,12 @@
                     android:src="@drawable/icon_message" />
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
                     android:id="@+id/comment_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginLeft="4dp"
+                    android:gravity="center"
                     android:text="0"
                     android:textColor="@color/text_hint"
                     android:textSize="16dp" />

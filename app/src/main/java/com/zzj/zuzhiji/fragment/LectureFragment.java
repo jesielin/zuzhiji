@@ -36,10 +36,10 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by shawn on 2017-03-29.
+ * Created by shawn on 2017-08-06.
  */
 
-public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class LectureFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.list)
     RecyclerView recyclerView;
@@ -51,20 +51,20 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
             return (int) (Double.valueOf(t1.createDate) - Double.valueOf(newsResult.createDate));
         }
     };
+
     int page = 1;
     int totalPage = 1;
     private List<NewsResult> datas = new ArrayList<>();
-    private TextNewsAdapter textNewsAdapter = new TextNewsAdapter();
+    private TrainAdapter trainAdapter = new TrainAdapter();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View contentView = View.inflate(getActivity(), R.layout.fragment_news2, null);
+        View contentView = View.inflate(getActivity(), R.layout.fragment_train, null);
         ButterKnife.bind(this, contentView);
 
 
         setupLayout();
-
         return contentView;
     }
 
@@ -74,7 +74,7 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(), linearLayoutManager
                 .getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
-        recyclerView.setAdapter(textNewsAdapter);
+        recyclerView.setAdapter(trainAdapter);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_orange_light, android.R.color.holo_blue_light, android.R.color.holo_green_light, android.R.color.holo_red_light);
         swipeRefreshLayout.post(new Runnable() {
@@ -136,12 +136,13 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
                             Collections.sort(datas, comparator);
                             DebugLog.e("data size:" + datas.size());
                             if (page < totalPage)
-                                textNewsAdapter.setCanLoadMore(true);
+                                trainAdapter.setCanLoadMore(true);
                             else
-                                textNewsAdapter.setCanLoadMore(false);
+                                trainAdapter.setCanLoadMore(false);
 //                            textNewsAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
+
                         }
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
 
@@ -180,9 +181,9 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
                             Collections.sort(datas, comparator);
                             DebugLog.e("data size:" + datas.size());
                             if (page < totalPage)
-                                textNewsAdapter.setCanLoadMore(true);
+                                trainAdapter.setCanLoadMore(true);
                             else
-                                textNewsAdapter.setCanLoadMore(false);
+                                trainAdapter.setCanLoadMore(false);
 //                            textNewsAdapter.notifyDataSetChanged();
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -190,7 +191,7 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
                 });
     }
 
-    class TextNewsVH extends RecyclerView.ViewHolder {
+    class TrainVH extends RecyclerView.ViewHolder {
 
         @BindView(R.id.title)
         TextView tvTitle;
@@ -203,7 +204,7 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
         @BindView(R.id.date)
         TextView tvDate;
 
-        public TextNewsVH(View itemView) {
+        public TrainVH(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -219,7 +220,7 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
     }
 
 
-    private class TextNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private class TrainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
         int NORMAL_TYPE = 1;
@@ -244,7 +245,7 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
             if (LOAD_TYPE == viewType)
                 return new LoadMoreVH(View.inflate(parent.getContext(), R.layout.item_load_more, null));
             else
-                return new TextNewsVH(View.inflate(parent.getContext(), R.layout.item_text_news, null));
+                return new TrainVH(View.inflate(parent.getContext(), R.layout.item_text_news, null));
         }
 
         @Override
@@ -257,7 +258,7 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
 
 
             } else {
-                TextNewsVH vh = (TextNewsVH) holder;
+                TrainVH vh = (TrainVH) holder;
                 final NewsResult item = datas.get(position);
                 Glide.with(getActivity()).load(item.titleImgUrl)
                         .asBitmap().fitCenter()
@@ -287,6 +288,4 @@ public class NewsFragment2 extends BaseFragment implements SwipeRefreshLayout.On
                 return datas.size();
         }
     }
-
-
 }

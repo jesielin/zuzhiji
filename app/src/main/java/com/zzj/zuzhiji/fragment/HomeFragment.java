@@ -27,6 +27,7 @@ import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.ReservationActivity;
 import com.zzj.zuzhiji.SearchActivity;
 import com.zzj.zuzhiji.ServiceActivity;
+import com.zzj.zuzhiji.TrainActivity;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.AdvertResult;
@@ -179,8 +180,8 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @OnClick(R.id.video)
     public void video(View view) {
 
-        Toast.makeText(getActivity(), "该模块正在开发中..", Toast.LENGTH_SHORT).show();
-        //// TODO: 2017-05-29 peixun
+        startActivity(new Intent(getActivity(), TrainActivity.class));
+//        Toast.makeText(getActivity(), "该模块正在开发中..", Toast.LENGTH_SHORT).show();
 //        MainActivity activity = (MainActivity) getActivity();
 //
 //        SharedPreferencesUtils.getInstance().setValue(Constant.SHARED_KEY.NEWS_TAB_INDEX, Constant.SHARED_VALUES.NEWS_VIDEO_TAB_INDEX);
