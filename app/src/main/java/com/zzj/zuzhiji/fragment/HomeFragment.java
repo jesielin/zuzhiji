@@ -26,8 +26,8 @@ import com.zzj.zuzhiji.MainActivity;
 import com.zzj.zuzhiji.R;
 import com.zzj.zuzhiji.ReservationActivity;
 import com.zzj.zuzhiji.SearchActivity;
-import com.zzj.zuzhiji.ServiceActivity;
 import com.zzj.zuzhiji.TrainActivity;
+import com.zzj.zuzhiji.VideoActivity;
 import com.zzj.zuzhiji.app.Constant;
 import com.zzj.zuzhiji.network.Network;
 import com.zzj.zuzhiji.network.entity.AdvertResult;
@@ -174,7 +174,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @OnClick(R.id.service)
     public void service(View view) {
-        startActivity(new Intent(getActivity(), ServiceActivity.class));
+        startActivity(new Intent(getActivity(), VideoActivity.class));
     }
 
     @OnClick(R.id.video)

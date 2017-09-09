@@ -132,6 +132,9 @@
         <activity
             android:name=".TrainActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".VideoActivity"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".ChatActivity"
