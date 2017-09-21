@@ -45,6 +45,24 @@
             android:textColor="@color/text_hint"
             android:textSize="16dp" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/del"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingBottom="5dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="10dp"
+                android:text="删除"
+                android:textColor="@color/pickerview_timebtn_nor"
+                android:textSize="16dp"
+                android:visibility="visible" />
+        </RelativeLayout>
         <cn.bingoogolapple.photopicker.widget.BGANinePhotoLayout
             android:id="@+id/image_group"
             style="@style/MatchWrap"
@@ -80,6 +98,7 @@
                 android:text="2小时前发布"
                 android:textColor="@color/text_hint"
                 android:textSize="16dp" />
+
 
             <LinearLayout
                 android:layout_width="wrap_content"

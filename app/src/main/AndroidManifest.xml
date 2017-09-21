@@ -135,6 +135,9 @@
         <activity
             android:name=".VideoActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".VideoDetailActivity"
+            android:screenOrientation="portrait"></activity>
 
         <activity
             android:name=".ChatActivity"

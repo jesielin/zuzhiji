@@ -2,6 +2,7 @@ package com.zzj.zuzhiji;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -96,6 +97,8 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
     private String friendSummary;
     private String friendNickName;
 
+    private boolean isMe = false;
+
 
     private boolean isReserv;
     private int page = 1;
@@ -149,7 +152,9 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
             editButton.setVisibility(View.VISIBLE);
             bottomNav.setVisibility(View.GONE);
             swipeRefreshLayout.setPadding(0, 0, 0, 0);
+            isMe = true;
         } else {
+            isMe = false;
             editButton.setVisibility(View.GONE);
             bottomNav.setVisibility(View.VISIBLE);
             final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
@@ -454,6 +459,8 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
         TextView tvDate;
         @BindView(R.id.comment_num)
         TextView tvNum;
+        @BindView(R.id.del)
+        TextView tvDel;
 
         public CaseVH(View itemView) {
             super(itemView);
@@ -473,7 +480,57 @@ public class HomePageActivity extends BaseActivity implements SwipeRefreshLayout
         @Override
         public void onBindViewHolder(CaseVH holder, int position) {
 
-            SocialItem item = datas.get(position);
+            final SocialItem item = datas.get(position);
+            if (isMe) {
+                holder.tvDel.setVisibility(View.VISIBLE);
+                holder.tvDel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        DialogUtils.showAlterDialog(HomePageActivity.this, "删除", "确定要删除此条案例？", "取消", "确定",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+                                    }
+                                }, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        mDialog = DialogUtils.showProgressDialog(HomePageActivity.this, "正在删除...");
+                                        mDialog.setCancelable(false);
+                                        Network.getInstance().del(item.momentOwner, item.momentsID)
+                                                .subscribe(new Subscriber<Object>() {
+                                                    @Override
+                                                    public void onCompleted() {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onError(Throwable e) {
+
+                                                        DialogUtils.dismissDialog(mDialog);
+
+                                                        DebugLog.e("error:" + e.getMessage());
+                                                    }
+
+                                                    @Override
+                                                    public void onNext(Object o) {
+
+                                                        DialogUtils.dismissDialog(mDialog);
+                                                        DebugLog.e("");
+                                                        onRefresh();
+
+                                                    }
+                                                });
+                                    }
+                                }, true);
+
+
+                    }
+                });
+            }
+
+
             holder.bgaNinePhotoLayout.setData(item.photos);
             holder.tvTitle.setText(friendNickName);
             holder.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));

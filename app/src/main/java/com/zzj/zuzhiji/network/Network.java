@@ -192,6 +192,10 @@ public class Network {
         return compose(normalHttpService.getNews(type, page, sign));
     }
 
+    public Observable<Object> del(String id, String momentsId) {
+        return compose(normalHttpService.del(id, momentsId, sign));
+    }
+
     public Observable<List<Notice>> getNotice(String date) {
         return compose(normalHttpService.getNotice(date, sign));
     }

@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
 
 
-    android:orientation="horizontal">
+    android:background="@drawable/touch_bg"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -18,6 +19,18 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_centerInParent="true"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_advert1" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:text="dsafsfdsafdsafdsa"
+        android:textColor="@color/md_black_1000"
+        android:textSize="18dp" />
 </LinearLayout>

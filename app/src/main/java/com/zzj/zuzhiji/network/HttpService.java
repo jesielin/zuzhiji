@@ -355,6 +355,17 @@ public interface HttpService {
 
 
     /**
+     * 删除朋友圈
+     *
+     * @param id
+     * @param momentsId
+     * @param sign
+     * @return
+     */
+    @GET("/del")
+    Observable<HttpResult<Object>> del(@Query("userUUID") String id, @Query("momentsID") String momentsId, @Query("sign") String sign);
+
+    /**
      * 关注技师
      *
      * @param ownerUUID

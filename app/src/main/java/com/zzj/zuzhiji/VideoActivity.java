@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -177,8 +178,8 @@ public class VideoActivity extends BaseActivity implements SwipeRefreshLayout.On
 
     class VideoVH extends RecyclerView.ViewHolder {
 
-        //        @BindView(R.id.title)
-//        TextView tvTitle;
+        @BindView(R.id.title)
+        TextView tvTitle;
 //        @BindView(R.id.subtitle)
 //        TextView tvSubTitle;
         @BindView(R.id.imv)
@@ -250,7 +251,7 @@ public class VideoActivity extends BaseActivity implements SwipeRefreshLayout.On
 
                         .placeholder(R.color.text_hint)
                         .into(vh.imv);
-//                vh.tvTitle.setText(item.title);
+                vh.tvTitle.setText(item.title);
 //                vh.tvHot.setText(item.hot);
 //                vh.tvSubTitle.setText(item.author);
 //                vh.tvDate.setText(CommonUtils.getDate(Double.valueOf(item.createDate)));
@@ -258,7 +259,7 @@ public class VideoActivity extends BaseActivity implements SwipeRefreshLayout.On
                 vh.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(VideoPlayActivity.newIntent(VideoActivity.this, item.contents));
+                        startActivity(VideoDetailActivity.newIntent(VideoActivity.this, item.titleImgUrl, item.title));
 //                        startActivity(ArticleActivity.newIntent(VideoActivity.this, item.title, item.contents));
                     }
                 });
